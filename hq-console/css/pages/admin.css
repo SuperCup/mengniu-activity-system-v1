@@ -1,0 +1,16 @@
+/* =============================================================================
+ * pages/admin.css — 系统管理
+ * 服务商配置表与服务商抽屉。
+ * ========================================================================== */
+
+.vcs-tbl{table-layout:fixed;width:100%}
+.vcs-tbl td,.vcs-tbl th{vertical-align:top}
+.vcs-tbl .vc-n{font-weight:400;font-size:11px;color:var(--ink4);margin-left:2px}
+.vcs-tbl .vc-cm > b{display:block;margin-bottom:1px}
+.vcs-tbl .vc-cm > span{display:block;margin-top:8px}
+.vcs-tbl .vc-rm{color:var(--ink2);line-height:1.6;font-size:12.4px}
+#dw-vs .bt.mini{margin-top:2px}
+#dw-vs .bt.mini td{padding:5px 6px}
+#dw-vs .bt.mini td .ci{width:100%;border:1px solid var(--line1);border-radius:5px;padding:5px 7px;box-sizing:border-box;font-family:inherit;font-size:12.2px}
+#dw-vs .bt.mini td.idx{color:var(--ink4);text-align:center;font-size:12px;line-height:26px}
+#dw-vs .bt.mini td .del{color:var(--red);cursor:pointer;font-weight:600;font-size:12px;line-height:26px}

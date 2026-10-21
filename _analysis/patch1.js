@@ -1,0 +1,1 @@
+const fs=require('fs');const p='D:/Project/蒙牛-原型-ds-harness/hq-console/js/components/picker.js';let s=fs.readFileSync(p,'utf8');if(!/defineDrawer\('pkLayer'/.test(s)){s+='\nMT.defineDrawer(' + JSON.stringify('pkLayer') + ', tplPickerLayer);\n';fs.writeFileSync(p,s,'utf8');}console.log('ok')

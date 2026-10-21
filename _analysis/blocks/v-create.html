@@ -1,0 +1,87 @@
+<div class="view" id="v-create">
+  <div class="panel">
+    <div class="panel-h">
+      <h3>新建项目​</h3>
+      <div class="flex">
+        <span class="muted">项目单号：提交后自动生成</span>
+        <span class="tg tg-n">草稿</span>
+      </div>
+    </div>
+    <div class="panel-b">
+
+      <div class="st">一、基本信息​</div>
+      <div class="fg c2">
+        <div class="fr"><label>项目名称<em>*</em></label><input class="inp" value="双节常温奶满减"></div>
+        <div class="fr"><label>项目目标<em>*</em></label><input class="inp" value="拉新 + 复购"></div>
+      </div>
+      <div class="fr">
+        <label>投放平台<em>*</em></label>
+        <div class="locked"><b>微信支付</b>　一期仅支持微信支付单平台</div>
+      </div>
+      <div class="fg c2">
+        <div class="fr"><label>活动周期<em>*</em></label>
+          <div class="flex" style="gap:8px"><input class="inp" value="2026-12-20" style="flex:1"><span class="muted">至</span><input class="inp" value="2027-01-05" style="flex:1"></div>
+        </div>
+        <div class="fr"><label>活动负责人 / 联系方式<em>*</em></label><input class="inp" value="李雪 · 15269175821"></div>
+      </div>
+      <div class="fr"><label>项目范围<em>*</em></label><input class="inp" value="华东区全部门店 · 常温奶"></div>
+
+      <div class="st" style="margin-top:26px">二、预算与费用科目</div>
+      <div class="fr"><label>PO 单号<em>*</em></label>
+        <div class="flex" style="gap:8px;align-items:center">
+          <input class="inp" id="poNo" value="POCN68-0000014722" style="flex:1;max-width:340px" oninput="poLookup()">
+          <span class="tg tg-g" id="poTag">✓ 已校验</span>
+        </div>
+        <div class="mut" style="font-size:11.6px;margin-top:4px">输入 PO 单号后自动带出下方预算信息；PO 单须已审批通过且剩余可用额度充足</div>
+      </div>
+      <div class="fg c2" style="margin-top:15px" id="poAuto">
+        <div class="fr"><label>核销预算（元）</label><input class="inp" id="poBudget" value="400,000.00" readonly="" style="background:#F7FAF9;color:var(--ink3)"><div class="mut" id="poHint" style="font-size:11.6px;margin-top:4px">由 PO 单带出</div></div>
+        <div class="fr"><label>费用科目</label><input class="inp" id="poSubj" value="市场推广费-促销费用" readonly="" style="background:#F7FAF9;color:var(--ink3)"></div>
+        <div class="fr"><label>承担主体（创建业务部门）</label><input class="inp" id="poOrg" value="BU03 华东事业部" readonly="" style="background:#F7FAF9;color:var(--ink3)"></div>
+        <div class="fr"><label>预算来源</label><input class="inp" id="poSrc" value="集团统投" readonly="" style="background:#F7FAF9;color:var(--ink3)"></div>
+      </div>
+
+      <div class="st" style="margin-top:26px">三、服务商信息</div>
+      <div class="fg c2">
+        <div class="fr"><label>服务商<em>*</em></label>
+          <select class="inp" id="projVendor" onchange="projVendorChange(this.value)"><option value="">请选择服务商</option><option value="0">智选数字技术（广州）股份有限公司</option><option value="1">上海智士网络科技有限公司</option><option value="2">武汉智赢数图科技有限公司</option><option value="3">广州智曹数字技术有限公司</option><option value="4">智选数字技术（广州）股份有限公司北京分公司</option></select>
+        </div>
+        <div class="fr"><label>服务商联系人<em>*</em></label>
+          <select class="inp" id="projContact"><option value="">请选择联系人</option><option value="胡味芝">胡味芝 · huwz@zhishi.com</option><option value="钱磊">钱磊 · qianlei@zhishi.com</option></select>
+        </div>
+      </div>
+
+      <div class="st" style="margin-top:26px;display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+        <span style="white-space: pre-wrap;">四、批次计划​</span>
+        <span class="flex right" style="gap:8px">
+          <button class="btn btn-o btn-xs" onclick="openPlanNew()">＋ 创建计划</button>
+        </span>
+      </div>
+      <div class="panel" style="margin-top:0">
+        <table class="bt" id="planTbl" style="table-layout:fixed">
+          <thead><tr>
+            <th style="width:4%">序号</th>
+            <th style="width:10.5%">计划名</th>
+            <th style="width:14%">机制</th>
+            <th style="width:17.5%">起止时间</th>
+            <th style="width:14%">零售商</th>
+            <th style="width:15%">活动商品</th>
+            <th style="width:11%">预算分配</th>
+            <th style="width:14%">操作</th>
+          </tr></thead>
+          <tbody id="planBody"><tr><td class="muted">1</td><td class="nm">双节满减主推</td><td>常温奶满 99 减 15</td><td style="font-size:12.2px;white-space:nowrap">2026-12-20 ~ 2026-12-27</td><td><span class="lk" onclick="openPick('ret',0)">重庆永辉超市有限公司<span class="muted"> +1</span></span></td><td><span class="lk" onclick="openPick('sku',0)">特仑苏纯牛奶 250ml×12</span></td><td class="num" style="text-align:right;padding-right:14px;font-size:12.2px">¥135,000.00</td><td><div class="ops"><a onclick="openPlanDetail(0)">详情</a><a onclick="openPlanNew(0)">编辑</a><a class="del" onclick="delPlan(0)">删除</a></div></td></tr><tr><td class="muted">2</td><td class="nm">跨年场景承接</td><td>常温奶满 99 减 15</td><td style="font-size:12.2px;white-space:nowrap">2026-12-28 ~ 2027-01-05</td><td><span class="lk" onclick="openPick('ret',1)">重庆永辉超市有限公司<span class="muted"> +1</span></span></td><td><span class="lk" onclick="openPick('sku',1)">特仑苏纯牛奶 250ml×12</span></td><td class="num" style="text-align:right;padding-right:14px;font-size:12.2px">¥105,000.00</td><td><div class="ops"><a onclick="openPlanDetail(1)">详情</a><a onclick="openPlanNew(1)">编辑</a><a class="del" onclick="delPlan(1)">删除</a></div></td></tr><tr><td class="muted">3</td><td class="nm">高端礼盒拉新</td><td>高端礼盒满 129 减 20</td><td style="font-size:12.2px;white-space:nowrap">2026-12-20 ~ 2027-01-05</td><td><span class="lk" onclick="openPick('ret',2)">杭州盒马网络科技有限公司</span></td><td><span class="lk" onclick="openPick('sku',2)">特仑苏 / 精选礼盒</span></td><td class="num" style="text-align:right;padding-right:14px;font-size:12.2px">¥100,000.00</td><td><div class="ops"><a onclick="openPlanDetail(2)">详情</a><a onclick="openPlanNew(2)">编辑</a><a class="del" onclick="delPlan(2)">删除</a></div></td></tr></tbody>
+        </table>
+        <div class="pager">
+          <div class="pg-info">共 <b id="planTotal">3</b> 条计划，每页 5 条</div>
+          <div class="pg-btns" id="planPager"><span class="dis" onclick="gotoPlan(0)">上一页</span><span class="on" onclick="gotoPlan(1)">1</span><span class="dis" onclick="gotoPlan(2)">下一页</span></div>
+        </div>
+      </div>
+
+      <div class="panel-f">
+        <button class="btn btn-g">保存草稿</button>
+        <button class="btn btn-o">预览</button>
+        <button class="btn btn-p">提交审批</button>
+      </div>
+    </div>
+  </div>
+</div>

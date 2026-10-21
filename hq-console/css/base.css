@@ -1,0 +1,55 @@
+/* =============================================================================
+ * base.css — 重置、排版基线与通用工具类
+ * ========================================================================== */
+*,*::before,*::after{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0;
+  font-family:var(--font);
+  font-size:var(--fs-base);
+  line-height:1.7;
+  color:var(--ink);
+  background:var(--bg);
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
+}
+h1,h2,h3,h4,h5,h6,p,figure{margin:0}
+ul,ol{margin:0;padding-left:18px}
+a{color:var(--brand);text-decoration:none}
+a:hover{color:var(--brand-d)}
+button,input,select,textarea{font:inherit;color:inherit}
+img,svg{display:block;max-width:100%}
+
+/* 标题层级（规范 B-02：一级/二级/三级标题 常规-悬浮-选中） */
+h1{font-size:var(--fs-2xl);font-weight:700;line-height:1.35}
+h2{font-size:var(--fs-xl);font-weight:700;line-height:1.4}
+h3{font-size:var(--fs-md);font-weight:700;line-height:1.45}
+h4{font-size:var(--fs-md);font-weight:600;line-height:1.5}
+h5{font-size:var(--fs-base);font-weight:600;line-height:1.5}
+h6{font-size:var(--fs-sm);font-weight:700;line-height:1.5}
+
+/* ---------- 视图容器：单入口下按模块显示/隐藏 ---------- */
+.view{display:none}
+.view.on{display:block}
+
+/* ---------- 通用工具类 ---------- */
+.muted{color:var(--ink3);font-size:var(--fs-sm)}
+.dim{color:var(--ink3)}
+.flex{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.right{margin-left:auto}
+.nowrap{white-space:nowrap}
+.sx-mono{font-family:var(--font-mono);font-size:10.8px;letter-spacing:.2px}
+.sec-gap{height:4px}
+.foot{margin-top:34px;padding-top:16px;border-top:1px solid var(--line);text-align:center;
+  font-size:var(--fs-xs);color:var(--ink4);line-height:1.9}
+.lnk{cursor:pointer;color:var(--brand);font-weight:600;
+  border-bottom:1px dashed var(--brand-40);text-decoration:none}
+.lnk:hover{color:var(--brand-d);border-bottom-style:solid}
+.mut{color:var(--ink3);font-size:var(--fs-sm)}
+
+/* ---------- 滚动条 ---------- */
+*::-webkit-scrollbar{width:10px;height:10px}
+*::-webkit-scrollbar-thumb{background:var(--ink-20);border-radius:5px;border:3px solid transparent;
+  background-clip:content-box}
+*::-webkit-scrollbar-thumb:hover{background:var(--ink-40);background-clip:content-box;border:3px solid transparent}
+*::-webkit-scrollbar-track{background:transparent}

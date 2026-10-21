@@ -1,0 +1,1 @@
+    + (canEdit && !plans.length && briefs ? '<div class="note b" style="margin-top:10px">报批时的计划概况：<b>' + briefs + '</b>。按概况逐个补充计划与批次，补完再推送服务商。</div>' : '')

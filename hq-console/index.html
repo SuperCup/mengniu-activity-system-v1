@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>蒙牛活动管理平台 · 总部端</title>
+<link rel="icon" type="image/png" href="assets/mengniu-logo.png">
+
+<!-- 钉钉扫码登录守卫：本标签页登录过才放行；加 ?nologin 可跳过（仅演示用） -->
+<script>
+(function(){
+  var skip = location.search.indexOf('nologin') >= 0;
+  if(!skip && sessionStorage.getItem('mn_ding_login') !== '1'){ location.replace('login.html'); }
+})();
+</script>
+
+<!-- 视觉规范设计变量（唯一色彩来源） -->
+<link rel="stylesheet" href="css/tokens.css">
+<link rel="stylesheet" href="css/base.css">
+<link rel="stylesheet" href="css/layout.css">
+<link rel="stylesheet" href="css/components.css">
+<!-- 模块样式：一个模块一个文件 -->
+<link rel="stylesheet" href="css/pages/home.css">
+<link rel="stylesheet" href="css/pages/project.css">
+<link rel="stylesheet" href="css/pages/plan-batch.css">
+<link rel="stylesheet" href="css/pages/coupon.css">
+<link rel="stylesheet" href="css/pages/dashboard.css">
+<link rel="stylesheet" href="css/pages/admin.css">
+</head>
+<body>
+
+<!-- ===================== 顶栏 ===================== -->
+<header class="mn-top">
+  <a class="mn-brand" href="index.html">
+    <span class="mn-mark"><img src="assets/mengniu-logo.png" alt="蒙牛" width="106" height="32"></span>
+    <span class="mn-brand-t">蒙牛活动管理平台<small>总部端</small></span>
+  </a>
+
+  <div class="mn-top-r">
+    <a class="mn-help" onclick="mnHelp()">帮助文档</a>
+    <span class="mn-user">
+      <span class="av">张</span>
+      <span>张明<small>数字化中心负责人</small></span>
+    </span>
+    <button class="mn-logout" type="button" onclick="logoutToDing()">退出</button>
+  </div>
+</header>
+
+<!-- ===================== 主体 ===================== -->
+<div class="mn-body">
+
+  <!-- 左侧导航：由 js/core/router.js 依据页面注册表渲染 -->
+  <aside class="sider" id="sider"></aside>
+
+  <div class="main">
+    <div class="crumb" id="crumb">工作台</div>
+
+    <!-- 所有模块视图挂载点（一个模块一个 js 文件，见 js/pages/） -->
+    <main class="wrap" id="viewRoot"></main>
+  </div>
+</div>
+
+<!-- ===================== 浮层容器 ===================== -->
+<!-- 抽屉、浮层由 js/components/*.js 在启动时注入到这里 -->
+<div id="layerRoot"></div>
+
+<noscript>
+  <p style="padding:24px">本页需要启用 JavaScript 才能正常显示。</p>
+</noscript>
+
+<!-- ---------- 核心 ---------- -->
+<script src="js/core/format.js"></script>
+<script src="js/core/drawer.js"></script>
+<script src="js/core/router.js"></script>
+
+<!-- ---------- 示例数据 ---------- -->
+<script src="js/data/vendors.js"></script>
+<script src="js/data/retailers.js"></script>
+<script src="js/data/products.js"></script>
+<script src="js/data/plans.js"></script>
+<script src="js/data/po.js"></script>
+<script src="js/data/coupon-pages.js"></script>
+<script src="js/data/qr.js"></script>
+<script src="js/data/projects.js"></script>
+<script src="js/data/logs.js"></script>
+<script src="js/data/roles.js"></script>
+<script src="js/data/dashboard.js"></script>
+
+<!-- ---------- 数据仓库 / 就绪计算 ---------- -->
+<script src="js/core/store.js"></script>
+<script src="js/core/audit.js"></script>
+<script src="js/core/readiness.js"></script>
+
+<!-- ---------- 共享组件（抽屉 / 浮层） ---------- -->
+<script src="js/components/import-drawer.js"></script>
+<script src="js/components/plan-drawer.js"></script>
+<script src="js/components/plan-list.js"></script>
+<script src="js/components/batch-drawer.js"></script>
+<script src="js/components/qr-drawer.js"></script>
+<script src="js/components/pagedata.js"></script>
+<script src="js/components/flow-drawer.js"></script>
+<script src="js/components/project-drawer.js"></script>
+<script src="js/components/vendor-drawer.js"></script>
+
+<!-- ---------- 业务模块（一个模块一个文件） ---------- -->
+<script src="js/pages/home.js"></script>
+<script src="js/pages/project-create.js"></script>
+<script src="js/pages/project-approve.js"></script>
+<script src="js/pages/project-manage.js"></script>
+<script src="js/pages/plan-batch.js"></script>
+<script src="js/pages/coupon-page.js"></script>
+<script src="js/pages/dashboard.js"></script>
+<script src="js/pages/system-admin.js"></script>
+<script src="js/pages/log-page.js"></script>
+<script src="js/pages/vendor-portal.js"></script>
+
+<!-- ---------- 业务流程动作 ---------- -->
+<script src="js/core/workflow.js"></script>
+
+<!-- ---------- 启动 ---------- -->
+<script src="js/app.js"></script>
+</body>
+</html>

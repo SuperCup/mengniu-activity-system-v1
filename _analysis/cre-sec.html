@@ -1,0 +1,25 @@
+      <!-- 四、批次计划：一个计划对应一个批次（一批次=一张券） -->
+      <div class="st" style="margin-top:26px;display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+        <span>四、批次计划</span>
+        <span class="flex" style="gap:8px;margin-left:auto">
+          <span class="tg tg-n" id="briefCnt">0 个计划</span>
+          <button class="btn btn-o btn-xs" type="button" onclick="briefAdd()">＋ 创建计划</button>
+        </span>
+      </div>
+      <div class="panel" style="margin-top:12px">
+        <div class="tw scroll" style="border:none;box-shadow:none;border-radius:0">
+          <table class="bt" style="table-layout:fixed">
+            <thead><tr>
+              <th style="width:4%">序号</th>
+              <th style="width:15%">计划名称</th>
+              <th style="width:15%">券名称</th>
+              <th style="width:14%">机制</th>
+              <th style="width:11%">发券方式</th>
+              <th style="width:16%">活动零售商</th>
+              <th style="width:19%">活动商品</th>
+              <th style="width:6%">操作</th>
+            </tr></thead>
+            <tbody id="briefBody"></tbody>
+          </table>
+        </div>
+      </div>

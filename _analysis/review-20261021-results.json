@@ -1,0 +1,180 @@
+{
+  "errors": [],
+  "results": [
+    {
+      "name": "boot",
+      "result": {
+        "views": 9,
+        "plans": 3
+      }
+    },
+    {
+      "name": "submit does not create project and invalid PO accepted",
+      "result": {
+        "before": 7,
+        "after": 7,
+        "toast": "已提交审批。审批通过后请在「项目管理 → 计划与批次」补充计划明细"
+      }
+    },
+    {
+      "name": "approval does not transition",
+      "result": {
+        "before": "pending",
+        "after": "pending"
+      }
+    },
+    {
+      "name": "import closes parent editor and headerless data is lost",
+      "result": {
+        "afterImport": {
+          "ret": 3,
+          "open": []
+        },
+        "afterReopen": 0,
+        "singleHeaderlessRows": 0,
+        "twoHeaderlessRows": 1,
+        "firstStore": "人民路店"
+      }
+    },
+    {
+      "name": "new plan loses project and ignores pending state and invalid amounts",
+      "result": {
+        "scopeState": "pending",
+        "created": true,
+        "proj": null,
+        "visible": false,
+        "budget": -1,
+        "qty": 1.5,
+        "face": -2
+      }
+    },
+    {
+      "name": "batch accepts negative day and fractional counts and overwrites plan",
+      "result": {
+        "before": {
+          "face": 15,
+          "qty": 9000,
+          "budget": 135000
+        },
+        "after": {
+          "face": 10,
+          "qty": 1.5,
+          "budget": 135000,
+          "bat": "WX73026369",
+          "bstat": "已审核",
+          "batchForm": {
+            "name": "测试券",
+            "mch": "1236057802",
+            "fund": "预充值",
+            "face": 10,
+            "thr": 99,
+            "start": "2026-12-20",
+            "end": "2026-12-27",
+            "cap": 1.5,
+            "day": -2,
+            "user": 1.5,
+            "desc": "测试",
+            "batNo": ""
+          }
+        }
+      }
+    },
+    {
+      "name": "QR names collide and empty channel keeps stale selected code",
+      "result": {
+        "a": "MN-WX-202612-0041-OFF-01",
+        "b": "MN-WX-202612-0041-OFF-01",
+        "duplicate": true,
+        "before": "mn-act.cn/h5/g/7f3a2c?ch=off1",
+        "first": {
+          "page": "r2",
+          "channel": "MP",
+          "selected": "mn-act.cn/h5/g/7f3a2c?ch=off1",
+          "display": "https://mn-act.cn/h5/g/7f3a2c?ch=off1 复制"
+        },
+        "afterBlank": {
+          "selected": "mn-act.cn/h5/g/7f3a2c?ch=off1",
+          "display": "该渠道还没有二维码，点左侧「新增」生成"
+        }
+      }
+    },
+    {
+      "name": "vendor data has multiple contacts and save resets project vendor",
+      "result": {
+        "counts": [
+          3,
+          2,
+          1,
+          2,
+          2
+        ],
+        "selectedAfterSave": "1"
+      }
+    },
+    {
+      "name": "dashboard channel total does not reconcile",
+      "result": {
+        "used": 12428,
+        "chanUsed": 10462,
+        "kpis": "核销订单数?12,428同比 +33.82%环比 +177.62%销售额?¥2,128,337同比 -61.61%环比 +2.75%优惠金额?¥198,910同比 -68.59%环比 -7.46%笔单价?¥171同比 +12.40%环比 +3.18%ROI?10.7同比 +21.89%环比 +11.46%"
+      }
+    },
+    {
+      "name": "decimal money formatting",
+      "result": "¥123.45.00"
+    },
+    {
+      "name": "valid imports parse and unique contact is displayed",
+      "result": {
+        "ret": {
+          "rows": 3,
+          "errors": 0
+        },
+        "sku": {
+          "rows": 3,
+          "errors": 0
+        },
+        "displayedContact": "周敏"
+      }
+    },
+    {
+      "name": "plan edit entry, page submit and vendor deactivate are unwired",
+      "result": {
+        "planEditLinks": 0,
+        "generatePageHandler": "closeDrawer()",
+        "vendorDeactivateHandler": null
+      }
+    },
+    {
+      "name": "permissions save does not restrict navigation",
+      "result": {
+        "roleKeys": [
+          "admin",
+          "biz",
+          "fin",
+          "svc"
+        ],
+        "allNavigation": [
+          "v-home",
+          "v-create",
+          "v-approve",
+          "v-manage",
+          "v-plan",
+          "v-h5",
+          "v-board",
+          "v-admin",
+          "v-vendor"
+        ],
+        "hasIdentity": "undefined"
+      }
+    },
+    {
+      "name": "batch duplicate ID accepted",
+      "result": {
+        "first": "23020101",
+        "second": "23020101",
+        "duplicate": true
+      }
+    }
+  ]
+}

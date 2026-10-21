@@ -1,0 +1,1 @@
+          + '<td><span class="tg ' + planConfigState(p).cls + ' xs">' + planConfigState(p).txt + '</span></td>'

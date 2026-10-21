@@ -1,0 +1,1 @@
+                <th style="width:86px">配置状态</th>

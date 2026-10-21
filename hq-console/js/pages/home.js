@@ -1,0 +1,59 @@
+/* =============================================================================
+ * pages/home.js — 工作台
+ * 入口页：待办 + 消息与提醒。待办数字全部由 data/* 计算，与列表角标同源；
+ * 点击数字卡直达已筛选列表（项目类会带上状态筛选）。
+ * ========================================================================== */
+
+function todoDefs(){
+  var noPlan = PROJECTS.filter(function(p){ return p.state === 'running' && p.progress && p.progress.plan === 0; }).length;
+  var noBat = PLANS.filter(function(p){ return !p.bat; }).length;
+  var myCfg = PROJECTS.filter(function(p){ return p.state === 'approved'; })
+    .reduce(function(s, p){ return s + (projConfigStat(p.id).todo ? 1 : 0); }, 0);
+
+  return [
+    { n: projCount('pending'),   l: '待我审批',          r: '数字化中心',            act: "go('v-approve')" },
+    { n: projCount('approved'),  l: '待推送服务商',      r: '已通过未推送',          cls: 'warn', act: "gotoProjState('approved')" },
+    { n: myCfg,                  l: '待我补充执行配置',  r: '已批准未完成配置',      cls: myCfg ? 'warn' : '', act: "wfGoFirstConfig()" },
+    { n: projCount('confirmed'), l: '待服务商确认',      r: '推送后等待确认',        cls: 'warn', act: "gotoProjState('confirmed')" },
+    { n: noPlan,                 l: '待补充计划明细',    r: '执行中但计划为 0',      act: "gotoProjState('running')" },
+    { n: noBat,                  l: '待补充批次',        r: '计划缺对应批次',        cls: noBat ? 'err' : '', act: "go('v-plan')" },
+    { n: projCount('running'),   l: '执行中活动',        r: '本月进行中',            act: "gotoProjState('running')" },
+    { n: projCount('stopped'),   l: '已终止项目',        r: '预算已释放',            act: "gotoProjState('stopped')" }
+  ];
+}
+
+function renderTodos(){
+  var box = document.getElementById('homeTodos'); if(!box) return;
+  box.innerHTML = todoDefs().map(function(t){
+    return '<div class="todo ' + (t.cls || '') + '" style="cursor:pointer" onclick="' + t.act + '">'
+      + '<div class="n">' + t.n + '</div><div class="l">' + t.l + '</div><div class="r">' + t.r + '</div></div>';
+  }).join('');
+}
+
+/* ---------- 模板：v-home ---------- */
+function tplPagehome(){
+  return `<div class="view" id="v-home">
+  <div class="st">我的待办</div>
+  <div class="todos" id="homeTodos"></div>
+  <div class="note b" style="margin-top:14px">待办数字与各模块角标同源（由项目与计划数据实时计算），点击数字卡直达已筛选列表。一期链路是「审批 → 推送 → 服务商确认 → 传计划 → 传批次 → 建页面 → 看数据」，工作台按这条链路的卡点排布待办。</div>
+
+  <div class="st" style="margin-top:26px">消息与提醒</div>
+  <div class="panel"><div class="panel-b" style="padding:6px 20px">
+    <div class="msg"><span class="dot b"></span><span class="t"><b>【待审批】</b>BU01 提交「年货节乳品礼盒」，核销预算 ¥125,000.00，等待您审批</span><span class="tm">12 分钟前</span></div>
+    <div class="msg"><span class="dot"></span><span class="t"><b>【审批通过】</b>「元旦乳品满减」终审通过，活动 ID <b>MN-WX-202612-0044</b> 已签发，项目状态更新为「待推送服务商」，待创建人补充计划明细</span><span class="tm">1 小时前</span></div>
+    <div class="msg"><span class="dot"></span><span class="t"><b>【已推送】</b>活动链接邮件已发送至 上海智士网络科技 · huwz@zhishi.com，等待服务商确认</span><span class="tm">1 小时前</span></div>
+    <div class="msg"><span class="dot a"></span><span class="t"><b>【计划校验失败】</b>「双节常温奶满减」计划金额合计 ¥420,000 超出核销预算 ¥400,000，已拒绝；差异清单已下载，等待服务商重新上传</span><span class="tm">2 小时前</span></div>
+    <div class="msg"><span class="dot"></span><span class="t"><b>【批次已配置】</b>「双节常温奶满减」3 个计划各回传 1 个批次（共 3 个），均已一一对应并可创建领券页面</span><span class="tm">今天 10:22</span></div>
+    <div class="msg"><span class="dot r"></span><span class="t"><b>【超时未确认】</b>「跨年暖冬饮品券」推送已 2 天 6 小时，服务商未确认执行，建议电话跟进</span><span class="tm">昨天 18:20</span></div>
+  </div></div>
+</div>`;
+}
+
+/* ---------- 注册模块 ---------- */
+MT.definePage({
+  id: "v-home",
+  title: "工作台",
+  crumb: "概览 / 工作台",
+  group: "概览",
+  template: tplPagehome
+});

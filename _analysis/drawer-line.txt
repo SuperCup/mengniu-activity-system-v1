@@ -1,0 +1,1 @@
+            + '<td>' + pnEsc(b.mech) + '</td><td>' + briefCellTxt(b.ret, 'ret') + '</td><td>' + briefCellTxt(b.sku, 'sku') + '</td></tr>';

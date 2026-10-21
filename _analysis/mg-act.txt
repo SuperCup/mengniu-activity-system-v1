@@ -1,0 +1,7 @@
+function projAct(act, id){
+  return wfAct(act, id);
+}
+
+function projActLegacy(act, id){
+  var p = projByAny(id);
+  if(!p) return;

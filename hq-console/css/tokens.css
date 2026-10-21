@@ -1,0 +1,80 @@
+/* =============================================================================
+ * tokens.css — 蒙牛 MTL 视觉规范设计变量（唯一色彩/字号/间距来源）
+ * 依据：蒙牛MTL平台视觉规范.pdf  A-03 品牌标准色 / A-04 品牌颜色应用指导 /
+ *       A-05 中英文标准字体 / B-02 网站交互规范
+ * 规则：其它样式文件只允许引用变量，不允许再出现字面色值。
+ * ========================================================================== */
+:root{
+  /* ---------- 主色调 #096C52，按 20% 递减形成完整色阶 ---------- */
+  --brand:#096C52;
+  --brand-80:#3A8975;
+  --brand-60:#6BA697;
+  --brand-40:#9CC4B9;
+  --brand-20:#CDE1DC;
+  --brand-12:#DEEBE7;
+  --brand-08:#EDF4F1;
+  --brand-d:#064E3C;          /* 按钮 hover / 强调文字 */
+  --brand-l:#E8F6F0;          /* 浅底（标签、选中行） */
+  --brand-ll:#F3FAF7;         /* 更浅底（提示卡） */
+
+  /* ---------- 字体色 #141E35，按 20% 递减 ---------- */
+  --ink:#141E35;
+  --ink-80:#434B5D;
+  --ink-60:#727886;
+  --ink-40:#A1A5AE;
+  --ink-20:#D0D2D7;
+  --ink2:var(--ink-80);
+  --ink3:var(--ink-60);
+  --ink4:var(--ink-40);
+
+  /* ---------- 同类辅助色（规范 A-04，色值不可改） ---------- */
+  --aux-green:#00A839;        /* 同类辅助色 1：进度、成功 */
+  --aux-olive:#609C0C;        /* 同类辅助色 2：次要数据系列 */
+  --aux-sand:#9F8E5D;         /* 辅助中性色：待办、待确认 */
+  --aux-sand-40:#E7E2D3;      /* 沙色描边 */
+  --aux-sand-l:#F7F3E8;       /* 沙色浅底 */
+  --aux-sand-ll:#FBF9F3;      /* 沙色更浅底 */
+  --aux-sand-ink:#6E6036;     /* 沙色上的可读文字 */
+
+  /* ---------- 功能色（语义状态，非品牌色） ---------- */
+  --blue:#2C6FC4;   --blue-l:#EAF2FC;   --blue-ink:#1B4E8C;
+  --red:#C0392B;    --red-l:#FBECEA;    --red-ink:#8A2C1D;
+  --red-40:#E8C9C4; --red-ll:#FEF9F8;
+  --purple:#6B4FA8; --purple-l:#F0EBF9; --purple-40:#DED5F0; --purple-ll:#FAF8FD;
+
+  /* ---------- 中性色 / 底色 ---------- */
+  --bg:#F2F5F3;
+  --bg-soft:#F7FAF9;
+  --bg-tint:#FAFCFB;
+  --card:#FFFFFF;
+  --line:#E1E8E5;
+  --line2:#EFF3F1;
+
+  /* ---------- 圆角 ---------- */
+  --r-sm:4px;
+  --r:8px;
+  --r-lg:12px;
+
+  /* ---------- 阴影 ---------- */
+  --sh:0 1px 2px rgba(20,30,53,.06);
+  --sh-md:0 6px 18px rgba(20,30,53,.10);
+  --sh-lg:0 14px 40px rgba(20,30,53,.18);
+
+  /* ---------- 字体（规范 A-05：思源黑体 Source Han Sans） ---------- */
+  --font:"Source Han Sans SC","Noto Sans SC","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+  --font-mono:ui-monospace,Menlo,Consolas,monospace;
+
+  /* ---------- 字号阶梯 ---------- */
+  --fs-xs:11px;
+  --fs-sm:12px;
+  --fs-base:13px;
+  --fs-md:14px;
+  --fs-lg:16px;
+  --fs-xl:20px;
+  --fs-2xl:24px;
+
+  /* ---------- 布局尺寸（规范 B-02：内容模块最低高度 896px） ---------- */
+  --top:56px;
+  --sider:208px;
+  --min-h:896px;
+}

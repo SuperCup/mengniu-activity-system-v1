@@ -1,0 +1,128 @@
+/* =============================================================================
+ * layout.css — 页面骨架：深绿顶栏 + 深绿左侧导航 + 内容区（最低 896px）
+ * 依据：视觉规范 B-02/B-05「内容模块最低高度 896px」「一级标题常规/悬浮/选中」
+ * ========================================================================== */
+
+/* ---------- 顶栏 ---------- */
+.mn-top{
+  position:sticky;top:0;z-index:60;
+  height:var(--top);display:flex;align-items:center;gap:18px;
+  padding:0 20px;
+  background:var(--brand);color:#fff;
+}
+.mn-brand{display:flex;align-items:center;gap:10px;flex:0 0 auto;color:#fff;text-decoration:none}
+.mn-brand:hover{color:#fff}
+.mn-mark{
+  padding:4px 8px;border-radius:var(--r-sm);
+  background:var(--card);
+  display:inline-flex;align-items:center;flex:0 0 auto;
+}
+.mn-mark img{display:block;width:106px;height:32px;object-fit:contain}
+.mn-brand-t{font-size:var(--fs-md);font-weight:700;line-height:1.15;letter-spacing:.2px}
+.mn-brand-t small{display:block;font-size:10.5px;font-weight:400;color:rgba(255,255,255,.72);letter-spacing:.3px}
+.mn-env{
+  flex:0 0 auto;font-size:10.5px;color:rgba(255,255,255,.86);
+  border:1px solid rgba(255,255,255,.34);border-radius:var(--r-sm);
+  padding:1px 7px;line-height:1.6;white-space:nowrap;
+}
+
+.mn-top-r{margin-left:auto;display:flex;align-items:center;gap:14px;flex:0 0 auto}
+.mn-help{font-size:var(--fs-sm);color:rgba(255,255,255,.82);cursor:pointer}
+.mn-help:hover{color:#fff}
+.mn-user{display:flex;align-items:center;gap:8px;font-size:var(--fs-sm);color:#fff;line-height:1.2}
+.mn-user .av{
+  width:24px;height:24px;border-radius:50%;background:rgba(255,255,255,.22);
+  display:inline-flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;
+}
+.mn-user small{display:block;font-size:10.5px;color:rgba(255,255,255,.68)}
+.mn-logout{
+  height:26px;padding:0 10px;border:1px solid rgba(255,255,255,.34);border-radius:var(--r-sm);
+  background:transparent;color:rgba(255,255,255,.9);font-size:var(--fs-xs);cursor:pointer;
+}
+.mn-logout:hover{background:rgba(255,255,255,.14);color:#fff}
+
+/* ---------- 主体：左导航 + 内容 ---------- */
+.mn-body{display:flex;align-items:stretch;min-height:var(--min-h)}
+
+.sider{
+  flex:0 0 var(--sider);width:var(--sider);
+  background:var(--brand);
+  padding:10px 0 24px;
+  position:sticky;top:var(--top);
+  align-self:flex-start;
+  height:calc(100vh - var(--top));
+  overflow-y:auto;
+}
+.sider .grp{
+  font-size:10.5px;letter-spacing:1px;color:rgba(255,255,255,.5);
+  padding:14px 18px 6px;
+}
+.sider a.item{
+  display:flex;align-items:center;gap:8px;
+  height:40px;margin:1px 10px;padding:0 12px;
+  border-radius:var(--r-sm);
+  font-size:var(--fs-base);color:rgba(255,255,255,.84);
+  text-decoration:none;cursor:pointer;
+  transition:background .16s,color .16s;
+  white-space:nowrap;
+}
+.sider a.item .ic{
+  width:16px;height:16px;flex:0 0 16px;
+  display:inline-flex;align-items:center;justify-content:center;
+  color:inherit;opacity:.82;
+}
+.sider a.item:hover{background:rgba(255,255,255,.14);color:#fff}
+.sider a.item.on{
+  background:#fff;color:var(--brand);font-weight:700;
+  box-shadow:var(--sh);
+}
+.sider a.item.on .ic{opacity:1;color:var(--brand)}
+.sider a.item .badge{
+  margin-left:auto;min-width:18px;height:16px;padding:0 5px;border-radius:8px;
+  background:rgba(255,255,255,.2);color:#fff;
+  font-size:10.5px;font-weight:700;line-height:16px;text-align:center;
+}
+.sider a.item.on .badge{background:var(--brand-l);color:var(--brand-d)}
+.sider a.item .new{
+  margin-left:auto;font-size:9.5px;font-weight:700;color:#fff;
+  background:var(--aux-green);border-radius:3px;padding:0 5px;line-height:15px;
+}
+
+.main{flex:1;min-width:0;min-height:var(--min-h);display:flex;flex-direction:column}
+
+/* 面包屑（一级标题：常规/悬浮/选中 三态由 .crumb a 实现） */
+.crumb{
+  background:var(--card);border-bottom:1px solid var(--line);
+  padding:9px 24px;font-size:var(--fs-sm);color:var(--ink-60);
+  display:flex;align-items:center;gap:6px;flex-wrap:wrap;
+}
+.crumb b{color:var(--ink);font-weight:600}
+.crumb .sp{color:var(--ink-20)}
+
+.wrap{flex:1;padding:18px 24px 48px;min-height:var(--min-h)}
+
+/* 搜索结果提示 */
+.search-tip{
+  display:none;margin:0 24px;padding:6px 0 0;
+  font-size:var(--fs-xs);color:var(--brand-d);
+}
+.search-tip.on{display:block}
+
+@media (max-width:1180px){
+  .mn-env{display:none}
+}
+@media (max-width:960px){
+  .sider{display:none}
+  .wrap{padding:14px 14px 48px}
+}
+@media (max-width:700px){
+  .mn-top{height:auto;flex-wrap:wrap;padding:8px 14px;gap:10px}
+  .mn-top-r{width:100%;justify-content:flex-end}
+  .mn-brand-t small{display:none}
+}
+
+/* nav icons */
+.sider a.item .ic{display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;margin-right:9px;flex:0 0 16px;opacity:.82}
+.sider a.item .ic svg{width:16px;height:16px;display:block}
+.sider a.item:hover .ic{opacity:1}
+.sider a.item.on .ic{opacity:1;color:var(--brand)}

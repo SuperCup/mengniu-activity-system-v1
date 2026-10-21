@@ -1,0 +1,14 @@
+<div class="picker" id="pkLayer">
+  <div class="pk-box">
+    <div class="pk-h"><h4 id="pkTitle">选择零售商　·　双节满减主推</h4><span class="x" onclick="closePick()">×</span></div>
+    <div class="pk-s"><input id="pkSearch" placeholder="搜索名称 / 编码 / 区域" oninput="pickSearch(this.value)"><label class="selall"><input type="checkbox" id="pkAll" onchange="pickAllToggle(this.checked)">全选</label></div>
+    <div class="pk-b" id="pkBody"></div>
+    <div class="pk-f">
+      <div class="cnt">已选 <b id="pkCnt">1</b> 项</div>
+      <div class="flex" style="gap:8px">
+        <button class="btn btn-g" onclick="closePick()">取消</button>
+        <button class="btn btn-p" onclick="pickOk()">确定</button>
+      </div>
+    </div>
+  </div>
+</div>

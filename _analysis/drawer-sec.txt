@@ -1,0 +1,14 @@
+  /* 四、计划概况：报批阶段写的「做什么」 */
+  if(p.planBrief && p.planBrief.length){
+    h += '<div class="dsec"><h5>计划概况 <span class="muted" style="font-weight:400;font-size:11.6px">报批时填写；预算与券规则在审批通过后补充</span></h5>'
+      + '<table class="bt mini" style="table-layout:fixed"><thead><tr>'
+      + '<th style="width:16%">计划名称</th><th style="width:16%">批次名称</th>'
+      + '<th style="width:18%">活动机制</th><th style="width:22%">涉及零售商</th><th style="width:20%">活动商品</th>'
+      + '</tr></thead><tbody>'
+      + p.planBrief.map(function(b){
+          return '<tr><td>' + pnEsc(b.name) + '</td><td>' + pnEsc(b.bat) + '</td>'
+            + '<td>' + pnEsc(b.mech) + '</td><td>' + pnEsc(b.ret) + '</td><td>' + pnEsc(b.sku) + '</td></tr>';
+        }).join('')
+      + '</tbody></table></div>';
+  }
+

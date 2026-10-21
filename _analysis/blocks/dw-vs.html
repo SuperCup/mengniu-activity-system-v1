@@ -1,0 +1,31 @@
+<div class="drawer" id="dw-vs" style="width:640px">
+  <div class="dw-h">
+    <h3>新增服务商 <span class="sub">保存后可在项目创建时被选择</span></h3>
+    <span class="dw-x" onclick="closeDrawer()">×</span>
+  </div>
+  <div class="dw-b">
+    <div class="fr"><label>服务商名称<em>*</em></label><input class="inp" id="vsName" placeholder="营业执照上的公司全称"></div>
+
+    <div class="fr">
+      <label>联系人 / 邮箱<em>*</em></label>
+      <table class="bt mini" style="table-layout:fixed">
+        <thead><tr>
+          <th style="width:6%">#</th><th style="width:38%">联系人</th><th>邮箱</th><th style="width:11%">操作</th>
+        </tr></thead>
+        <tbody id="vsCmBody"></tbody>
+      </table>
+      <div class="add-row" onclick="vsAddCm()">＋ 添加联系人</div>
+    </div>
+
+    <div class="fr"><label>备注</label>
+      <textarea class="inp" id="vsRemark" rows="3" style="resize:vertical" placeholder="如：承接区域、结算方式、SLA 要求等"></textarea>
+    </div>
+  </div>
+  <div class="dw-f">
+    <div class="lft">当前 <b>5</b> 家 · 新增后为第 6 家</div>
+    <div class="rgt">
+      <button class="btn btn-g" onclick="closeDrawer()">取消</button>
+      <button class="btn btn-p" onclick="closeDrawer()">保存</button>
+    </div>
+  </div>
+</div>

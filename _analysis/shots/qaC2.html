@@ -1,0 +1,1363 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN"><head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>蒙牛活动管理平台 · 总部端</title>
+<link rel="icon" type="image/png" href="assets/mengniu-logo.png">
+
+<!-- 钉钉扫码登录守卫：本标签页登录过才放行；加 ?nologin 可跳过（仅演示用） -->
+<script>
+(function(){
+  var skip = location.search.indexOf('nologin') >= 0;
+  if(!skip && sessionStorage.getItem('mn_ding_login') !== '1'){ location.replace('login.html'); }
+})();
+</script>
+
+<!-- 视觉规范设计变量（唯一色彩来源） -->
+<link rel="stylesheet" href="css/tokens.css">
+<link rel="stylesheet" href="css/base.css">
+<link rel="stylesheet" href="css/layout.css">
+<link rel="stylesheet" href="css/components.css">
+<!-- 模块样式：一个模块一个文件 -->
+<link rel="stylesheet" href="css/pages/home.css">
+<link rel="stylesheet" href="css/pages/project.css">
+<link rel="stylesheet" href="css/pages/plan-batch.css">
+<link rel="stylesheet" href="css/pages/coupon.css">
+<link rel="stylesheet" href="css/pages/dashboard.css">
+<link rel="stylesheet" href="css/pages/admin.css">
+</head>
+<body>
+
+<!-- ===================== 顶栏 ===================== -->
+<header class="mn-top">
+  <a class="mn-brand" href="index.html">
+    <span class="mn-mark"><img src="assets/mengniu-logo.png" alt="蒙牛" width="106" height="32"></span>
+    <span class="mn-brand-t">蒙牛活动管理平台<small>总部端</small></span>
+  </a>
+
+  <div class="mn-top-r">
+    <a class="mn-help" onclick="mnHelp()">帮助文档</a>
+    <span class="mn-user">
+      <span class="av">张</span>
+      <span>张明<small>数字化中心负责人</small></span>
+    </span>
+    <button class="mn-logout" type="button" onclick="logoutToDing()">退出</button>
+  </div>
+</header>
+
+<!-- ===================== 主体 ===================== -->
+<div class="mn-body">
+
+  <!-- 左侧导航：由 js/core/router.js 依据页面注册表渲染 -->
+  <aside class="sider" id="sider"><div class="grp">概览</div><a class="item" data-view="v-home" data-crumb="概览 / 工作台" onclick="go('v-home',this)"><span class="ic"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><rect x="2.2" y="2.2" width="5" height="5" rx="1"></rect><rect x="8.8" y="2.2" width="5" height="5" rx="1"></rect><rect x="2.2" y="8.8" width="5" height="5" rx="1"></rect><rect x="8.8" y="8.8" width="5" height="5" rx="1"></rect></svg></span>工作台</a><div class="grp">活动运营</div><a class="item" data-view="v-create" data-crumb="活动运营 / 项目创建" onclick="go('v-create',this)"><span class="ic"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 2.2H4.4a1.2 1.2 0 0 0-1.2 1.2v9.2a1.2 1.2 0 0 0 1.2 1.2h7.2a1.2 1.2 0 0 0 1.2-1.2V6"></path><path d="M11.6 1.8v4h4"></path><path d="M8 8.4v3.2M6.4 10h3.2"></path></svg></span>项目创建</a><a class="item on" data-view="v-approve" data-crumb="活动运营 / 项目审批" onclick="go('v-approve',this)"><span class="ic"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="8" r="5.8"></circle><path d="m5.2 8.1 2 2 3.6-3.9"></path></svg></span>项目审批</a><a class="item" data-view="v-manage" data-crumb="活动运营 / 项目管理" onclick="go('v-manage',this)"><span class="ic"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M2.2 5.6a1.2 1.2 0 0 1 1.2-1.2h3l1.3 1.6h4.9a1.2 1.2 0 0 1 1.2 1.2v5.4a1.2 1.2 0 0 1-1.2 1.2H3.4a1.2 1.2 0 0 1-1.2-1.2z"></path></svg></span>项目管理</a><a class="item" data-view="v-plan" data-crumb="活动运营 / 计划与批次" onclick="go('v-plan',this)"><span class="ic"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="m8 1.9 5.4 2.6L8 7.1 2.6 4.5z"></path><path d="m2.6 8 5.4 2.6L13.4 8"></path><path d="m2.6 11.5 5.4 2.6 5.4-2.6"></path></svg></span>计划与批次</a><div class="grp">运营执行</div><a class="item" data-view="v-h5" data-crumb="运营执行 / 领券页面" onclick="go('v-h5',this)"><span class="ic"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><rect x="4.2" y="1.8" width="7.6" height="12.4" rx="1.6"></rect><path d="M6.8 3.6h2.4"></path><path d="M7 11.4h2"></path></svg></span>领券页面</a><div class="grp">数据分析</div><a class="item" data-view="v-board" data-crumb="数据分析 / 数据看板" onclick="go('v-board',this)"><span class="ic"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M2.4 13.6V2.6"></path><path d="M2.4 13.6h11.2"></path><rect x="4.6" y="8.4" width="2.2" height="3.4" rx="0.6"></rect><rect x="8.4" y="5.4" width="2.2" height="6.4" rx="0.6"></rect><rect x="11.4" y="9.8" width="0" height="0"></rect></svg></span>数据看板</a><div class="grp">配置</div><a class="item" data-view="v-admin" data-crumb="系统配置 / 系统管理" onclick="go('v-admin',this)"><span class="ic"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="8" r="2.1"></circle><path d="M12.9 9.6a1 1 0 0 0 .2 1.1l.1.1a1.2 1.2 0 1 1-1.7 1.7l-.1-.1a1 1 0 0 0-1.1-.2 1 1 0 0 0-.6.9v.2a1.2 1.2 0 1 1-2.4 0v-.1a1 1 0 0 0-.7-.9 1 1 0 0 0-1.1.2l-.1.1a1.2 1.2 0 1 1-1.7-1.7l.1-.1a1 1 0 0 0 .2-1.1 1 1 0 0 0-.9-.6H2.9a1.2 1.2 0 1 1 0-2.4h.1a1 1 0 0 0 .9-.7 1 1 0 0 0-.2-1.1l-.1-.1a1.2 1.2 0 1 1 1.7-1.7l.1.1a1 1 0 0 0 1.1.2h.1a1 1 0 0 0 .6-.9V2.9a1.2 1.2 0 1 1 2.4 0v.1a1 1 0 0 0 .6.9 1 1 0 0 0 1.1-.2l.1-.1a1.2 1.2 0 1 1 1.7 1.7l-.1.1a1 1 0 0 0-.2 1.1v.1a1 1 0 0 0 .9.6h.2a1.2 1.2 0 1 1 0 2.4h-.1a1 1 0 0 0-.9.6z"></path></svg></span>系统管理</a><div class="grp">服务商协作</div><a class="item" data-view="v-vendor" data-crumb="服务商协作 / 服务商操作页" onclick="go('v-vendor',this)"><span class="ic"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><rect x="1.8" y="3" width="12.4" height="8.2" rx="1.2"></rect><path d="M5.6 13.6h4.8"></path><path d="M8 11.2v2.4"></path></svg></span>服务商操作页<span class="new">NEW</span></a></aside>
+
+  <div class="main">
+    <div class="crumb" id="crumb">活动运营<span class="sp">/</span><b>项目审批</b></div>
+
+    <!-- 所有模块视图挂载点（一个模块一个 js 文件，见 js/pages/） -->
+    <main class="wrap" id="viewRoot"><div class="view" id="v-home">
+  <div class="st">我的待办</div>
+  <div class="todos" id="homeTodos"><div class="todo " style="cursor:pointer" onclick="go('v-approve')"><div class="n">1</div><div class="l">待我审批</div><div class="r">数字化中心</div></div><div class="todo warn" style="cursor:pointer" onclick="gotoProjState('approved')"><div class="n">1</div><div class="l">待推送服务商</div><div class="r">已通过未推送</div></div><div class="todo warn" style="cursor:pointer" onclick="wfGoFirstConfig()"><div class="n">1</div><div class="l">待我补充执行配置</div><div class="r">已批准未完成配置</div></div><div class="todo warn" style="cursor:pointer" onclick="gotoProjState('confirmed')"><div class="n">1</div><div class="l">待服务商确认</div><div class="r">推送后等待确认</div></div><div class="todo " style="cursor:pointer" onclick="gotoProjState('running')"><div class="n">1</div><div class="l">待补充计划明细</div><div class="r">执行中但计划为 0</div></div><div class="todo err" style="cursor:pointer" onclick="go('v-plan')"><div class="n">1</div><div class="l">待补充批次</div><div class="r">计划缺对应批次</div></div><div class="todo " style="cursor:pointer" onclick="gotoProjState('running')"><div class="n">2</div><div class="l">执行中活动</div><div class="r">本月进行中</div></div><div class="todo " style="cursor:pointer" onclick="gotoProjState('stopped')"><div class="n">1</div><div class="l">已终止项目</div><div class="r">预算已释放</div></div></div>
+  <div class="note b" style="margin-top:14px">待办数字与各模块角标同源（由项目与计划数据实时计算），点击数字卡直达已筛选列表。一期链路是「审批 → 推送 → 服务商确认 → 传计划 → 传批次 → 建页面 → 看数据」，工作台按这条链路的卡点排布待办。</div>
+
+  <div class="st" style="margin-top:26px">消息与提醒</div>
+  <div class="panel"><div class="panel-b" style="padding:6px 20px">
+    <div class="msg"><span class="dot b"></span><span class="t"><b>【待审批】</b>BU01 提交「年货节乳品礼盒」，核销预算 ¥125,000.00，等待您审批</span><span class="tm">12 分钟前</span></div>
+    <div class="msg"><span class="dot"></span><span class="t"><b>【审批通过】</b>「元旦乳品满减」终审通过，活动 ID <b>MN-WX-202612-0044</b> 已签发，项目状态更新为「待推送服务商」，待创建人补充计划明细</span><span class="tm">1 小时前</span></div>
+    <div class="msg"><span class="dot"></span><span class="t"><b>【已推送】</b>活动链接邮件已发送至 上海智士网络科技 · huwz@zhishi.com，等待服务商确认</span><span class="tm">1 小时前</span></div>
+    <div class="msg"><span class="dot a"></span><span class="t"><b>【计划校验失败】</b>「双节常温奶满减」计划金额合计 ¥420,000 超出核销预算 ¥400,000，已拒绝；差异清单已下载，等待服务商重新上传</span><span class="tm">2 小时前</span></div>
+    <div class="msg"><span class="dot"></span><span class="t"><b>【批次已配置】</b>「双节常温奶满减」3 个计划各回传 1 个批次（共 3 个），均已一一对应并可创建领券页面</span><span class="tm">今天 10:22</span></div>
+    <div class="msg"><span class="dot r"></span><span class="t"><b>【超时未确认】</b>「跨年暖冬饮品券」推送已 2 天 6 小时，服务商未确认执行，建议电话跟进</span><span class="tm">昨天 18:20</span></div>
+  </div></div>
+</div>
+<div class="view" id="v-create">
+  <div class="panel">
+    <div class="panel-h">
+      <h3>新建项目</h3>
+      <div class="flex">
+        <span class="muted">项目单号：提交后自动生成</span>
+        <span class="tg tg-n">草稿</span>
+      </div>
+    </div>
+    <div class="panel-b">
+
+      <!-- 一、基本信息 -->
+      <div class="st">一、基本信息</div>
+      <div class="fg c2">
+        <div class="fr"><label>项目名称<em>*</em></label><input class="inp" id="projName" value="双节常温奶满减"></div>
+        <div class="fr"><label>项目目标<em>*</em></label><input class="inp" value="拉新 + 复购"></div>
+      </div>
+      <div class="fr">
+        <label>投放平台<em>*</em></label>
+        <div class="locked"><b>微信支付</b>　一期仅支持微信支付单平台</div>
+      </div>
+      <div class="fg c2">
+        <div class="fr"><label>活动周期<em>*</em></label>
+          <div class="flex" style="gap:8px"><input class="inp" value="2026-12-20" style="flex:1"><span class="muted">至</span><input class="inp" value="2027-01-05" style="flex:1"></div>
+        </div>
+        <div class="fr" style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+          <div><label>活动负责人<em>*</em></label><input class="inp" id="projOwner" value="李雪"></div>
+          <div><label>联系方式<em>*</em></label><input class="inp" id="projOwnerPhone" value="15269175821"></div>
+        </div>
+      </div>
+
+      <!-- 二、预算与费用科目 -->
+      <div class="st" style="margin-top:26px">二、预算与费用科目</div>
+      <div class="fr"><label>PO 单号<em>*</em></label>
+        <div class="flex" style="gap:8px;align-items:center">
+          <input class="inp" id="poNo" value="POCN68-0000014722" style="flex:1;max-width:340px" oninput="poLookup()">
+          <span class="tg tg-g" id="poTag">✓ 已校验</span>
+        </div>
+        <div class="fld-hint">输入 PO 单号后自动带出下方预算信息；PO 单须已审批通过且剩余可用额度充足</div>
+      </div>
+      <div class="fg c2" style="margin-top:15px" id="poAuto">
+        <div class="fr"><label>核销预算（元）</label><input class="inp" id="poBudget" value="400,000.00" readonly="" style="background:var(--bg-soft);color:var(--ink-60)"><div class="fld-hint" id="poHint">由 PO 单带出</div></div>
+        <div class="fr"><label>费用科目</label><input class="inp" id="poSubj" value="市场推广费-促销费用" readonly="" style="background:var(--bg-soft);color:var(--ink-60)"></div>
+        <div class="fr"><label>承担主体（创建业务部门）</label><input class="inp" id="poOrg" value="BU03 华东事业部" readonly="" style="background:var(--bg-soft);color:var(--ink-60)"></div>
+        <div class="fr"><label>预算来源</label><input class="inp" id="poSrc" value="集团统投" readonly="" style="background:var(--bg-soft);color:var(--ink-60)"></div>
+      </div>
+
+      <!-- 三、服务商信息 -->
+      <div class="st" style="margin-top:26px">三、服务商信息</div>
+      <div class="fg c2">
+        <div class="fr"><label>服务商<em>*</em></label>
+          <select class="inp" id="projVendor" onchange="projVendorChange(this.value)"><option value="">请选择服务商</option><option value="0">智选数字技术（广州）股份有限公司</option><option value="1">上海智士网络科技有限公司</option><option value="2">武汉智赢数图科技有限公司</option><option value="3">广州智曹数字技术有限公司</option><option value="4">智选数字技术（广州）股份有限公司北京分公司</option></select>
+        </div>
+        <div class="fr">
+          <label>对接联系人 / 邮箱<em>*</em></label>
+          <div class="locked" style="justify-content:flex-start;gap:10px">
+            <b id="projContactName">周敏</b>
+            <span class="mut" id="projContactMail">zhoumin@zhixuan-digital.com</span>
+            <span class="lk">自动带出</span>
+          </div>
+          <div class="fld-hint" id="projContactTip">审批通过后，活动链接与推送邮件只发送到该邮箱；联系人由服务商内部自行分配跟进，不在本系统体现</div>
+        </div>
+      </div>
+
+      <!-- 四、批次计划：一个计划对应一个批次（一批次=一张券） -->
+      <div class="st" style="margin-top:26px;display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+        <span>四、批次计划</span>
+        <span class="flex" style="gap:8px;margin-left:auto">
+          <span class="tg tg-n" id="briefCnt">3 个计划</span>
+          <button class="btn btn-o btn-xs" type="button" onclick="briefAdd()">＋ 创建计划</button>
+        </span>
+      </div>
+      <div class="panel" style="margin-top:12px">
+        <div class="tw scroll" style="border:none;box-shadow:none;border-radius:0">
+          <table class="bt" style="table-layout:fixed">
+            <thead><tr>
+              <th style="width:6%">序号</th>
+              <th style="width:22%">机制</th>
+              <th style="width:32%">活动零售商</th>
+              <th style="width:32%">活动商品</th>
+              <th style="width:8%">操作</th>
+            </tr></thead>
+            <tbody id="briefBody"><tr><td style="text-align:center">1</td><td><input class="inp" style="width:100%" value="满 99 减 15" placeholder="满 99 减 15" oninput="briefSet(0,'mech',this.value)"></td><td><div class="bcell"><span class="bv">永辉超市、特易购</span><a class="lnk" onclick="openBriefItems(0,'ret')">明细 2</a></div></td><td><div class="bcell"><span class="bv">特仑苏纯牛奶 250ml×12</span><a class="lnk" onclick="openBriefItems(0,'sku')">明细 1</a></div></td><td><div class="ops"><a onclick="briefDel(0)">删除</a></div></td></tr><tr><td style="text-align:center">2</td><td><input class="inp" style="width:100%" value="满 99 减 15" placeholder="满 99 减 15" oninput="briefSet(1,'mech',this.value)"></td><td><div class="bcell"><span class="bv">永辉超市、特易购</span><a class="lnk" onclick="openBriefItems(1,'ret')">明细 2</a></div></td><td><div class="bcell"><span class="bv">特仑苏纯牛奶 250ml×12</span><a class="lnk" onclick="openBriefItems(1,'sku')">明细 1</a></div></td><td><div class="ops"><a onclick="briefDel(1)">删除</a></div></td></tr><tr><td style="text-align:center">3</td><td><input class="inp" style="width:100%" value="满 129 减 20" placeholder="满 99 减 15" oninput="briefSet(2,'mech',this.value)"></td><td><div class="bcell"><span class="bv">盒马鲜生</span><a class="lnk" onclick="openBriefItems(2,'ret')">明细 1</a></div></td><td><div class="bcell"><span class="bv">特仑苏精选礼盒 12 盒装</span><a class="lnk" onclick="openBriefItems(2,'sku')">明细 1</a></div></td><td><div class="ops"><a onclick="briefDel(2)">删除</a></div></td></tr></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="panel-f">
+        <button class="btn btn-g">保存草稿</button>
+        <button class="btn btn-o" onclick="openFlow()">流程说明</button>
+        <button class="btn btn-p" onclick="submitProject()">提交审批</button>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="view on" id="v-approve">
+  <div class="panel">
+    <div class="panel-h">
+      <h3>项目审批 <span class="tg tg-a" id="apCnt">1</span></h3>
+      <div class="flex" style="gap:8px">
+        <span class="muted">审批只看报批信息，计划明细在审批通过后由创建人补充</span>
+        <button class="btn btn-o btn-xs" onclick="openFlow()">状态流转与执行动作</button>
+      </div>
+    </div>
+    <div class="panel-b" style="border-top:1px solid var(--line2)">
+      <div class="flex" style="gap:8px;flex-wrap:wrap;align-items:center">
+        <span class="mut" style="font-size:12.2px">审批状态</span>
+        <select class="inp" id="apStat" style="max-width:150px" onchange="AP_PAGE=1;renderApproveList()">
+          <option value="pending" selected="">待审批</option>
+          <option value="approved">已通过</option>
+          <option value="stopped">已终止</option>
+          <option value="">全部</option>
+        </select>
+        <input class="inp" id="apKw" placeholder="项目名称 / 项目单号 / 提报人" style="max-width:280px" oninput="AP_PAGE=1;renderApproveList()">
+        <button class="btn btn-p btn-xs" onclick="AP_PAGE=1;renderApproveList()">查询</button>
+        <button class="btn btn-g btn-xs" onclick="apReset()">重置</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="apList"><div class="pcard" data-state="pending"><div class="pcard-h"><div><h4>年货节乳品礼盒 <span class="tg tg-t nmst">待审批</span></h4></div><div class="rt"><span class="sx-mono">SO2026100038-02</span></div></div><div class="kv"><div class="kv-i"><span class="k">创建业务部门</span><span class="v">BU01 华北事业部</span></div><div class="kv-i"><span class="k">投放平台</span><span class="v">微信支付</span></div><div class="kv-i"><span class="k">预算来源</span><span class="v">BU 自投</span></div><div class="kv-i"><span class="k">核销预算</span><span class="v">¥125,000.00</span></div><div class="kv-i"><span class="k">活动周期</span><span class="v">2026-12-28 ~ 2027-01-10</span></div><div class="kv-i"><span class="k">服务商</span><span class="v">智选数字技术（广州）股份有限公司北京分公司</span></div><div class="kv-i"><span class="k">机制</span><span class="v">礼盒满 129 减 20</span></div><div class="kv-i"><span class="k">PO 单号</span><span class="v sx-mono">POCN68-0000014708</span></div></div><div class="pcard-f"><span class="savet">最近保存 2026-10-19 14:20</span><div class="pcard-btns"><button class="btn btn-d btn-xs" onclick="projApprove('MN-WX-202612-0043','reject')">驳回</button><button class="btn btn-o btn-xs" onclick="openProjDetail('MN-WX-202612-0043')">查看详情</button><button class="btn btn-p btn-xs" onclick="projApprove('MN-WX-202612-0043','agree')">同意</button></div></div></div></div>
+
+  <div class="pager">
+    <div class="pg-info" id="apInfo">共 1 条，每页 15 条</div>
+    <div class="pg-btns" id="apPager"><span class="dis" onclick="gotoApprove(0)">上一页</span><span class="on" onclick="gotoApprove(1)">1</span><span class="dis" onclick="gotoApprove(2)">下一页</span></div>
+  </div>
+</div>
+<div class="view" id="v-manage">
+  <div class="panel">
+    <div class="panel-h">
+      <h3>项目列表 <span class="tg tg-n" id="projCnt">7 个项目</span></h3>
+      <div class="flex" style="gap:8px">
+        <button class="btn btn-o btn-xs" onclick="openFlow()">状态流转与执行动作</button>
+        <button class="btn btn-p btn-xs" onclick="go('v-create')">＋ 创建项目</button>
+      </div>
+    </div>
+    <div id="projSteps" class="steps"><div class="s on" onclick="projState('')"><span class="c">7</span>全部</div><div class="s" onclick="projState('draft')"><span class="c">1</span>草稿</div><div class="s" onclick="projState('pending')"><span class="c">1</span>待审批</div><div class="s" onclick="projState('approved')"><span class="c">1</span>待推送服务商</div><div class="s" onclick="projState('confirmed')"><span class="c">1</span>待服务商确认</div><div class="s" onclick="projState('running')"><span class="c">2</span>执行中</div><div class="s" onclick="projState('stopped')"><span class="c">1</span>已终止</div></div>
+    <div class="panel-b" style="border-top:1px solid var(--line2)">
+      <div class="flex">
+        <input class="inp" id="projKw" placeholder="活动名称 / 项目单号 / 服务商" style="max-width:300px" oninput="PROJ_PAGE=1;renderProjCards()">
+        <button class="btn btn-p btn-xs" onclick="renderProjCards()">查询</button>
+        <button class="btn btn-g btn-xs" onclick="document.getElementById('projKw').value='';PROJ_PAGE=1;renderProjCards()">重置</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="projList"><div class="pcard" data-state="draft"><div class="pcard-h"><div><h4>春节礼盒预售 <span class="tg tg-n nmst">草稿</span></h4></div><div class="rt"><span class="sx-mono">SO2026100046-01</span></div></div><div class="kv"><div class="kv-i"><span class="k">创建业务部门</span><span class="v">BU02 华北事业部</span></div><div class="kv-i"><span class="k">投放平台</span><span class="v">微信支付</span></div><div class="kv-i"><span class="k">预算来源</span><span class="v">BU 自投</span></div><div class="kv-i"><span class="k">核销预算</span><span class="v">¥180,000.00</span></div><div class="kv-i"><span class="k">活动周期</span><span class="v">2027-01-10 ~ 2027-02-10</span></div><div class="kv-i"><span class="k">服务商</span><span class="v">智选数字技术（广州）股份有限公司北京分公司</span></div><div class="kv-i"><span class="k">机制</span><span class="v">礼盒满 199 减 30</span></div><div class="kv-i"><span class="k">PO 单号</span><span class="v sx-mono">POCN68-0000014712</span></div></div><div class="pcard-f"><span class="savet">最近保存 2026-10-19 16:48</span><div class="pcard-btns"><button class="btn btn-o btn-xs" onclick="go('v-create')">继续编辑</button><button class="btn btn-o btn-xs" onclick="openProjDetail('MN-WX-202612-0046')">活动详情</button><button class="btn btn-d btn-xs" onclick="projAct('del','MN-WX-202612-0046')">删除草稿</button><button class="btn btn-p btn-xs" onclick="projAct('submit','MN-WX-202612-0046')">提交审批</button></div></div></div><div class="pcard" data-state="pending"><div class="pcard-h"><div><h4>年货节乳品礼盒 <span class="tg tg-t nmst">待审批</span></h4></div><div class="rt"><span class="sx-mono">SO2026100038-02</span></div></div><div class="kv"><div class="kv-i"><span class="k">创建业务部门</span><span class="v">BU01 华北事业部</span></div><div class="kv-i"><span class="k">投放平台</span><span class="v">微信支付</span></div><div class="kv-i"><span class="k">预算来源</span><span class="v">BU 自投</span></div><div class="kv-i"><span class="k">核销预算</span><span class="v">¥125,000.00</span></div><div class="kv-i"><span class="k">活动周期</span><span class="v">2026-12-28 ~ 2027-01-10</span></div><div class="kv-i"><span class="k">服务商</span><span class="v">智选数字技术（广州）股份有限公司北京分公司</span></div><div class="kv-i"><span class="k">机制</span><span class="v">礼盒满 129 减 20</span></div><div class="kv-i"><span class="k">PO 单号</span><span class="v sx-mono">POCN68-0000014708</span></div></div><div class="pcard-f"><span class="savet">最近保存 2026-10-19 14:20</span><div class="pcard-btns"><button class="btn btn-o btn-xs" onclick="openProjDetail('MN-WX-202612-0043')">活动详情</button><button class="btn btn-d btn-xs" onclick="projAct('withdraw','MN-WX-202612-0043')">撤回</button></div></div></div><div class="pcard" data-state="approved"><div class="pcard-h"><div><h4>元旦乳品满减 <span class="tg tg-t nmst">待推送服务商</span><span class="tg tg-a">审批已通过，待推送</span><span class="tg tg-a">待补配置 0/1</span></h4></div><div class="rt"><span class="sx-mono">SO2026100040-03</span></div></div><div class="kv"><div class="kv-i"><span class="k">创建业务部门</span><span class="v">BU01 华北事业部</span></div><div class="kv-i"><span class="k">投放平台</span><span class="v">微信支付</span></div><div class="kv-i"><span class="k">预算来源</span><span class="v">BU 自投</span></div><div class="kv-i"><span class="k">核销预算</span><span class="v">¥125,000.00</span></div><div class="kv-i"><span class="k">活动周期</span><span class="v">2026-12-28 ~ 2027-01-10</span></div><div class="kv-i"><span class="k">服务商</span><span class="v">智选数字技术（广州）股份有限公司北京分公司</span></div><div class="kv-i"><span class="k">机制</span><span class="v">常温奶满 99 减 15</span></div><div class="kv-i"><span class="k">PO 单号</span><span class="v sx-mono">POCN68-0000014710</span></div></div><div class="pcard-f"><span class="savet">最近保存 2026-10-19 11:30</span><div class="pcard-btns"><button class="btn btn-o btn-xs" onclick="openProjDetail('MN-WX-202612-0044')">活动详情</button><button class="btn btn-o btn-xs" onclick="wfEnterConfig('MN-WX-202612-0044')">继续完善计划</button><button class="btn btn-d btn-xs" onclick="projAct('stop','MN-WX-202612-0044')">终止</button><button class="btn btn-p btn-xs" onclick="projAct('push','MN-WX-202612-0044')">推送服务商</button></div></div></div><div class="pcard" data-state="confirmed"><div class="pcard-h"><div><h4>跨年暖冬饮品券 <span class="tg tg-a nmst">待服务商确认</span><span class="tg tg-r">2 天 6 小时未确认</span></h4></div><div class="rt"><span class="sx-mono">SO2026100042-04</span></div></div><div class="kv"><div class="kv-i"><span class="k">创建业务部门</span><span class="v">BU03 华东事业部</span></div><div class="kv-i"><span class="k">投放平台</span><span class="v">微信支付</span></div><div class="kv-i"><span class="k">预算来源</span><span class="v">集团统投</span></div><div class="kv-i"><span class="k">核销预算</span><span class="v">¥260,000.00</span></div><div class="kv-i"><span class="k">活动周期</span><span class="v">2026-12-28 ~ 2027-01-10</span></div><div class="kv-i"><span class="k">服务商</span><span class="v">上海智士网络科技有限公司</span></div><div class="kv-i"><span class="k">机制</span><span class="v">饮品满 59 减 10</span></div><div class="kv-i"><span class="k">PO 单号</span><span class="v sx-mono">POCN68-0000014715</span></div></div><div class="pcard-f"><span class="savet">最近保存 2026-10-17 10:12</span><div class="pcard-btns"><button class="btn btn-o btn-xs" onclick="openProjDetail('MN-WX-202612-0047')">活动详情</button><button class="btn btn-o btn-xs" onclick="projAct('resend','MN-WX-202612-0047')">重发邮件</button><button class="btn btn-o btn-xs" onclick="projAct('copy','MN-WX-202612-0047')">复制确认链接</button><button class="btn btn-d btn-xs" onclick="projAct('stop','MN-WX-202612-0047')">终止</button></div></div></div><div class="pcard" data-state="running"><div class="pcard-h"><div><h4>双节常温奶满减 <span class="tg tg-g nmst">执行中</span><span class="tg tg-s" style="background:var(--brand-l);color:var(--brand-d)">计划 4 / 批次 4 / 页面 1 启用</span></h4></div><div class="rt"><span class="sx-mono">SO2026100041-01</span></div></div><div class="kv"><div class="kv-i"><span class="k">创建业务部门</span><span class="v">BU03 华东事业部</span></div><div class="kv-i"><span class="k">投放平台</span><span class="v">微信支付</span></div><div class="kv-i"><span class="k">预算来源</span><span class="v">集团统投</span></div><div class="kv-i"><span class="k">核销预算</span><span class="v">¥400,000.00</span></div><div class="kv-i"><span class="k">活动周期</span><span class="v">2026-12-20 ~ 2027-01-05</span></div><div class="kv-i"><span class="k">服务商</span><span class="v">上海智士网络科技有限公司</span></div><div class="kv-i"><span class="k">机制</span><span class="v">常温奶满 99 减 15</span></div><div class="kv-i"><span class="k">PO 单号</span><span class="v sx-mono">POCN68-0000014722</span></div></div><div class="pcard-f"><span class="savet">最近保存 2026-10-19 15:30</span><div class="pcard-btns"><button class="btn btn-o btn-xs" onclick="openProjDetail('MN-WX-202612-0041')">活动详情</button><button class="btn btn-o btn-xs" onclick="openProjPlans('MN-WX-202612-0041')">计划与批次</button><button class="btn btn-o btn-xs" onclick="go('v-h5')">领券页面</button><button class="btn btn-p btn-xs" onclick="go('v-board')">数据看板</button></div></div></div><div class="pcard" data-state="running"><div class="pcard-h"><div><h4>早餐场景券（12月） <span class="tg tg-g nmst">执行中</span><span class="tg tg-s" style="background:var(--brand-l);color:var(--brand-d)">计划 0 / 批次 0 / 页面 0 启用</span></h4></div><div class="rt"><span class="sx-mono">SO2026100039-05</span></div></div><div class="kv"><div class="kv-i"><span class="k">创建业务部门</span><span class="v">BU05 华南事业部</span></div><div class="kv-i"><span class="k">投放平台</span><span class="v">微信支付</span></div><div class="kv-i"><span class="k">预算来源</span><span class="v">BU 自投</span></div><div class="kv-i"><span class="k">核销预算</span><span class="v">¥210,000.00</span></div><div class="kv-i"><span class="k">活动周期</span><span class="v">2026-12-01 ~ 2026-12-31</span></div><div class="kv-i"><span class="k">服务商</span><span class="v">广州智曹数字技术有限公司</span></div><div class="kv-i"><span class="k">机制</span><span class="v">早餐组合满 39 减 8</span></div><div class="kv-i"><span class="k">PO 单号</span><span class="v sx-mono">POCN68-0000014699</span></div></div><div class="pcard-f"><span class="savet">最近保存 2026-10-18 16:10</span><div class="pcard-btns"><button class="btn btn-o btn-xs" onclick="openProjDetail('MN-WX-202612-0039')">活动详情</button><button class="btn btn-o btn-xs" onclick="openProjPlans('MN-WX-202612-0039')">计划与批次</button><button class="btn btn-o btn-xs" onclick="go('v-h5')">领券页面</button><button class="btn btn-p btn-xs" onclick="go('v-board')">数据看板</button></div></div></div><div class="pcard" data-state="stopped"><div class="pcard-h"><div><h4>夏季冰品联合促销 <span class="tg tg-r nmst">已终止</span></h4></div><div class="rt"><span class="sx-mono">SO2026100028-06</span></div></div><div class="kv"><div class="kv-i"><span class="k">创建业务部门</span><span class="v">BU04 西南事业部</span></div><div class="kv-i"><span class="k">投放平台</span><span class="v">微信支付</span></div><div class="kv-i"><span class="k">预算来源</span><span class="v">BU 自投</span></div><div class="kv-i"><span class="k">核销预算</span><span class="v">¥96,000.00</span></div><div class="kv-i"><span class="k">活动周期</span><span class="v">2026-10-01 ~ 2026-10-31</span></div><div class="kv-i"><span class="k">服务商</span><span class="v">武汉智赢数图科技有限公司</span></div><div class="kv-i"><span class="k">机制</span><span class="v">冰品满 49 减 8</span></div><div class="kv-i"><span class="k">PO 单号</span><span class="v sx-mono">POCN68-0000014601</span></div></div><div class="pcard-f"><span class="savet">最近保存 2026-10-16 09:40</span><div class="pcard-btns"><button class="btn btn-o btn-xs" onclick="openProjDetail('MN-WX-202611-0028')">活动详情（只读）</button><button class="btn btn-g btn-xs" onclick="projAct('copyNew','MN-WX-202611-0028')">复制为新项目</button></div></div></div></div>
+
+  <div class="pager">
+    <div class="pg-info">按创建时间倒序，每页 15 条</div>
+    <div class="pg-btns" id="projPager"><span class="dis" onclick="gotoProj(0)">上一页</span><span class="on" onclick="gotoProj(1)">1</span><span class="dis" onclick="gotoProj(2)">下一页</span></div>
+  </div>
+</div>
+<div class="view" id="v-plan">
+  <div class="panel" id="planProjBar" style="display:none"></div>
+
+  <div class="panel">
+    <div class="panel-h">
+      <h3>计划与批次 <span class="tg tg-n" id="pbPlanCnt">4 个计划</span></h3>
+    </div>
+    <div class="bf" id="planFilterBar">
+      <div class="fi"><label>所属项目</label>
+        <select id="planFProj" onchange="PLAN_PAGE=1;renderPlans()"><option value="">全部项目</option><option value="MN-WX-202612-0041">双节常温奶满减</option><option value="MN-WX-202612-0044">元旦乳品满减</option></select>
+      </div>
+      <div class="fi"><label>计划状态</label>
+        <select id="planFStat" onchange="PLAN_PAGE=1;renderPlans()">
+          <option value="">全部状态</option>
+          <option value="待完善">待完善</option>
+          <option value="待配置">待配置</option>
+          <option value="进行中">进行中</option>
+          <option value="已结束">已结束</option>
+          <option value="已中止">已中止</option>
+        </select>
+      </div>
+      <div class="fi"><label>关键字</label>
+        <input id="planFKw" placeholder="计划名称 / 计划 ID / 批次号" oninput="PLAN_PAGE=1;renderPlans()">
+      </div>
+    </div>
+    <div class="panel-b" style="padding:0">
+      <div class="tw scroll" style="border:none;box-shadow:none;border-radius:0">
+        <table class="bt pb-plan">
+          <thead><tr>
+            <th style="width:128px">计划 ID</th>
+            <th style="width:140px">所属项目</th>
+            <th style="width:140px">计划 / 券名称</th>
+            <th style="width:96px">券面额 / 门槛</th>
+            <th style="width:80px">发放数量</th>
+            <th style="width:96px">计划金额</th>
+            <th style="width:108px">有效期</th>
+            <th style="width:100px">批次号</th>
+            <th style="width:80px">计划状态</th>
+            <th style="width:72px">操作</th>
+          </tr></thead>
+          <tbody id="pbPlanBody"><tr><td><b>ZS-HD-202612-A</b></td><td><b>双节常温奶满减</b><div class="muted sx-mono">MN-WX-202612-0041</div></td><td><b>双节满减主推</b><div class="muted" style="font-size:11.6px">双节常温奶满减券 · 领券</div></td><td>¥15 / 满 99</td><td class="num" style="text-align:left">9,000 张</td><td>¥135,000.00</td><td style="font-size:12.1px;white-space:nowrap">2026-12-20 ~ 2026-12-27</td><td><a class="lnk sx-mono" onclick="openPlanDetail(0)">23020101</a></td><td><span class="tg tg-g xs">进行中</span></td><td><div class="ops"><a onclick="openPlanDetail(0)">明细</a></div></td></tr><tr><td><b>ZS-HD-202612-B</b></td><td><b>双节常温奶满减</b><div class="muted sx-mono">MN-WX-202612-0041</div></td><td><b>跨年场景承接</b><div class="muted" style="font-size:11.6px">跨年常温奶满减券 · 领券</div></td><td>¥15 / 满 99</td><td class="num" style="text-align:left">7,000 张</td><td>¥105,000.00</td><td style="font-size:12.1px;white-space:nowrap">2026-12-28 ~ 2027-01-05</td><td><a class="lnk sx-mono" onclick="openPlanDetail(1)">23020102</a></td><td><span class="tg tg-g xs">进行中</span></td><td><div class="ops"><a onclick="openPlanDetail(1)">明细</a></div></td></tr><tr><td><b>ZS-HD-202612-C</b></td><td><b>双节常温奶满减</b><div class="muted sx-mono">MN-WX-202612-0041</div></td><td><b>高端礼盒拉新</b><div class="muted" style="font-size:11.6px">礼盒满减券 · 过机立减</div></td><td>¥20 / 满 129</td><td class="num" style="text-align:left">5,000 张</td><td>¥100,000.00</td><td style="font-size:12.1px;white-space:nowrap">2026-12-20 ~ 2027-01-05</td><td><a class="lnk sx-mono" onclick="openPlanDetail(2)">23020103</a></td><td><span class="tg tg-g xs">进行中</span></td><td><div class="ops"><a onclick="openPlanDetail(2)">明细</a></div></td></tr><tr><td><b>ZS-HD-202612-D</b></td><td><b>元旦乳品满减</b><div class="muted sx-mono">MN-WX-202612-0044</div></td><td><b>元旦常温奶满减</b></td><td>¥0 / 满 0</td><td class="num" style="text-align:left">0 张</td><td>¥0.00</td><td style="font-size:12.1px;white-space:nowrap">2026-12-28 ~ 2027-01-05</td><td><span class="muted">待服务商上传</span></td><td><span class="tg tg-a xs">待完善</span></td><td><div class="ops"><a onclick="openBatch(3)">补充配置</a><a onclick="openPlanDetail(3)">明细</a></div></td></tr></tbody>
+        </table>
+        <div class="pager">
+        <div class="pg-info">共 <b id="planTotal">4</b> 条计划，每页 15 条</div>
+        <div class="pg-btns" id="planPager"><span class="dis" onclick="gotoPlan(0)">上一页</span><span class="on" onclick="gotoPlan(1)">1</span><span class="dis" onclick="gotoPlan(2)">下一页</span></div>
+      </div>
+    </div>
+    </div>
+  </div>
+</div>
+<div class="view" id="v-h5">
+  <div class="panel">
+    <div class="panel-b">
+      <div class="flex" style="margin-bottom:0">
+        <input class="inp" placeholder="所属项目（项目名称 / 活动 ID）" value="双节常温奶满减" style="max-width:280px">
+        <input class="inp" placeholder="页面名称" style="max-width:180px">
+        <input class="inp" placeholder="含批次编码" style="max-width:150px">
+        <button class="btn btn-p btn-xs">查询</button>
+        <button class="btn btn-g btn-xs">重置</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-h">
+      <h3>领券页面</h3>
+      <div class="flex"><button class="btn btn-p btn-xs" onclick="openPageDrawer()">＋ 新建领券页面</button></div>
+    </div>
+    <div class="panel-b">
+      <div class="tw scroll">
+        <table>
+          <tbody><tr><th style="width:180px">页面名称</th><th style="width:64px">所属项目</th><th style="width:70px">批次数</th><th style="width:62px">状态</th><th style="width:104px">有效期</th><th style="width:84px">渠道</th><th style="width:76px">二维码</th><th>操作</th></tr>
+          <tr>
+            <td><b>双节主推页（常温奶）</b></td>
+            <td><a class="pjl sx-mono" onclick="event.stopPropagation()">…0041<span class="pjt"><span class="pjt-h">双节常温奶满减</span><span class="pjt-b"><span class="row"><span>活动编码</span><span class="sx-mono">MN-WX-202612-0041</span></span><span class="row"><span>业务部门</span><span>BU03 华东事业部</span></span><span class="row"><span>服务商</span><span>上海智士网络科技</span></span><span class="row"><span>项目状态</span><span style="color:var(--brand-d)">执行中</span></span><span class="row"><span>项目周期</span><span>2026-12-20 ~ 2027-01-05</span></span></span><span class="pjt-f">点击查看项目详情 →</span></span></a></td>
+            <td>2 个</td>
+            <td><span class="tg tg-g">启用中</span></td>
+            <td style="white-space:nowrap;font-size:11.8px">2026-12-20 ~ 2027-01-05</td>
+            <td style="font-size:11.8px"><span class="tg tg-n xs">线下物料</span> <span class="tg tg-n xs">公众号</span> <span class="tg tg-n xs">私域</span></td>
+            
+            <td style="white-space:nowrap;font-size:11.6px"><a class="lnk" onclick="openQr('r1','OFF')">物料</a> <a class="lnk" onclick="openQr('r1','MP')">公众号</a> <a class="lnk" onclick="openQr('r1','PRI')">私域</a></td>
+            <td style="white-space:nowrap">
+              <button class="btn btn-o btn-xs" onclick="openPgData('双节主推页（常温奶）','86,420','41,230','18,606')">数据</button>
+              <button class="btn btn-o btn-xs" onclick="openEditDrawer('r1')">编辑</button>
+              <button class="btn btn-g btn-xs">停用</button>
+            </td>
+          </tr>
+          <tr>
+            <td><b>高端礼盒页（满 129）</b></td>
+            <td><a class="pjl sx-mono" onclick="event.stopPropagation()">…0041<span class="pjt"><span class="pjt-h">双节常温奶满减</span><span class="pjt-b"><span class="row"><span>活动编码</span><span class="sx-mono">MN-WX-202612-0041</span></span><span class="row"><span>业务部门</span><span>BU03 华东事业部</span></span><span class="row"><span>服务商</span><span>上海智士网络科技</span></span><span class="row"><span>项目状态</span><span style="color:var(--brand-d)">执行中</span></span><span class="row"><span>项目周期</span><span>2026-12-20 ~ 2027-01-05</span></span></span><span class="pjt-f">点击查看项目详情 →</span></span></a></td>
+            <td>1 个</td>
+            <td><span class="tg tg-g">启用中</span></td>
+            <td style="white-space:nowrap;font-size:11.8px">2026-12-20 ~ 2027-01-05</td>
+            <td style="font-size:11.8px"><span class="tg tg-n xs">线下物料</span> <span class="tg tg-n xs">私域</span></td>
+            
+            <td style="white-space:nowrap;font-size:11.6px"><a class="lnk" onclick="openQr('r2','OFF')">物料</a> <a class="lnk" onclick="openQr('r2','MP')">公众号</a> <a class="lnk" onclick="openQr('r2','PRI')">私域</a></td>
+            <td style="white-space:nowrap">
+              <button class="btn btn-o btn-xs" onclick="openPgData('高端礼盒页（满 129）','32,180','15,720','6,288')">数据</button>
+              <button class="btn btn-o btn-xs" onclick="openEditDrawer('r2')">编辑</button>
+              <button class="btn btn-g btn-xs">停用</button>
+            </td>
+          </tr>
+          <tr style="background:#FCFDFC">
+            <td><b style="color:var(--ink3)">元旦补发页（草稿）</b><div class="muted" style="font-size:11.2px">未启用</div></td>
+            <td><a class="pjl sx-mono" onclick="event.stopPropagation()">…0041<span class="pjt"><span class="pjt-h">双节常温奶满减</span><span class="pjt-b"><span class="row"><span>活动编码</span><span class="sx-mono">MN-WX-202612-0041</span></span><span class="row"><span>业务部门</span><span>BU03 华东事业部</span></span><span class="row"><span>服务商</span><span>上海智士网络科技</span></span><span class="row"><span>项目状态</span><span style="color:var(--brand-d)">执行中</span></span><span class="row"><span>项目周期</span><span>2026-12-20 ~ 2027-01-05</span></span></span><span class="pjt-f">点击查看项目详情 →</span></span></a></td>
+            <td>1 个</td>
+            <td><span class="tg tg-n">草稿</span></td>
+            <td style="white-space:nowrap;font-size:11.8px">2026-12-30 ~ 2027-01-05</td>
+            <td style="font-size:11.8px">线下</td>
+            
+            <td><span class="muted" style="font-size:11.6px;white-space:nowrap" title="草稿未生成链接，启用后按渠道分别生成二维码">未生成</span></td>
+            <td style="white-space:nowrap">
+              <button class="btn btn-o btn-xs" disabled="" title="未启用，暂无数据">数据</button>
+              <button class="btn btn-o btn-xs" onclick="openEditDrawer('r3')">继续编辑</button>
+              <button class="btn btn-d btn-xs">删除</button>
+            </td>
+          </tr>
+        </tbody></table>
+      </div>
+    </div>
+</div>
+
+</div>
+<div class="view" id="v-board">
+  <div class="note b" style="margin-top:0">
+    <b>指标口径：</b>沿用呼市 / 河南已对齐版本，模块与拆分维度直接平移，不另起炉灶（待确认清单标黄项 17）。
+    数据源为微信支付 T+1 回传的发券 / 核销 / 订单明细，按活动 → 计划 → 批次 → 二维码四级维度下钻。
+  </div>
+  
+  <div class="sums">
+    
+    
+    
+    
+  </div>
+
+  
+
+  
+  
+  
+
+  <div class="st" style="margin-top:28px">核销订单分析 <span class="sub">数据源：微信支付核销回调 + T+1 订单拉取</span></div>
+
+  <!-- 筛选 -->
+  <div class="panel" style="margin-bottom:14px">
+    <div class="panel-b" style="padding:12px 16px">
+      <div class="flex" style="gap:10px;flex-wrap:wrap;align-items:center">
+        <span class="muted">核销时间</span>
+        <input class="inp" value="2026-12-20" style="max-width:128px"><span class="muted">至</span>
+        <input class="inp" value="2027-01-05" style="max-width:128px">
+        <span class="muted" style="margin-left:8px">活动</span>
+        <input class="inp" placeholder="全部活动" style="max-width:150px">
+        <span class="muted">创建业务部门</span>
+        <input class="inp" placeholder="全部部门" style="max-width:150px">
+        <button class="btn btn-p btn-xs">查询</button>
+        <button class="btn btn-g btn-xs">重置</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="db-wrap">
+
+    <!-- ① 核心指标 -->
+    <div class="st" style="margin:0">核心指标</div>
+    <div class="kpis" id="dbKpis"><div class="kpi"><div class="kl">核销订单数<i class="q">?</i></div><div class="kv2">12,428</div><div class="kd"><span class="up">同比 +33.82%</span><span class="up">环比 +177.62%</span></div></div><div class="kpi"><div class="kl">销售额<i class="q">?</i></div><div class="kv2">¥2,128,337</div><div class="kd"><span class="dn">同比 -61.61%</span><span class="up">环比 +2.75%</span></div></div><div class="kpi"><div class="kl">优惠金额<i class="q">?</i></div><div class="kv2">¥198,910</div><div class="kd"><span class="dn">同比 -68.59%</span><span class="dn">环比 -7.46%</span></div></div><div class="kpi"><div class="kl">笔单价<i class="q">?</i></div><div class="kv2">¥171</div><div class="kd"><span class="up">同比 +12.40%</span><span class="up">环比 +3.18%</span></div></div><div class="kpi"><div class="kl">ROI<i class="q">?</i></div><div class="kv2">10.7</div><div class="kd"><span class="up">同比 +21.89%</span><span class="up">环比 +11.46%</span></div></div></div>
+
+    <!-- ② 趋势 -->
+    <div class="chart-box">
+      <div class="chart-hd">
+        <div class="legend">
+          <span><i style="background:#E8622C"></i>销售额（元）</span>
+          <span><i style="background:#2C6FC4"></i>优惠金额（元）</span>
+          <span><i style="background:#A8B4AF"></i>订单数（笔）</span>
+        </div>
+        <div class="dim" style="font-size:11.8px">按自然日汇总</div>
+      </div>
+      <div id="dbTrend"><svg class="svgline" viewBox="0 0 1000 250" preserveAspectRatio="none" role="img" aria-label="销售额趋势"><defs><linearGradient id="gArea" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#E8622C" stop-opacity="0.22"></stop><stop offset="100%" stop-color="#E8622C" stop-opacity="0"></stop></linearGradient></defs><line x1="44" y1="14.0" x2="990" y2="14.0" stroke="#EFF3F1" stroke-width="1"></line><text x="38" y="17.0" font-size="10" fill="#A8B4AF" text-anchor="end">128,000</text><line x1="44" y1="56.0" x2="990" y2="56.0" stroke="#EFF3F1" stroke-width="1"></line><text x="38" y="59.0" font-size="10" fill="#A8B4AF" text-anchor="end">102,400</text><line x1="44" y1="98.0" x2="990" y2="98.0" stroke="#EFF3F1" stroke-width="1"></line><text x="38" y="101.0" font-size="10" fill="#A8B4AF" text-anchor="end">76,800</text><line x1="44" y1="140.0" x2="990" y2="140.0" stroke="#EFF3F1" stroke-width="1"></line><text x="38" y="143.0" font-size="10" fill="#A8B4AF" text-anchor="end">51,200</text><line x1="44" y1="182.0" x2="990" y2="182.0" stroke="#EFF3F1" stroke-width="1"></line><text x="38" y="185.0" font-size="10" fill="#A8B4AF" text-anchor="end">25,600</text><line x1="44" y1="224.0" x2="990" y2="224.0" stroke="#EFF3F1" stroke-width="1"></line><text x="38" y="227.0" font-size="10" fill="#A8B4AF" text-anchor="end">0</text><path d="M44.0,135.8 C61.5,135.8 61.5,108.5 79.0,108.5 C96.6,108.5 96.6,81.2 114.1,81.2 C131.6,81.2 131.6,43.4 149.1,43.4 C166.6,43.4 166.6,14.0 184.1,14.0 C201.7,14.0 201.7,30.8 219.2,30.8 C236.7,30.8 236.7,68.6 254.2,68.6 C271.7,68.6 271.7,93.8 289.3,93.8 C306.8,93.8 306.8,102.2 324.3,102.2 C341.8,102.2 341.8,85.4 359.3,85.4 C376.9,85.4 376.9,56.0 394.4,56.0 C411.9,56.0 411.9,24.5 429.4,24.5 C446.9,24.5 446.9,39.2 464.4,39.2 C482.0,39.2 482.0,72.8 499.5,72.8 C517.0,72.8 517.0,98.0 534.5,98.0 C552.0,98.0 552.0,110.6 569.6,110.6 C587.1,110.6 587.1,93.8 604.6,93.8 C622.1,93.8 622.1,60.2 639.6,60.2 C657.1,60.2 657.1,35.0 674.7,35.0 C692.2,35.0 692.2,22.4 709.7,22.4 C727.2,22.4 727.2,47.6 744.7,47.6 C762.3,47.6 762.3,77.0 779.8,77.0 C797.3,77.0 797.3,102.2 814.8,102.2 C832.3,102.2 832.3,119.0 849.9,119.0 C867.4,119.0 867.4,127.4 884.9,127.4 C902.4,127.4 902.4,114.8 919.9,114.8 C937.4,114.8 937.4,98.0 955.0,98.0 C972.5,98.0 972.5,108.5 990.0,108.5 L990.0,224 L44.0,224 Z" fill="url(#gArea)"></path><path d="M44.0,215.2 C61.5,215.2 61.5,212.4 79.0,212.4 C96.6,212.4 96.6,209.7 114.1,209.7 C131.6,209.7 131.6,205.9 149.1,205.9 C166.6,205.9 166.6,203.0 184.1,203.0 C201.7,203.0 201.7,204.7 219.2,204.7 C236.7,204.7 236.7,208.5 254.2,208.5 C271.7,208.5 271.7,211.0 289.3,211.0 C306.8,211.0 306.8,211.8 324.3,211.8 C341.8,211.8 341.8,210.1 359.3,210.1 C376.9,210.1 376.9,207.2 394.4,207.2 C411.9,207.2 411.9,204.1 429.4,204.1 C446.9,204.1 446.9,205.5 464.4,205.5 C482.0,205.5 482.0,208.9 499.5,208.9 C517.0,208.9 517.0,211.4 534.5,211.4 C552.0,211.4 552.0,212.7 569.6,212.7 C587.1,212.7 587.1,211.0 604.6,211.0 C622.1,211.0 622.1,207.6 639.6,207.6 C657.1,207.6 657.1,205.1 674.7,205.1 C692.2,205.1 692.2,203.8 709.7,203.8 C727.2,203.8 727.2,206.4 744.7,206.4 C762.3,206.4 762.3,209.3 779.8,209.3 C797.3,209.3 797.3,211.8 814.8,211.8 C832.3,211.8 832.3,213.5 849.9,213.5 C867.4,213.5 867.4,214.3 884.9,214.3 C902.4,214.3 902.4,213.1 919.9,213.1 C937.4,213.1 937.4,211.4 955.0,211.4 C972.5,211.4 972.5,212.4 990.0,212.4" fill="none" stroke="#2C6FC4" stroke-width="1.6" stroke-linejoin="round"></path><path d="M44.0,223.3 C61.5,223.3 61.5,223.1 79.0,223.1 C96.6,223.1 96.6,222.9 114.1,222.9 C131.6,222.9 131.6,222.6 149.1,222.6 C166.6,222.6 166.6,222.4 184.1,222.4 C201.7,222.4 201.7,222.5 219.2,222.5 C236.7,222.5 236.7,222.8 254.2,222.8 C271.7,222.8 271.7,223.0 289.3,223.0 C306.8,223.0 306.8,223.0 324.3,223.0 C341.8,223.0 341.8,222.9 359.3,222.9 C376.9,222.9 376.9,222.7 394.4,222.7 C411.9,222.7 411.9,222.4 429.4,222.4 C446.9,222.4 446.9,222.6 464.4,222.6 C482.0,222.6 482.0,222.8 499.5,222.8 C517.0,222.8 517.0,223.0 534.5,223.0 C552.0,223.0 552.0,223.1 569.6,223.1 C587.1,223.1 587.1,223.0 604.6,223.0 C622.1,223.0 622.1,222.7 639.6,222.7 C657.1,222.7 657.1,222.5 674.7,222.5 C692.2,222.5 692.2,222.4 709.7,222.4 C727.2,222.4 727.2,222.6 744.7,222.6 C762.3,222.6 762.3,222.9 779.8,222.9 C797.3,222.9 797.3,223.0 814.8,223.0 C832.3,223.0 832.3,223.2 849.9,223.2 C867.4,223.2 867.4,223.2 884.9,223.2 C902.4,223.2 902.4,223.1 919.9,223.1 C937.4,223.1 937.4,223.0 955.0,223.0 C972.5,223.0 972.5,223.1 990.0,223.1" fill="none" stroke="#A8B4AF" stroke-width="1.4" stroke-dasharray="4 3"></path><path d="M44.0,135.8 C61.5,135.8 61.5,108.5 79.0,108.5 C96.6,108.5 96.6,81.2 114.1,81.2 C131.6,81.2 131.6,43.4 149.1,43.4 C166.6,43.4 166.6,14.0 184.1,14.0 C201.7,14.0 201.7,30.8 219.2,30.8 C236.7,30.8 236.7,68.6 254.2,68.6 C271.7,68.6 271.7,93.8 289.3,93.8 C306.8,93.8 306.8,102.2 324.3,102.2 C341.8,102.2 341.8,85.4 359.3,85.4 C376.9,85.4 376.9,56.0 394.4,56.0 C411.9,56.0 411.9,24.5 429.4,24.5 C446.9,24.5 446.9,39.2 464.4,39.2 C482.0,39.2 482.0,72.8 499.5,72.8 C517.0,72.8 517.0,98.0 534.5,98.0 C552.0,98.0 552.0,110.6 569.6,110.6 C587.1,110.6 587.1,93.8 604.6,93.8 C622.1,93.8 622.1,60.2 639.6,60.2 C657.1,60.2 657.1,35.0 674.7,35.0 C692.2,35.0 692.2,22.4 709.7,22.4 C727.2,22.4 727.2,47.6 744.7,47.6 C762.3,47.6 762.3,77.0 779.8,77.0 C797.3,77.0 797.3,102.2 814.8,102.2 C832.3,102.2 832.3,119.0 849.9,119.0 C867.4,119.0 867.4,127.4 884.9,127.4 C902.4,127.4 902.4,114.8 919.9,114.8 C937.4,114.8 937.4,98.0 955.0,98.0 C972.5,98.0 972.5,108.5 990.0,108.5" fill="none" stroke="#E8622C" stroke-width="1.9" stroke-linejoin="round"></path><text x="44.0" y="242" font-size="10" fill="#A8B4AF" text-anchor="middle">12-20</text><text x="219.2" y="242" font-size="10" fill="#A8B4AF" text-anchor="middle">12-25</text><text x="394.4" y="242" font-size="10" fill="#A8B4AF" text-anchor="middle">12-30</text><text x="569.6" y="242" font-size="10" fill="#A8B4AF" text-anchor="middle">1-04</text><text x="744.7" y="242" font-size="10" fill="#A8B4AF" text-anchor="middle">1-09</text><text x="919.9" y="242" font-size="10" fill="#A8B4AF" text-anchor="middle">1-14</text></svg></div>
+    </div>
+
+    <!-- ③ 发券渠道 -->
+    <div class="st" style="margin:4px 0 0">发券渠道</div>
+    <div class="duo">
+      <div class="donut-box">
+        <div id="dbDonut"><svg width="150" height="150" viewBox="0 0 150 150" role="img" aria-label="发券渠道构成"><path d="M75.00,13.00 A62,62 0 1 1 23.72,109.85 L41.92,97.48 A40,40 0 1 0 75.00,35.00 Z" fill="#E8622C"></path><path d="M23.72,109.85 A62,62 0 0 1 29.01,33.42 L45.33,48.17 A40,40 0 0 0 41.92,97.48 Z" fill="#2C6FC4"></path><path d="M29.01,33.42 A62,62 0 0 1 59.58,14.95 L65.05,36.26 A40,40 0 0 0 45.33,48.17 Z" fill="#1F9C6B"></path><path d="M59.58,14.95 A62,62 0 0 1 75.00,13.00 L75.00,35.00 A40,40 0 0 0 65.05,36.26 Z" fill="#C08300"></path></svg><div style="display:grid;grid-template-columns:1fr 1fr;gap:4px 14px;margin-top:6px"><div style="display:flex;align-items:center;gap:6px;font-size:11.6px;color:var(--ink2)"><i style="width:9px;height:9px;border-radius:2px;background:#E8622C;display:inline-block"></i><span>品牌小程序</span></div><div style="display:flex;align-items:center;gap:6px;font-size:11.6px;color:var(--ink2)"><i style="width:9px;height:9px;border-radius:2px;background:#2C6FC4;display:inline-block"></i><span>线下扫码</span></div><div style="display:flex;align-items:center;gap:6px;font-size:11.6px;color:var(--ink2)"><i style="width:9px;height:9px;border-radius:2px;background:#1F9C6B;display:inline-block"></i><span>公众号</span></div><div style="display:flex;align-items:center;gap:6px;font-size:11.6px;color:var(--ink2)"><i style="width:9px;height:9px;border-radius:2px;background:#C08300;display:inline-block"></i><span>社群分享</span></div></div></div>
+        <div class="cap">发券渠道构成</div>
+      </div>
+      <div class="tw scroll" style="box-shadow:none">
+        <table class="bt db-table" style="min-width:640px">
+          <thead><tr>
+            <th style="width:150px">发券渠道</th>
+            <th class="num">发券数</th>
+            <th class="num">核销数</th>
+            <th class="num">销售额（元）</th>
+            <th class="num">核销率</th>
+            <th class="num">销售额占比</th>
+          </tr></thead>
+          <tbody id="dbChanBody"><tr><td>微信（品牌小程序）</td><td class="num" style="text-align:right">13,755</td><td class="num" style="text-align:right">7,125</td><td class="num" style="text-align:right">1,394,061</td><td class="num" style="text-align:right">51.80%</td><td class="num" style="text-align:right">65.50%</td></tr><tr><td>微信（线下扫码）</td><td class="num" style="text-align:right">4,452</td><td class="num" style="text-align:right">2,141</td><td class="num" style="text-align:right">451,207</td><td class="num" style="text-align:right">48.10%</td><td class="num" style="text-align:right">21.20%</td></tr><tr><td>微信（公众号）</td><td class="num" style="text-align:right">1,953</td><td class="num" style="text-align:right">863</td><td class="num" style="text-align:right">197,935</td><td class="num" style="text-align:right">44.20%</td><td class="num" style="text-align:right">9.30%</td></tr><tr><td>微信（社群分享）</td><td class="num" style="text-align:right">840</td><td class="num" style="text-align:right">333</td><td class="num" style="text-align:right">85,133</td><td class="num" style="text-align:right">39.60%</td><td class="num" style="text-align:right">4.00%</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ④ 零售商 TOP10 -->
+    <div class="st" style="margin:4px 0 0">零售商 TOP10</div>
+    <div class="chart-box">
+      <div class="legend" style="margin-bottom:10px"><span><i style="background:#E8622C"></i>销售额（元）</span></div>
+      <div class="hbar-list" id="dbRetList"><div class="hbar-row"><div class="nm" title="重庆永辉超市有限公司">重庆永辉超市有限公司</div><div class="track"><div class="fill" style="width:88.0%"></div><span class="val" style="position:absolute;left:calc(88.0% + 8px);top:0;line-height:19px">2,184,000</span></div></div><div class="hbar-row"><div class="nm" title="广东特易购商业有限公司">广东特易购商业有限公司</div><div class="track"><div class="fill" style="width:66.2%"></div><span class="val" style="position:absolute;left:calc(66.2% + 8px);top:0;line-height:19px">1,642,000</span></div></div><div class="hbar-row"><div class="nm" title="华润万家生活超市（中山）有限公司">华润万家生活超市（中山）有限公司</div><div class="track"><div class="fill" style="width:47.8%"></div><span class="val" style="position:absolute;left:calc(47.8% + 8px);top:0;line-height:19px">1,186,000</span></div></div><div class="hbar-row"><div class="nm" title="上海福满家便利有限公司">上海福满家便利有限公司</div><div class="track"><div class="fill" style="width:38.8%"></div><span class="val" style="position:absolute;left:calc(38.8% + 8px);top:0;line-height:19px">962,000</span></div></div><div class="hbar-row"><div class="nm" title="苏果超市有限公司南京分公司">苏果超市有限公司南京分公司</div><div class="track"><div class="fill" style="width:30.1%"></div><span class="val" style="position:absolute;left:calc(30.1% + 8px);top:0;line-height:19px">748,000</span></div></div><div class="hbar-row"><div class="nm" title="北京物美商业集团股份有限公司">北京物美商业集团股份有限公司</div><div class="track"><div class="fill" style="width:25.5%"></div><span class="val" style="position:absolute;left:calc(25.5% + 8px);top:0;line-height:19px">634,000</span></div></div><div class="hbar-row"><div class="nm" title="天津物美便利超市有限公司">天津物美便利超市有限公司</div><div class="track"><div class="fill" style="width:20.6%"></div><span class="val" style="position:absolute;left:calc(20.6% + 8px);top:0;line-height:19px">512,000</span></div></div><div class="hbar-row"><div class="nm" title="杭州盒马网络科技有限公司">杭州盒马网络科技有限公司</div><div class="track"><div class="fill" style="width:17.2%"></div><span class="val" style="position:absolute;left:calc(17.2% + 8px);top:0;line-height:19px">428,000</span></div></div><div class="hbar-row"><div class="nm" title="广西华润万家生活超市有限公司">广西华润万家生活超市有限公司</div><div class="track"><div class="fill" style="width:12.7%"></div><span class="val" style="position:absolute;left:calc(12.7% + 8px);top:0;line-height:19px">316,000</span></div></div><div class="hbar-row"><div class="nm" title="四川舞东风超市连锁股份有限公司">四川舞东风超市连锁股份有限公司</div><div class="track"><div class="fill" style="width:8.6%"></div><span class="val" style="position:absolute;left:calc(8.6% + 8px);top:0;line-height:19px">214,000</span></div></div></div>
+      <div class="hbar-axis"><div></div><div class="ticks" id="dbRetTicks"><span>0</span><span>436,800</span><span>873,600</span><span>1,310,400</span><span>1,747,200</span><span>2,184,000</span></div></div>
+    </div>
+
+    <!-- ⑤ 商品 TOP10 -->
+    <div class="st" style="margin:4px 0 0">商品 TOP10</div>
+    <div class="tw">
+      <table class="bt db-table">
+        <thead><tr>
+          <th style="width:60px">排名</th>
+          <th>商品名称</th>
+          <th class="num" style="width:130px">销售额（元）</th>
+          <th class="num" style="width:130px">销售额占比（%）</th>
+          <th class="num" style="width:120px">销售件数（件）</th>
+          <th class="num" style="width:120px">优惠金额（元）</th>
+        </tr></thead>
+        <tbody id="dbSkuBody"><tr><td class="dim">1</td><td>特仑苏纯牛奶 250ml×12</td><td class="num" style="text-align:right">2,860,000</td><td class="num" style="text-align:right">27.25%<span class="sqbar"><i style="width:27%"></i></span></td><td class="num" style="text-align:right">16,400</td><td class="num" style="text-align:right">642,000</td></tr><tr><td class="dim">2</td><td>蒙牛纯甄酸奶 200g×12</td><td class="num" style="text-align:right">1,980,000</td><td class="num" style="text-align:right">18.87%<span class="sqbar"><i style="width:19%"></i></span></td><td class="num" style="text-align:right">13,800</td><td class="num" style="text-align:right">412,000</td></tr><tr><td class="dim">3</td><td>未来星儿童奶 190ml×12</td><td class="num" style="text-align:right">1,520,000</td><td class="num" style="text-align:right">14.48%<span class="sqbar"><i style="width:14%"></i></span></td><td class="num" style="text-align:right">9,600</td><td class="num" style="text-align:right">288,000</td></tr><tr><td class="dim">4</td><td>特仑苏 / 精选礼盒</td><td class="num" style="text-align:right">1,180,000</td><td class="num" style="text-align:right">11.24%<span class="sqbar"><i style="width:11%"></i></span></td><td class="num" style="text-align:right">4,200</td><td class="num" style="text-align:right">196,000</td></tr><tr><td class="dim">5</td><td>纯甄果粒礼盒装</td><td class="num" style="text-align:right">940,000</td><td class="num" style="text-align:right">8.96%<span class="sqbar"><i style="width:9%"></i></span></td><td class="num" style="text-align:right">3,800</td><td class="num" style="text-align:right">152,000</td></tr><tr><td class="dim">6</td><td>随变 / 蒂兰圣雪冰品</td><td class="num" style="text-align:right">638,000</td><td class="num" style="text-align:right">6.08%<span class="sqbar"><i style="width:6%"></i></span></td><td class="num" style="text-align:right">7,200</td><td class="num" style="text-align:right">86,000</td></tr><tr><td class="dim">7</td><td>蒙牛真果粒 250g×12</td><td class="num" style="text-align:right">482,000</td><td class="num" style="text-align:right">4.59%<span class="sqbar"><i style="width:5%"></i></span></td><td class="num" style="text-align:right">5,100</td><td class="num" style="text-align:right">64,000</td></tr><tr><td class="dim">8</td><td>蒙牛早餐奶 250ml×16</td><td class="num" style="text-align:right">396,000</td><td class="num" style="text-align:right">3.77%<span class="sqbar"><i style="width:4%"></i></span></td><td class="num" style="text-align:right">4,600</td><td class="num" style="text-align:right">52,000</td></tr><tr><td class="dim">9</td><td>冠益乳原味 100g×8</td><td class="num" style="text-align:right">284,000</td><td class="num" style="text-align:right">2.71%<span class="sqbar"><i style="width:3%"></i></span></td><td class="num" style="text-align:right">3,800</td><td class="num" style="text-align:right">38,000</td></tr><tr><td class="dim">10</td><td>优益C 活菌型 340ml</td><td class="num" style="text-align:right">214,000</td><td class="num" style="text-align:right">2.04%<span class="sqbar"><i style="width:2%"></i></span></td><td class="num" style="text-align:right">2,600</td><td class="num" style="text-align:right">29,000</td></tr></tbody>
+      </table>
+    </div>
+
+    <!-- ⑥ 时段分析 -->
+    <div class="st" style="margin:4px 0 0">时段分析</div>
+    <div class="duo2">
+      <div class="chart-box">
+        <div class="chart-hd"><div class="t">销售额时段分布</div><div class="dim" style="font-size:11.4px">颜色越深表示该时段销售额越高</div></div>
+        <div class="heat-wrap" id="dbHeat"><div class="heat"><div class="hl">周一</div><div class="cell" title="周一 0:00 · 相对热度 2" style="background:rgba(232,98,44,0.10)"></div><div class="cell" title="周一 1:00 · 相对热度 1" style="background:rgba(232,98,44,0.09)"></div><div class="cell" title="周一 2:00 · 相对热度 1" style="background:rgba(232,98,44,0.09)"></div><div class="cell" title="周一 3:00 · 相对热度 1" style="background:rgba(232,98,44,0.09)"></div><div class="cell" title="周一 4:00 · 相对热度 2" style="background:rgba(232,98,44,0.10)"></div><div class="cell" title="周一 5:00 · 相对热度 6" style="background:rgba(232,98,44,0.13)"></div><div class="cell" title="周一 6:00 · 相对热度 13" style="background:rgba(232,98,44,0.20)"></div><div class="cell" title="周一 7:00 · 相对热度 29" style="background:rgba(232,98,44,0.34)"></div><div class="cell" title="周一 8:00 · 相对热度 42" style="background:rgba(232,98,44,0.46)"></div><div class="cell" title="周一 9:00 · 相对热度 51" style="background:rgba(232,98,44,0.55)"></div><div class="cell" title="周一 10:00 · 相对热度 68" style="background:rgba(232,98,44,0.71)"></div><div class="cell" title="周一 11:00 · 相对热度 99" style="background:rgba(232,98,44,0.99)"></div><div class="cell" title="周一 12:00 · 相对热度 100" style="background:rgba(232,98,44,1.00)"></div><div class="cell" title="周一 13:00 · 相对热度 100" style="background:rgba(232,98,44,1.00)"></div><div class="cell" title="周一 14:00 · 相对热度 73" style="background:rgba(232,98,44,0.75)"></div><div class="cell" title="周一 15:00 · 相对热度 59" style="background:rgba(232,98,44,0.63)"></div><div class="cell" title="周一 16:00 · 相对热度 64" style="background:rgba(232,98,44,0.67)"></div><div class="cell" title="周一 17:00 · 相对热度 79" style="background:rgba(232,98,44,0.81)"></div><div class="cell" title="周一 18:00 · 相对热度 100" style="background:rgba(232,98,44,1.00)"></div><div class="cell" title="周一 19:00 · 相对热度 100" style="background:rgba(232,98,44,1.00)"></div><div class="cell" title="周一 20:00 · 相对热度 100" style="background:rgba(232,98,44,1.00)"></div><div class="cell" title="周一 21:00 · 相对热度 68" style="background:rgba(232,98,44,0.71)"></div><div class="cell" title="周一 22:00 · 相对热度 37" style="background:rgba(232,98,44,0.42)"></div><div class="cell" title="周一 23:00 · 相对热度 15" style="background:rgba(232,98,44,0.22)"></div><div class="hl">周日</div><div class="cell" title="周日 0:00 · 相对热度 2" style="background:rgba(232,98,44,0.10)"></div><div class="cell" title="周日 1:00 · 相对热度 1" style="background:rgba(232,98,44,0.09)"></div><div class="cell" title="周日 2:00 · 相对热度 1" style="background:rgba(232,98,44,0.09)"></div><div class="cell" title="周日 3:00 · 相对热度 1" style="background:rgba(232,98,44,0.09)"></div><div class="cell" title="周日 4:00 · 相对热度 2" style="background:rgba(232,98,44,0.10)"></div><div class="cell" title="周日 5:00 · 相对热度 6" style="background:rgba(232,98,44,0.13)"></div><div class="cell" title="周日 6:00 · 相对热度 14" style="background:rgba(232,98,44,0.21)"></div><div class="cell" title="周日 7:00 · 相对热度 31" style="background:rgba(232,98,44,0.36)"></div><div class="cell" title="周日 8:00 · 相对热度 45" style="background:rgba(232,98,44,0.49)"></div><div class="cell" title="周日 9:00 · 相对热度 54" style="background:rgba(232,98,44,0.58)"></div><div class="cell" title="周日 10:00 · 相对热度 73" style="background:rgba(232,98,44,0.75)"></div><div class="cell" title="周日 11:00 · 相对热度 100" style="background:rgba(232,98,44,1.00)"></div><div class="cell" title="周日 12:00 · 相对热度 100" style="background:rgba(232,98,44,1.00)"></div><div class="cell" title="周日 13:00 · 相对热度 100" style="background:rgba(232,98,44,1.00)"></div><div class="cell" title="周日 14:00 · 相对热度 78" style="background:rgba(232,98,44,0.80)"></div><div class="cell" title="周日 15:00 · 相对热度 64" style="background:rgba(232,98,44,0.67)"></div><div class="cell" title="周日 16:00 · 相对热度 68" style="background:rgba(232,98,44,0.71)"></div><div class="cell" title="周日 17:00 · 相对热度 85" style="background:rgba(232,98,44,0.86)"></div><div class="cell" title="周日 18:00 · 相对热度 100" style="background:rgba(232,98,44,1.00)"></div><div class="cell" title="周日 19:00 · 相对热度 100" style="background:rgba(232,98,44,1.00)"></div><div class="cell" title="周日 20:00 · 相对热度 100" style="background:rgba(232,98,44,1.00)"></div><div class="cell" title="周日 21:00 · 相对热度 73" style="background:rgba(232,98,44,0.75)"></div><div class="cell" title="周日 22:00 · 相对热度 40" style="background:rgba(232,98,44,0.45)"></div><div class="cell" title="周日 23:00 · 相对热度 17" style="background:rgba(232,98,44,0.23)"></div><div class="hl">周六</div><div class="cell" title="周六 0:00 · 相对热度 2" style="background:rgba(232,98,44,0.10)"></div><div class="cell" title="周六 1:00 · 相对热度 1" style="background:rgba(232,98,44,0.09)"></div><div class="cell" title="周六 2:00 · 相对热度 1" style="background:rgba(232,98,44,0.09)"></div><div class="cell" title="周六 3:00 · 相对热度 1" style="background:rgba(232,98,44,0.09)"></div><div class="cell" title="周六 4:00 · 相对热度 2" style="background:rgba(232,98,44,0.10)"></div><div class="cell" title="周六 5:00 · 相对热度 5" style="background:rgba(232,98,44,0.13)"></div><div class="cell" title="周六 6:00 · 相对热度 12" style="background:rgba(232,98,44,0.19)"></div><div class="cell" title="周六 7:00 · 相对热度 26" style="background:rgba(232,98,44,0.32)"></div><div class="cell" title="周六 8:00 · 相对热度 38" style="background:rgba(232,98,44,0.43)"></div><div class="cell" title="周六 9:00 · 相对热度 46" style="background:rgba(232,98,44,0.50)"></div><div class="cell" title="周六 10:00 · 相对热度 62" style="background:rgba(232,98,44,0.65)"></div><div class="cell" title="周六 11:00 · 相对热度 78" style="background:rgba(232,98,44,0.80)"></div><div class="cell" title="周六 12:00 · 相对热度 92" style="background:rgba(232,98,44,0.93)"></div><div class="cell" title="周六 13:00 · 相对热度 84" style="background:rgba(232,98,44,0.85)"></div><div class="cell" title="周六 14:00 · 相对热度 66" style="background:rgba(232,98,44,0.69)"></div><div class="cell" title="周六 15:00 · 相对热度 54" style="background:rgba(232,98,44,0.58)"></div><div class="cell" title="周六 16:00 · 相对热度 58" style="background:rgba(232,98,44,0.61)"></div><div class="cell" title="周六 17:00 · 相对热度 72" style="background:rgba(232,98,44,0.74)"></div><div class="cell" title="周六 18:00 · 相对热度 88" style="background:rgba(232,98,44,0.89)"></div><div class="cell" title="周六 19:00 · 相对热度 95" style="background:rgba(232,98,44,0.95)"></div><div class="cell" title="周六 20:00 · 相对热度 86" style="background:rgba(232,98,44,0.87)"></div><div class="cell" title="周六 21:00 · 相对热度 62" style="background:rgba(232,98,44,0.65)"></div><div class="cell" title="周六 22:00 · 相对热度 34" style="background:rgba(232,98,44,0.39)"></div><div class="cell" title="周六 23:00 · 相对热度 14" style="background:rgba(232,98,44,0.21)"></div><div class="hl">周五</div><div class="cell" title="周五 0:00 · 相对热度 2" style="background:rgba(232,98,44,0.10)"></div><div class="cell" title="周五 1:00 · 相对热度 1" style="background:rgba(232,98,44,0.09)"></div><div class="cell" title="周五 2:00 · 相对热度 1" style="background:rgba(232,98,44,0.09)"></div><div class="cell" title="周五 3:00 · 相对热度 1" style="background:rgba(232,98,44,0.09)"></div><div class="cell" title="周五 4:00 · 相对热度 2" style="background:rgba(232,98,44,0.10)"></div><div class="cell" title="周五 5:00 · 相对热度 4" style="background:rgba(232,98,44,0.12)"></div><div class="cell" title="周五 6:00 · 相对热度 11" style="background:rgba(232,98,44,0.18)"></div><div class="cell" title="周五 7:00 · 相对热度 23" style="background:rgba(232,98,44,0.29)"></div><div class="cell" title="周五 8:00 · 相对热度 33" style="background:rgba(232,98,44,0.39)"></div><div class="cell" title="周五 9:00 · 相对热度 40" style="background:rgba(232,98,44,0.45)"></div><div class="cell" title="周五 10:00 · 相对热度 55" style="background:rgba(232,98,44,0.58)"></div><div class="cell" title="周五 11:00 · 相对热度 69" style="background:rgba(232,98,44,0.71)"></div><div class="cell" title="周五 12:00 · 相对热度 81" style="background:rgba(232,98,44,0.82)"></div><div class="cell" title="周五 13:00 · 相对热度 74" style="background:rgba(232,98,44,0.76)"></div><div class="cell" title="周五 14:00 · 相对热度 58" style="background:rgba(232,98,44,0.61)"></div><div class="cell" title="周五 15:00 · 相对热度 48" style="background:rgba(232,98,44,0.52)"></div><div class="cell" title="周五 16:00 · 相对热度 51" style="background:rgba(232,98,44,0.55)"></div><div class="cell" title="周五 17:00 · 相对热度 63" style="background:rgba(232,98,44,0.66)"></div><div class="cell" title="周五 18:00 · 相对热度 77" style="background:rgba(232,98,44,0.79)"></div><div class="cell" title="周五 19:00 · 相对热度 84" style="background:rgba(232,98,44,0.85)"></div><div class="cell" title="周五 20:00 · 相对热度 76" style="background:rgba(232,98,44,0.78)"></div><div class="cell" title="周五 21:00 · 相对热度 55" style="background:rgba(232,98,44,0.58)"></div><div class="cell" title="周五 22:00 · 相对热度 30" style="background:rgba(232,98,44,0.36)"></div><div class="cell" title="周五 23:00 · 相对热度 12" style="background:rgba(232,98,44,0.19)"></div><div class="hl">周四</div><div class="cell" title="周四 0:00 · 相对热度 2" style="background:rgba(232,98,44,0.10)"></div><div class="cell" title="周四 1:00 · 相对热度 1" style="background:rgba(232,98,44,0.09)"></div><div class="cell" title="周四 2:00 · 相对热度 1" style="background:rgba(232,98,44,0.09)"></div><div class="cell" title="周四 3:00 · 相对热度 1" style="background:rgba(232,98,44,0.09)"></div><div class="cell" title="周四 4:00 · 相对热度 2" style="background:rgba(232,98,44,0.10)"></div><div class="cell" title="周四 5:00 · 相对热度 4" style="background:rgba(232,98,44,0.12)"></div><div class="cell" title="周四 6:00 · 相对热度 10" style="background:rgba(232,98,44,0.17)"></div><div class="cell" title="周四 7:00 · 相对热度 22" style="background:rgba(232,98,44,0.28)"></div><div class="cell" title="周四 8:00 · 相对热度 32" style="background:rgba(232,98,44,0.37)"></div><div class="cell" title="周四 9:00 · 相对热度 39" style="background:rgba(232,98,44,0.44)"></div><div class="cell" title="周四 10:00 · 相对热度 52" style="background:rgba(232,98,44,0.56)"></div><div class="cell" title="周四 11:00 · 相对热度 66" style="background:rgba(232,98,44,0.68)"></div><div class="cell" title="周四 12:00 · 相对热度 77" style="background:rgba(232,98,44,0.79)"></div><div class="cell" title="周四 13:00 · 相对热度 71" style="background:rgba(232,98,44,0.73)"></div><div class="cell" title="周四 14:00 · 相对热度 55" style="background:rgba(232,98,44,0.59)"></div><div class="cell" title="周四 15:00 · 相对热度 45" style="background:rgba(232,98,44,0.50)"></div><div class="cell" title="周四 16:00 · 相对热度 49" style="background:rgba(232,98,44,0.53)"></div><div class="cell" title="周四 17:00 · 相对热度 60" style="background:rgba(232,98,44,0.64)"></div><div class="cell" title="周四 18:00 · 相对热度 74" style="background:rgba(232,98,44,0.76)"></div><div class="cell" title="周四 19:00 · 相对热度 80" style="background:rgba(232,98,44,0.81)"></div><div class="cell" title="周四 20:00 · 相对热度 72" style="background:rgba(232,98,44,0.74)"></div><div class="cell" title="周四 21:00 · 相对热度 52" style="background:rgba(232,98,44,0.56)"></div><div class="cell" title="周四 22:00 · 相对热度 29" style="background:rgba(232,98,44,0.34)"></div><div class="cell" title="周四 23:00 · 相对热度 12" style="background:rgba(232,98,44,0.19)"></div><div class="hl">周三</div><div class="cell" title="周三 0:00 · 相对热度 2" style="background:rgba(232,98,44,0.10)"></div><div class="cell" title="周三 1:00 · 相对热度 1" style="background:rgba(232,98,44,0.09)"></div><div class="cell" title="周三 2:00 · 相对热度 1" style="background:rgba(232,98,44,0.09)"></div><div class="cell" title="周三 3:00 · 相对热度 1" style="background:rgba(232,98,44,0.09)"></div><div class="cell" title="周三 4:00 · 相对热度 2" style="background:rgba(232,98,44,0.10)"></div><div class="cell" title="周三 5:00 · 相对热度 4" style="background:rgba(232,98,44,0.12)"></div><div class="cell" title="周三 6:00 · 相对热度 10" style="background:rgba(232,98,44,0.17)"></div><div class="cell" title="周三 7:00 · 相对热度 21" style="background:rgba(232,98,44,0.28)"></div><div class="cell" title="周三 8:00 · 相对热度 31" style="background:rgba(232,98,44,0.37)"></div><div class="cell" title="周三 9:00 · 相对热度 38" style="background:rgba(232,98,44,0.43)"></div><div class="cell" title="周三 10:00 · 相对热度 51" style="background:rgba(232,98,44,0.55)"></div><div class="cell" title="周三 11:00 · 相对热度 64" style="background:rgba(232,98,44,0.67)"></div><div class="cell" title="周三 12:00 · 相对热度 75" style="background:rgba(232,98,44,0.77)"></div><div class="cell" title="周三 13:00 · 相对热度 69" style="background:rgba(232,98,44,0.71)"></div><div class="cell" title="周三 14:00 · 相对热度 54" style="background:rgba(232,98,44,0.58)"></div><div class="cell" title="周三 15:00 · 相对热度 44" style="background:rgba(232,98,44,0.49)"></div><div class="cell" title="周三 16:00 · 相对热度 48" style="background:rgba(232,98,44,0.52)"></div><div class="cell" title="周三 17:00 · 相对热度 59" style="background:rgba(232,98,44,0.62)"></div><div class="cell" title="周三 18:00 · 相对热度 72" style="background:rgba(232,98,44,0.74)"></div><div class="cell" title="周三 19:00 · 相对热度 78" style="background:rgba(232,98,44,0.80)"></div><div class="cell" title="周三 20:00 · 相对热度 71" style="background:rgba(232,98,44,0.73)"></div><div class="cell" title="周三 21:00 · 相对热度 51" style="background:rgba(232,98,44,0.55)"></div><div class="cell" title="周三 22:00 · 相对热度 28" style="background:rgba(232,98,44,0.34)"></div><div class="cell" title="周三 23:00 · 相对热度 11" style="background:rgba(232,98,44,0.19)"></div><div class="hl">周二</div><div class="cell" title="周二 0:00 · 相对热度 2" style="background:rgba(232,98,44,0.10)"></div><div class="cell" title="周二 1:00 · 相对热度 1" style="background:rgba(232,98,44,0.09)"></div><div class="cell" title="周二 2:00 · 相对热度 1" style="background:rgba(232,98,44,0.09)"></div><div class="cell" title="周二 3:00 · 相对热度 1" style="background:rgba(232,98,44,0.09)"></div><div class="cell" title="周二 4:00 · 相对热度 2" style="background:rgba(232,98,44,0.10)"></div><div class="cell" title="周二 5:00 · 相对热度 4" style="background:rgba(232,98,44,0.12)"></div><div class="cell" title="周二 6:00 · 相对热度 10" style="background:rgba(232,98,44,0.17)"></div><div class="cell" title="周二 7:00 · 相对热度 22" style="background:rgba(232,98,44,0.29)"></div><div class="cell" title="周二 8:00 · 相对热度 33" style="background:rgba(232,98,44,0.38)"></div><div class="cell" title="周二 9:00 · 相对热度 40" style="background:rgba(232,98,44,0.44)"></div><div class="cell" title="周二 10:00 · 相对热度 53" style="background:rgba(232,98,44,0.57)"></div><div class="cell" title="周二 11:00 · 相对热度 67" style="background:rgba(232,98,44,0.70)"></div><div class="cell" title="周二 12:00 · 相对热度 79" style="background:rgba(232,98,44,0.81)"></div><div class="cell" title="周二 13:00 · 相对热度 72" style="background:rgba(232,98,44,0.74)"></div><div class="cell" title="周二 14:00 · 相对热度 57" style="background:rgba(232,98,44,0.60)"></div><div class="cell" title="周二 15:00 · 相对热度 46" style="background:rgba(232,98,44,0.51)"></div><div class="cell" title="周二 16:00 · 相对热度 50" style="background:rgba(232,98,44,0.54)"></div><div class="cell" title="周二 17:00 · 相对热度 62" style="background:rgba(232,98,44,0.65)"></div><div class="cell" title="周二 18:00 · 相对热度 76" style="background:rgba(232,98,44,0.78)"></div><div class="cell" title="周二 19:00 · 相对热度 82" style="background:rgba(232,98,44,0.83)"></div><div class="cell" title="周二 20:00 · 相对热度 74" style="background:rgba(232,98,44,0.76)"></div><div class="cell" title="周二 21:00 · 相对热度 53" style="background:rgba(232,98,44,0.57)"></div><div class="cell" title="周二 22:00 · 相对热度 29" style="background:rgba(232,98,44,0.35)"></div><div class="cell" title="周二 23:00 · 相对热度 12" style="background:rgba(232,98,44,0.19)"></div></div><div class="hx"><div class="hx-in"><span style="left:2.08%">0</span><span style="left:27.08%">6</span><span style="left:52.08%">12</span><span style="left:77.08%">18</span></div></div></div>
+      </div>
+      <div class="chart-box">
+        <div class="chart-hd"><div class="t">销售额周内占比</div></div>
+        <div class="hbar-list" id="dbWeekList"><div class="hbar-row" style="grid-template-columns:48px 1fr"><div class="nm" style="text-align:right">周一</div><div class="track"><div class="fill" style="width:38.2%"></div><span class="val" style="position:absolute;left:calc(38.2% + 8px);top:0;line-height:19px">10.8%</span></div></div><div class="hbar-row" style="grid-template-columns:48px 1fr"><div class="nm" style="text-align:right">周二</div><div class="track"><div class="fill" style="width:33.2%"></div><span class="val" style="position:absolute;left:calc(33.2% + 8px);top:0;line-height:19px">9.4%</span></div></div><div class="hbar-row" style="grid-template-columns:48px 1fr"><div class="nm" style="text-align:right">周三</div><div class="track"><div class="fill" style="width:34.6%"></div><span class="val" style="position:absolute;left:calc(34.6% + 8px);top:0;line-height:19px">9.8%</span></div></div><div class="hbar-row" style="grid-template-columns:48px 1fr"><div class="nm" style="text-align:right">周四</div><div class="track"><div class="fill" style="width:39.6%"></div><span class="val" style="position:absolute;left:calc(39.6% + 8px);top:0;line-height:19px">11.2%</span></div></div><div class="hbar-row" style="grid-template-columns:48px 1fr"><div class="nm" style="text-align:right">周五</div><div class="track"><div class="fill" style="width:52.3%"></div><span class="val" style="position:absolute;left:calc(52.3% + 8px);top:0;line-height:19px">14.8%</span></div></div><div class="hbar-row" style="grid-template-columns:48px 1fr"><div class="nm" style="text-align:right">周六</div><div class="track"><div class="fill" style="width:82.0%"></div><span class="val" style="position:absolute;left:calc(82.0% + 8px);top:0;line-height:19px">23.2%</span></div></div><div class="hbar-row" style="grid-template-columns:48px 1fr"><div class="nm" style="text-align:right">周日</div><div class="track"><div class="fill" style="width:73.5%"></div><span class="val" style="position:absolute;left:calc(73.5% + 8px);top:0;line-height:19px">20.8%</span></div></div></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+<div class="view" id="v-admin">
+  <div class="panel">
+    <div class="panel-h">
+      <h3>系统管理</h3>
+      <div class="flex"><span class="muted">角色与权限、组织架构、服务商配置集中在此维护</span></div>
+    </div>
+    <div id="admTabs" class="steps">
+      <div class="atab on" data-tab="role" onclick="admTab('role')">角色与权限 <span class="c" id="roleCnt">4 个角色</span></div>
+      <div class="atab" data-tab="org" onclick="admTab('org')">组织架构 <span class="c">5 个节点</span></div>
+      <div class="atab" data-tab="vendor" onclick="admTab('vendor')">服务商配置 <span class="c" id="vsCnt">5 家</span></div>
+    </div>
+  </div>
+
+  <!-- 角色与权限 -->
+  <div id="admTab-role">
+    <div class="panel">
+      <div class="panel-h">
+        <h3>角色列表</h3>
+        <div class="flex"><span class="muted">点「配置」维护该角色的菜单范围与数据范围</span></div>
+      </div>
+      <div class="panel-b" style="padding:0">
+        <div class="tw scroll" style="border:none;box-shadow:none;border-radius:0">
+          <table class="bt">
+            <thead><tr>
+              <th style="width:30%">角色</th>
+              <th style="width:22%">人员归属</th>
+              <th style="width:16%">菜单范围</th>
+              <th style="width:18%">数据范围</th>
+              <th style="width:8%">状态</th>
+              <th style="width:96px">操作</th>
+            </tr></thead>
+            <tbody id="roleTbody"><tr><td><b>管理员</b><div class="muted" style="font-size:11.4px">全部菜单，全量数据，可维护角色与字典</div></td><td>数字化中心</td><td>全部菜单</td><td>全量</td><td><span class="tg tg-g">启用</span></td><td style="white-space:nowrap"><button class="btn btn-o btn-xs" onclick="openRole('admin')">配置</button></td></tr><tr><td><b>业务运营</b><div class="muted" style="font-size:11.4px">按组织架构收窄数据范围，不可进入系统管理</div></td><td>总部市场部 / 事业部 / 区域 / 经销商</td><td>7 个菜单</td><td>本级及下级</td><td><span class="tg tg-g">启用</span></td><td style="white-space:nowrap"><button class="btn btn-o btn-xs" onclick="openRole('biz')">配置</button></td></tr><tr><td><b>财务</b><div class="muted" style="font-size:11.4px">只看数据，不参与创建与审批</div></td><td>财务部</td><td>3 个菜单</td><td>全量（只读）</td><td><span class="tg tg-g">启用</span></td><td style="white-space:nowrap"><button class="btn btn-o btn-xs" onclick="openRole('fin')">配置</button></td></tr><tr><td><b>服务商</b><div class="muted" style="font-size:11.4px">不发账号、不进系统，通过邮件链接免登录访问活动操作页</div></td><td>第三方服务公司</td><td><b>不发账号、不进系统</b></td><td>—</td><td><span class="tg tg-n">不适用</span></td><td style="white-space:nowrap"><span class="muted">—</span></td></tr></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 组织架构 -->
+  <div id="admTab-org" style="display:none">
+    <div class="panel">
+      <div class="panel-h">
+        <h3>组织架构</h3>
+        <div class="flex"><span class="muted">数据范围按组织架构收窄，服务商不发账号</span></div>
+      </div>
+      <div class="panel-b" style="padding:0">
+        <div class="tw scroll" style="border:none;box-shadow:none;border-radius:0">
+          <table class="bt">
+            <thead><tr>
+              <th style="width:12%">层级</th>
+              <th style="width:32%">名称</th>
+              <th style="width:22%">上级</th>
+              <th style="width:20%">下辖</th>
+              <th style="width:10%">状态</th>
+            </tr></thead>
+            <tbody id="orgTbody"><tr><td>集团</td><td><b>蒙牛集团</b></td><td>—</td><td>6 个事业部</td><td><span class="tg tg-g">启用</span></td></tr><tr><td>事业部</td><td><b>BU03 华东事业部</b></td><td>蒙牛集团</td><td>4 个区域</td><td><span class="tg tg-g">启用</span></td></tr><tr><td>区域</td><td><b>华东-上海区域</b></td><td>BU03 华东事业部</td><td>12 个经销商</td><td><span class="tg tg-g">启用</span></td></tr><tr><td>经销商</td><td><b>上海某某商贸有限公司</b></td><td>华东-上海区域</td><td>—</td><td><span class="tg tg-g">启用</span></td></tr><tr><td>事业部</td><td><b>BU01 华北事业部</b></td><td>蒙牛集团</td><td>3 个区域</td><td><span class="tg tg-g">启用</span></td></tr></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 服务商配置 -->
+  <div id="admTab-vendor" style="display:none">
+    <div class="panel">
+      <div class="panel-h">
+        <h3>服务商配置</h3>
+        <div class="flex">
+          <span class="muted">一个服务商只维护一个对接联系人 / 邮箱</span>
+          <button class="btn btn-p btn-xs" onclick="openVs(-1)">＋ 新增服务商</button>
+        </div>
+      </div>
+      <div class="panel-b" style="padding:0">
+        <div class="tw scroll" style="border:none;box-shadow:none;border-radius:0">
+          <table class="bt vcs-tbl">
+            <thead><tr>
+              <th style="width:28%">服务商名称</th>
+              <th style="width:24%">对接联系人 / 邮箱</th>
+              <th>备注</th>
+              <th style="width:8%">状态</th>
+              <th style="width:116px">操作</th>
+            </tr></thead>
+            <tbody id="vsTbody"><tr><td><b>智选数字技术（广州）股份有限公司</b><div class="muted sx-mono">SVC-0001</div></td><td class="vc-cm"><b>周敏</b><div class="muted" style="font-size:11.2px;line-height:1.4">zhoumin@zhixuan-digital.com</div></td><td class="vc-rm">集团级主服务商，承接全国总部统投项目；对账周期 T+3</td><td><span class="tg tg-g">启用</span></td><td style="white-space:nowrap"><button class="btn btn-o btn-xs" onclick="openVs(0)">编辑</button> <button class="btn btn-g btn-xs">停用</button></td></tr><tr><td><b>上海智士网络科技有限公司</b><div class="muted sx-mono">SVC-0002</div></td><td class="vc-cm"><b>胡味芝</b><div class="muted" style="font-size:11.2px;line-height:1.4">huwz@zhishi.com</div></td><td class="vc-rm">华东区主要执行方；券码异常需 2 小时内响应</td><td><span class="tg tg-g">启用</span></td><td style="white-space:nowrap"><button class="btn btn-o btn-xs" onclick="openVs(1)">编辑</button> <button class="btn btn-g btn-xs">停用</button></td></tr><tr><td><b>武汉智赢数图科技有限公司</b><div class="muted sx-mono">SVC-0003</div></td><td class="vc-cm"><b>李航</b><div class="muted" style="font-size:11.2px;line-height:1.4">lihang@zhiying-shutu.com</div></td><td class="vc-rm">华中区执行方；支持门店物料代发</td><td><span class="tg tg-g">启用</span></td><td style="white-space:nowrap"><button class="btn btn-o btn-xs" onclick="openVs(2)">编辑</button> <button class="btn btn-g btn-xs">停用</button></td></tr><tr><td><b>广州智曹数字技术有限公司</b><div class="muted sx-mono">SVC-0004</div></td><td class="vc-cm"><b>陈嘉明</b><div class="muted" style="font-size:11.2px;line-height:1.4">chenjm@zhicao-tech.com</div></td><td class="vc-rm">华南区执行方；负责便利店渠道核销对接</td><td><span class="tg tg-g">启用</span></td><td style="white-space:nowrap"><button class="btn btn-o btn-xs" onclick="openVs(3)">编辑</button> <button class="btn btn-g btn-xs">停用</button></td></tr><tr><td><b>智选数字技术（广州）股份有限公司北京分公司</b><div class="muted sx-mono">SVC-0005</div></td><td class="vc-cm"><b>王琳</b><div class="muted" style="font-size:11.2px;line-height:1.4">wanglin@zhixuan-digital.com</div></td><td class="vc-rm">华北区执行方；与总部共用券模板，独立结算</td><td><span class="tg tg-g">启用</span></td><td style="white-space:nowrap"><button class="btn btn-o btn-xs" onclick="openVs(4)">编辑</button> <button class="btn btn-g btn-xs">停用</button></td></tr></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="view" id="v-vendor">
+  <div class="panel">
+    <div class="panel-h">
+      <h3>服务商操作页 <span class="tg tg-a">免登录 · 邮件链接进入</span></h3>
+      <span class="muted">服务商侧操作页（总部端菜单不进入此页，由邮件链接直达）</span>
+    </div>
+    <div class="panel-b">
+      <div class="cbox" style="margin-bottom:16px"><b>服务商没有系统账号。</b>打开邮件中的专属链接即可进入本页，令牌与活动 ID 绑定、设有效期、活动终止即回收。页面只展示该活动，不暴露预算总额与内部审批意见。</div>
+
+      <div class="st">邮件通知</div>
+      <div class="mail">
+        <div class="mail-h">
+          <div class="r"><span class="k">发件人</span><span>蒙牛活动管理平台 &lt;no-reply@mengniu.com.cn&gt;</span></div>
+          <div class="r"><span class="k">收件人</span><span>huwz@zhishi.com（上海智士网络科技 · 胡味芝）</span></div>
+          <div class="r"><span class="k">主题</span><span><b>【活动执行通知】双节常温奶满减 · MN-WX-202612-0041 待您确认</b></span></div>
+        </div>
+        <div class="mail-b">
+          <div class="bt">您好，有一项活动待确认执行</div>
+          <div>活动名称：双节常温奶满减<br>
+          活动 ID：MN-WX-202612-0041<br>
+          活动周期：2026-12-20 至 2027-01-05<br>
+          投放平台：微信支付<br>
+          机制附件：活动机制说明 / 零售商清单 / SKU 清单（3 个，可下载）<br>
+          核销预算：¥400,000.00</div>
+          <a class="mail-link" href="javascript:void(0)" onclick="go('v-vendor',document.querySelector('.topbar nav a'))">确认执行并上传数据</a>
+          <div class="mail-tip">请在 2 个工作日内确认是否承接。确认后可在同一页面下载计划模板、上传计划与批次数据。<br>本链接仅对本次活动有效，请勿转发。链接有效期至 2026-12-19。</div>
+        </div>
+      </div>
+
+      <div class="st" style="margin-top:24px">服务商操作页（链接打开后）</div>
+      <div class="flow">
+        <div class="fs done"><div class="l">① 确认执行</div><div class="d">已完成 2026-10-19 15:30</div></div>
+        <div class="fs done"><div class="l">② 上传计划</div><div class="d">3 个计划 · 2026-10-20 09:15</div></div>
+        <div class="fs done"><div class="l">③ 上传批次</div><div class="d">3 个批次 · 2026-10-21 10:20</div></div>
+        <div class="fs"><div class="l">④ 等待页面生成</div><div class="d">由蒙牛业务方操作</div></div>
+      </div>
+
+      <div class="h5new" style="margin-top:6px">
+        <div>
+          <div class="st" style="margin-top:0">② 上传计划</div>
+          <div class="drop"><b>点击或拖拽上传计划表</b>支持 xlsx / csv，单文件 ≤20MB<span class="sm">表头须与模板完全一致，不可增删字段</span></div>
+          <div class="file"><span class="ic">XLS</span><span class="nm">双节常温奶满减_计划_20261020.xlsx<small>3 条计划 · 已通过校验 · 2026-10-20 09:15</small></span><button class="btn btn-o btn-xs">查看</button></div>
+          <div class="vres ok"><span class="ic">✓</span><span class="bd"><b>校验通过</b>计划 ID 唯一、金额合计 ¥340,000 未超核销预算</span></div>
+          <div class="vres warn"><span class="ic">!</span><span class="bd"><b>金额校验通过</b>合计 ¥340,000，未超核销预算</span></div>
+        </div>
+        <div>
+          <div class="st" style="margin-top:0">③ 上传批次</div>
+          <div class="drop"><b>点击或拖拽上传批次表</b>支持 xlsx / csv，单文件 ≤20MB<span class="sm">必须包含「批次编码」与「计划 ID」两列，用于建立对应关系</span></div>
+          <div class="file"><span class="ic">XLS</span><span class="nm">双节常温奶满减_批次_20261021.xlsx<small>3 条批次 · 一一对应校验通过 · 2026-10-21 10:20</small></span><button class="btn btn-o btn-xs">查看</button></div>
+          <div class="vres ok"><span class="ic">✓</span><span class="bd"><b>一一对应校验通过</b>3 条计划各有 1 个批次，无重复绑定、无孤儿批次</span></div>
+          <div class="vres warn"><span class="ic">!</span><span class="bd"><b>券信息按回传入库</b>批次有效期 2026-12-30 起，与计划一致；平台不做券规则比对</span></div>
+
+          <div class="st" style="margin-top:18px">④ 同步核销订单</div>
+          <div class="drop"><b>点击或拖拽上传核销订单</b>支持 xlsx / csv，单文件 ≤20MB<span class="sm">必须包含「批次编码」列，一条订单只能归属一个批次</span></div>
+          <div class="file"><span class="ic">XLS</span><span class="nm">双节常温奶满减_核销订单_20261021.xlsx<small>12,428 条订单 · 3 个批次均已归属 · 2026-10-21 10:25</small></span><button class="btn btn-o btn-xs">查看</button></div>
+          <div class="vres ok"><span class="ic">✓</span><span class="bd"><b>批次归属校验通过</b>全部订单都能对上已回传的 3 个批次，无孤儿订单、无重复归属</span></div>
+        </div>
+      </div>
+
+      <div class="note"><b>服务商可见范围：</b>活动名称与 ID、周期、核销预算（用于配券）、机制附件、计划与批次数据、校验结果。<b>不可见：</b>内部审批意见与审批人、其他服务商的活动、其他 BU 的数据。</div>
+    </div>
+  </div>
+</div></main>
+  </div>
+</div>
+
+<!-- ===================== 浮层容器 ===================== -->
+<!-- 抽屉、浮层由 js/components/*.js 在启动时注入到这里 -->
+<div id="layerRoot"><div class="mask" id="mask" onclick="closeDrawer()"></div><div class="drawer" id="dw-imp" style="width:840px">
+  <div class="dw-h">
+    <h3 id="impTitle">导入零售商 / 门店名单</h3>
+    <span class="dw-x" onclick="closeDrawer()">×</span>
+  </div>
+  <div class="dw-b">
+
+    <div class="note b" id="impHint" style="margin-top:0"></div>
+
+    <div class="imp-drop">
+      <div class="imp-drop-l">
+        <b>选择文件导入</b>
+        <small>支持 .csv / .txt（UTF-8），单次建议不超过 5,000 行</small>
+      </div>
+      <div class="imp-drop-r">
+        <input type="file" id="impFile" accept=".csv,text/csv,.txt" onchange="impRead(this)">
+        <button class="btn btn-o btn-xs" type="button" onclick="impTpl()">下载导入模板</button>
+        <button class="btn btn-g btn-xs" type="button" onclick="impDemo()">填入示例数据</button>
+        <button class="btn btn-g btn-xs" type="button" onclick="impClear()">清空</button>
+      </div>
+    </div>
+
+    <div class="psec"><h4>导入预览</h4><span class="psec-r" id="impCnt">尚未选择文件</span></div>
+    <div id="impPreview" class="imp-preview"></div>
+  </div>
+  <div class="dw-f">
+    <div class="lft">异常行导入时自动跳过，可修正后重新导入</div>
+    <div class="rgt">
+      <button class="btn btn-g" onclick="impCancel()">取消</button>
+      <button class="btn btn-p" id="impOkBtn" onclick="impOk()" disabled="">导入</button>
+    </div>
+  </div>
+</div><div class="drawer" id="dw-plannew" style="width:860px">
+  <div class="dw-h">
+    <h3 id="pnTitle">创建活动计划 <span class="sub">项目：双节常温奶满减 · MN-WX-202612-0041</span></h3>
+    <span class="dw-x" onclick="closeDrawer()">×</span>
+  </div>
+  <div class="dw-b">
+
+    <div class="note b" style="margin-top:0">
+      <b>审批通过后补充：</b>券名称、文案等细节在本计划内补齐。机制、起止时间、活动零售商、活动商品都在这里填报，创建项目时不填写。
+    </div>
+
+    <!-- 一、计划基础信息 -->
+    <div class="psec"><h4>一、计划基础信息</h4></div>
+    <div class="fr">
+      <label>计划名称<em>*</em></label><input class="inp" id="pnName" placeholder="如：双节满减主推">
+    </div>
+    <div class="fr">
+      <label>机制<em>*</em></label><input class="inp" id="pnMech" placeholder="如：常温奶满 99 减 15">
+    </div>
+    <div class="fg c2">
+      <div class="fr"><label>开始时间<em>*</em></label><input class="inp" id="pnStart" type="date" value="2026-12-20"></div>
+      <div class="fr"><label>结束时间<em>*</em></label><input class="inp" id="pnEnd" type="date" value="2027-01-05"></div>
+    </div>
+
+    <!-- 二、零售商明细 -->
+    <div class="psec"><h4>二、零售商 / 门店明细</h4><span class="psec-r"><b id="pnRetCnt">0</b> 条</span></div>
+    <table class="bt" style="table-layout:fixed">
+      <thead><tr>
+        <th style="width:4%">#</th>
+        <th style="width:17%">零售商名称</th>
+        <th style="width:28%">门店名称</th>
+        <th style="width:9%">省份</th>
+        <th style="width:9%">城市</th>
+        <th style="width:22%">微信商户号</th>
+        <th style="width:11%">操作</th>
+      </tr></thead>
+      <tbody id="pnRetBody"><tr><td colspan="7" class="empty-row">尚未导入零售商 / 门店</td></tr></tbody>
+    </table>
+    <div class="imp-row" onclick="openImp('ret')">
+      <span class="ic">⇪</span> 导入零售商门店名单
+      <span class="hint">零售商名称 / 门店名称 / 省份 / 城市 / 微信商户号</span>
+    </div>
+    <div class="note" id="pnMchTip" style="margin-top:10px">门店微信商户号可空，由服务商提报时补充</div>
+
+    <!-- 三、商品明细 -->
+    <div class="psec"><h4>三、活动商品明细</h4><span class="psec-r"><b id="pnSkuCnt">0</b> 条</span></div>
+    <table class="bt" style="table-layout:fixed">
+      <thead><tr>
+        <th style="width:5%">#</th>
+        <th style="width:24%">69码或店内码</th>
+        <th style="width:44%">商品名称</th>
+        <th style="width:18%">店内码所属零售商</th>
+        <th style="width:9%">操作</th>
+      </tr></thead>
+      <tbody id="pnSkuBody"><tr><td colspan="5" class="empty-row">尚未导入商品</td></tr></tbody>
+    </table>
+    <div class="imp-row" onclick="openImp('sku')">
+      <span class="ic">⇪</span> 导入商品明细
+      <span class="hint">69码或店内码 / 商品名称 / 店内码所属零售商</span>
+    </div>
+
+    <!-- 四、预算与优惠发放规则 -->
+    <div class="psec"><h4>四、预算与优惠发放规则</h4></div>
+    <div class="fg c2">
+      <div class="fr"><label>计划预算（元）<em>*</em></label><input class="inp" id="pnBudget" value="0" oninput="pnSum()"><div class="mut" style="font-size:11.6px;margin-top:4px">独立填写，不随零售商明细变动</div></div>
+      <div class="fr"><label>发放数量（张）<em>*</em></label><input class="inp" id="pnQty" value="0"></div>
+      <div class="fr"><label>券面额（元）<em>*</em></label><input class="inp" id="pnFace" value="0"></div>
+      <div class="fr"><label>使用门槛（元）<em>*</em></label><input class="inp" id="pnThr" value="0"></div>
+      <div class="fr"><label>领取限制</label><input class="inp" id="pnLimit" value="每人限领 2 张"></div>
+      <div class="fr"><label>券有效期</label><input class="inp" id="pnValid" value="随批次有效期"></div>
+    </div>
+
+  </div>
+  <div class="dw-f">
+    <div class="lft">门店 <b id="pnFRet">0</b> 条 · 商品 <b id="pnFSku">0</b> 条 · 带 <span style="color:var(--red)">*</span> 为必填</div>
+    <div class="rgt">
+      <button class="btn btn-g" onclick="closeDrawer()">取消</button>
+      <button class="btn btn-o" onclick="pnSave(true)">保存并继续创建</button>
+      <button class="btn btn-p" onclick="pnSave(false)">保存</button>
+    </div>
+  </div>
+</div><div class="drawer" id="dw-pdetail" style="width:780px">
+  <div class="dw-h">
+    <h3 id="pdTitle">计划与批次明细</h3>
+    <span class="dw-x" onclick="closeDrawer()">×</span>
+  </div>
+  <div class="dw-b" id="pdBody"></div>
+  <div class="dw-f">
+    <div class="lft">计划与批次一一对应，批次不可拆分或合并</div>
+    <div class="rgt"><button class="btn btn-g" onclick="closeDrawer()">关闭</button></div>
+  </div>
+</div><div class="drawer dw-batch" id="dw-batch">
+  <div class="dw-h">
+    <h3 id="batTitle">补充批次信息</h3>
+    <span class="dw-x" onclick="closeDrawer()">×</span>
+  </div>
+  <div class="dw-b">
+    <div class="bat-grid">
+      <div class="bat-form">
+        <div class="psec"><h4>一、批次必填字段</h4><span class="psec-r">对标微信支付后台</span></div>
+
+        <div class="fr">
+          <label>券名称<em>*</em></label>
+          <input class="inp" id="bfName" maxlength="20" oninput="batchPreview()" placeholder="如：双节满减券">
+          <div class="fld-hint"><span id="bfNameLen" class="mut">0 / 9 个汉字</span> · 例：双节满减券（不超过 9 个汉字，超长商户平台直接拒绝）</div>
+        </div>
+
+        <div class="fr">
+          <label>批次号</label>
+          <input class="inp" id="bfBatNo" readonly="" placeholder="待服务商上传" style="background:var(--bg-soft);color:var(--ink-60)">
+          <div class="fld-hint">由服务商在微信支付后台生成后回传，创建人不用填写</div>
+        </div>
+
+        <div class="fr">
+          <label>券类型</label>
+          <div class="locked"><b>满减券</b>　一期仅支持满减</div>
+          <div class="fld-hint">例：满 99 减 15</div>
+        </div>
+
+        <div class="fg c2">
+          <div class="fr">
+            <label>券面额（元）<em>*</em></label>
+            <input class="inp" id="bfFace" type="number" min="1" oninput="batchPreview()" placeholder="15">
+            <div class="fld-hint">例：15　即为消费者实际抵扣金额</div>
+          </div>
+          <div class="fr">
+            <label>使用门槛（元）<em>*</em></label>
+            <input class="inp" id="bfThr" type="number" min="1" oninput="batchPreview()" placeholder="99">
+            <div class="fld-hint">例：99　订单满 99 元可用，必须大于面额</div>
+          </div>
+        </div>
+
+        <div class="fg c2">
+          <div class="fr">
+            <label>可用开始时间<em>*</em></label>
+            <input class="inp" id="bfStart" type="date" onchange="batchPreview()">
+          </div>
+          <div class="fr">
+            <label>可用结束时间<em>*</em></label>
+            <input class="inp" id="bfEnd" type="date" onchange="batchPreview()">
+          </div>
+        </div>
+        <div class="fld-hint" id="bfSpan"></div>
+
+        <div class="psec"><h4>二、发放控制</h4></div>
+        <div class="fg c2">
+          <div class="fr">
+            <label>发放总上限（张）<em>*</em></label>
+            <input class="inp" id="bfCap" type="number" min="1" placeholder="9000">
+            <div class="fld-hint">例：9000</div>
+          </div>
+          <div class="fr">
+            <label>单人可领个数<em>*</em></label>
+            <input class="inp" id="bfUser" type="number" min="1" max="100" placeholder="2">
+            <div class="fld-hint">例：2　取值 1 ~ 100</div>
+          </div>
+        </div>
+
+        <div class="fr">
+          <label>使用说明（消费者可见）<em>*</em></label>
+          <textarea class="inp" id="bfDesc" rows="3" oninput="batchPreview()" maxlength="200"></textarea>
+          <div class="fld-hint"><span id="bfDescLen" class="mut">0 / 100 字</span> · 例：限指定商品使用，不可兑换现金，可在微信支付卡包查看。</div>
+        </div>
+
+      </div>
+
+      <div class="bat-side">
+        <div class="psec"><h4>字段示例图</h4><span class="psec-r">消费者卡包</span></div>
+        <div id="batPreviewCard"></div>
+      </div>
+    </div>
+
+    <!-- 三、活动零售商明细 -->
+    <div class="psec" style="margin-top:22px"><h4>三、活动零售商明细</h4><span class="psec-r"><b id="bfRetCnt">0</b> 条</span></div>
+    <table class="bt mini" style="table-layout:fixed">
+      <thead><tr>
+        <th style="width:5%">#</th>
+        <th style="width:17%">零售商名称</th>
+        <th style="width:28%">门店名称</th>
+        <th style="width:9%">省份</th>
+        <th style="width:9%">城市</th>
+        <th style="width:22%">微信商户号</th>
+        <th style="width:10%">操作</th>
+      </tr></thead>
+      <tbody id="bfRetBody"><tr><td colspan="7" class="empty-row">尚未导入零售商 / 门店</td></tr></tbody>
+    </table>
+    <div class="imp-row" onclick="openImp('ret')">
+      <span class="ic">⇪</span> 导入零售商门店名单
+      <span class="hint">零售商名称 / 门店名称 / 省份 / 城市 / 微信商户号</span>
+    </div>
+    <div class="note" id="bfMchTip" style="margin-top:10px">门店微信商户号可空，由服务商提报时补充</div>
+
+    <!-- 四、活动商品明细 -->
+    <div class="psec" style="margin-top:22px"><h4>四、活动商品明细</h4><span class="psec-r"><b id="bfSkuCnt">0</b> 条</span></div>
+    <table class="bt mini" style="table-layout:fixed">
+      <thead><tr>
+        <th style="width:5%">#</th>
+        <th style="width:24%">69码或店内码</th>
+        <th style="width:44%">商品名称</th>
+        <th style="width:18%">店内码所属零售商</th>
+        <th style="width:9%">操作</th>
+      </tr></thead>
+      <tbody id="bfSkuBody"><tr><td colspan="5" class="empty-row">尚未导入商品</td></tr></tbody>
+    </table>
+    <div class="imp-row" onclick="openImp('sku')">
+      <span class="ic">⇪</span> 导入商品明细
+      <span class="hint">69码或店内码 / 商品名称 / 店内码所属零售商</span>
+    </div>
+  </div>
+  <div class="dw-f">
+    <div class="rgt" style="margin-left:auto">
+      <button class="btn btn-g" onclick="closeDrawer()">取消</button>
+      <button class="btn btn-p" onclick="batchSave()">保存批次信息</button>
+    </div>
+  </div>
+</div><div class="drawer dw-qr" id="dw-qr">
+  <div class="dw-h">
+    <h3>分渠道二维码 <span class="sub" id="qrPageName">领券页面</span></h3>
+    <div class="flex" style="gap:10px">
+      <span class="tg tg-g" id="qrStatus">启用中</span>
+      <span class="dw-x" onclick="closeDrawer()">×</span>
+    </div>
+  </div>
+  <div class="dw-b">
+
+    <div class="note g" style="margin-top:0">
+      <b>一个活动可以有多个码。</b>同一活动按分发渠道（线下物料 / 公众号 / 私域）分别生成二维码，用于分渠道统计发券量；同一渠道下还可以按物料位置建多枚码。
+    </div>
+
+    <div class="qwrap2">
+      <div class="qrc-list" id="qrCodeList"></div>
+
+      <div class="qrc-main">
+        <div class="qrc-qr">
+          <div class="qr"><svg viewBox="0 0 100 100" id="qrSvg"></svg></div>
+          <div class="qsdim" id="qrDimv">300 × 300 px</div>
+          <div class="qsz" id="qrSz">
+            <span class="on" data-px="300" onclick="qrSize(this,300)">300</span>
+            <span data-px="600" onclick="qrSize(this,600)">600</span>
+            <span data-px="1000" onclick="qrSize(this,1000)">1000</span>
+          </div>
+          <div class="flex" style="gap:6px;margin-top:10px;justify-content:center">
+            <button class="btn btn-o btn-xs" onclick="qrDl('PNG')">下载 PNG</button>
+            <button class="btn btn-g btn-xs" onclick="qrDl('SVG')">下载 SVG</button>
+          </div>
+        </div>
+
+        <div class="qrc-info">
+          <div class="qinfo">
+            <div class="qi"><span class="k">二维码编号</span><span class="v"><b id="qrCodeName">—</b></span></div>
+            <div class="qi"><span class="k">所属项目</span><span class="v" id="qrProj"></span></div>
+            <div class="qi"><span class="k">活动周期</span><span class="v" id="qrPeriod"></span></div>
+            <div class="qi"><span class="k">跳转链接</span><span class="v" id="qrLink"></span></div>
+            <div class="qi"><span class="k">命名规则</span><span class="v"><span class="sx-mono">MN-&lt;活动ID&gt;-&lt;渠道码&gt;-&lt;序号&gt;</span>　渠道码：OFF 线下物料 / MP 公众号 / PRI 私域</span></div>
+          </div>
+          <div class="psec"><h4>本码数据</h4></div>
+          <div id="qrCodeData"></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+  <div class="dw-f">
+    <div class="lft">扫码 → 领取 → 核销按「码」维度留痕，可回溯到具体物料</div>
+    <div class="rgt"><button class="btn btn-g" onclick="closeDrawer()">关闭</button></div>
+  </div>
+</div><div class="drawer" id="dw-pgdata" style="width:520px">
+  <div class="dw-h">
+    <h3>领券页面数据 <span class="sub" id="pgDataName">—</span></h3>
+    <span class="dw-x" onclick="closeDrawer()">×</span>
+  </div>
+  <div class="dw-b">
+    <div class="pdm">
+      <div class="pdm-i"><span class="k">PV</span><span class="v" id="pgdPv">—</span><span class="d">页面访问次数</span></div>
+      <div class="pdm-i"><span class="k">领取</span><span class="v" id="pgdGet">—</span><span class="d">成功领券张数</span></div>
+      <div class="pdm-i"><span class="k">核销</span><span class="v" id="pgdUse">—</span><span class="d">已核销张数</span></div>
+    </div>
+    <table class="bt mini" style="table-layout:fixed;margin-top:16px">
+      <thead><tr><th style="width:44%">指标</th><th style="text-align:right">数值</th><th style="width:30%;text-align:right">转化率</th></tr></thead>
+      <tbody>
+        <tr><td>PV（页面访问）</td><td class="num" id="pgdPv2">—</td><td class="num muted">—</td></tr>
+        <tr><td>领取（领券成功）</td><td class="num" id="pgdGet2">—</td><td class="num" id="pgdR1">—</td></tr>
+        <tr><td>核销（已使用）</td><td class="num" id="pgdUse2">—</td><td class="num" id="pgdR2">—</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="dw-f">
+    <div class="lft">数据 T+1 更新，口径与数据看板一致</div>
+    <div class="rgt">
+      <button class="btn btn-g" onclick="closeDrawer()">关闭</button>
+      <button class="btn btn-p" onclick="closeDrawer(); go('v-board', null)">去数据看板</button>
+    </div>
+  </div>
+</div><div class="drawer" id="dw-flow" style="width:760px">
+  <div class="dw-h">
+    <h3>项目状态流转 <span class="sub">六个状态与各自可执行动作</span></h3>
+    <span class="dw-x" onclick="closeDrawer()">×</span>
+  </div>
+  <div class="dw-b">
+    <div class="stmap" style="margin-top:0">
+        <div class="nd gray"><span class="ar">›</span><div class="nm"><span class="no">01</span>草稿</div><div class="ds">含被驳回回退<br>可编辑、可删除、可提审</div></div>
+        <div class="nd gray"><span class="ar">›</span><div class="nm"><span class="no">02</span>待审批</div><div class="ds">已提交，锁编辑<br>可撤回（回到草稿）</div></div>
+        <div class="nd"><span class="ar">›</span><div class="nm"><span class="no">03</span>待推送服务商</div><div class="ds">审批已通过<br>补计划明细 → 推送（邮件）/ 终止</div></div>
+        <div class="nd"><span class="ar">›</span><div class="nm"><span class="no">04</span>待服务商确认</div><div class="ds">邮件已送达<br>可重发 / 可终止</div></div>
+        <div class="nd"><span class="ar">›</span><div class="nm"><span class="no">05</span>执行中</div><div class="ds">服务商已确认<br>建计划·批次·页面，可终止<sup>*</sup></div></div>
+        <div class="nd red"><div class="nm"><span class="no">06</span>已终止</div><div class="ds">终态，停发券<br>不可恢复，仅可重建</div></div>
+      </div>
+    <table class="bt mini" style="table-layout:fixed;margin-top:6px">
+      <thead><tr>
+        <th style="width:22%">状态</th><th style="width:40%">含义</th><th>可执行动作</th>
+      </tr></thead>
+      <tbody>
+        <tr><td><b>草稿</b></td><td>含被驳回回退；仅本人与同部门可见，不计入待办</td><td>编辑、删除、提交审批</td></tr>
+        <tr><td><b>待审批</b></td><td>已提交，锁编辑；等待数字化中心审批结论</td><td>撤回（回到草稿）</td></tr>
+        <tr><td><b>待推送服务商</b></td><td>审批已通过；计划明细由创建人在此状态补充（审批人看不到计划明细）</td><td>补充计划明细、推送（邮件）、终止</td></tr>
+        <tr><td><b>待服务商确认</b></td><td>邮件已送达，令牌有效期 7 天；未确认前不计入执行</td><td>重发、复制链接、终止</td></tr>
+        <tr><td><b>执行中</b></td><td>服务商已确认，可建计划·批次·页面</td><td>建计划/批次/页面；批次产齐后不可终止</td></tr>
+        <tr><td><b>已终止</b></td><td>终态，停发券，不可恢复</td><td>仅可重建</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="dw-f">
+    <div class="lft">状态变更均由系统按动作自动推进，不支持手工改状态</div>
+    <div class="rgt"><button class="btn btn-p" onclick="closeDrawer()">知道了</button></div>
+  </div>
+</div><div class="drawer" id="dw-proj" style="width:1040px">
+  <div class="dw-h">
+    <h3 id="projDwTitle">项目详情</h3>
+    <span class="dw-x" onclick="closeDrawer()">×</span>
+  </div>
+  <div class="dw-b" id="projDwBody"></div>
+  <div class="dw-f">
+    <div class="lft">字段与创建项目一致</div>
+    <div class="rgt"><button class="btn btn-g" onclick="closeDrawer()">关闭</button></div>
+  </div>
+</div><div class="drawer" id="dw-vs" style="width:600px">
+  <div class="dw-h">
+    <h3 id="vsTitle">新增服务商</h3>
+    <span class="dw-x" onclick="closeDrawer()">×</span>
+  </div>
+  <div class="dw-b">
+    <div class="note b" style="margin-top:0">
+      <b>一个服务商只有一个对接联系人 / 邮箱。</b>系统只记录对外对接人，服务商内部由谁跟进由其自行分配，不在本系统体现。
+    </div>
+
+    <div class="fr">
+      <label>服务商名称<em>*</em></label>
+      <input class="inp" id="vsName" placeholder="营业执照上的公司全称">
+    </div>
+
+    <div class="fr">
+      <label>服务商编码</label>
+      <input class="inp" id="vsCode" readonly="" style="background:var(--bg-soft);color:var(--ink-60)">
+    </div>
+
+    <div class="psec"><h4>对接联系人</h4><span class="psec-r">唯一</span></div>
+    <div class="fg c2">
+      <div class="fr">
+        <label>联系人姓名<em>*</em></label>
+        <input class="inp" id="vsContact" placeholder="如：胡文志">
+      </div>
+      <div class="fr">
+        <label>对接邮箱<em>*</em></label>
+        <input class="inp" id="vsEmail" type="email" placeholder="huwz@zhishi.com">
+        <div class="fld-hint">审批通过后，活动链接与推送邮件只发送到该邮箱</div>
+      </div>
+    </div>
+
+    <div class="fr">
+      <label>备注</label>
+      <textarea class="inp" id="vsRemark" rows="3" placeholder="如：承接区域、结算方式、SLA 要求等"></textarea>
+    </div>
+  </div>
+  <div class="dw-f">
+    <div class="lft">当前 <b>5</b> 家 · 每个服务商只维护一个对接邮箱</div>
+    <div class="rgt">
+      <button class="btn btn-g" onclick="closeDrawer()">取消</button>
+      <button class="btn btn-p" onclick="vsSave()">保存</button>
+    </div>
+  </div>
+</div><div class="drawer" id="dw-brief" style="width:960px">
+  <div class="dw-h">
+    <h3 id="briefDwTitle">明细</h3>
+    <span class="dw-x" onclick="closeDrawer()">×</span>
+  </div>
+  <div class="dw-b">
+    <div class="note b" id="briefDwTip" style="margin-top:0">明细字段与「名单导入」模板一致</div>
+
+    <div id="briefDwBody" style="margin-top:12px"></div>
+  </div>
+  <div class="dw-f">
+    <div class="lft">支持「下载模板 → 填写 → 导入文件」</div>
+    <div class="rgt">
+      <input type="file" id="briefImpFile" accept=".csv,.txt" style="display:none" onchange="briefImpFile(this)">
+      <button class="btn btn-g btn-xs" type="button" onclick="briefImpTpl()">下载模板</button>
+      <button class="btn btn-g btn-xs" type="button" onclick="document.getElementById('briefImpFile').click()">导入文件</button>
+      <button class="btn btn-o" type="button" onclick="briefItemAdd()">＋ 添加一行</button>
+      <button class="btn btn-g" type="button" onclick="closeDrawer()">取消</button>
+      <button class="btn btn-p" type="button" onclick="briefItemDone()">完成</button>
+    </div>
+  </div>
+</div><div class="drawer" id="dw-page">
+  <div class="dw-h">
+    <h3>新建领券页面 <span class="sub">项目：双节常温奶满减 · MN-WX-202612-0041</span></h3>
+    <div class="flex" style="gap:14px">
+      <div class="dw-step" id="dwStep">
+        <span class="sp on"><i>1</i>填基础信息</span><span style="color:#C9D8D2">›</span>
+        <span class="sp"><i>2</i>选批次</span><span style="color:#C9D8D2">›</span>
+        <span class="sp"><i>3</i>外观与渠道</span><span style="color:#C9D8D2">›</span>
+        <span class="sp"><i>4</i>预览与生成</span>
+      </div>
+      <span class="dw-x" onclick="closeDrawer()">×</span>
+    </div>
+  </div>
+  <div class="dw-b">
+    
+
+    <div class="fg c2">
+      <div class="fr"><label>页面名称<em>*</em></label>
+        <input class="inp" id="pgName" value="双节主推页（常温奶）" placeholder="如：双节主推页（常温奶）" oninput="syncPreview()">
+        <div class="mut" style="font-size:11.6px;margin-top:4px">建议带场景或渠道，同一项目内名称不可重复，最长 30 字</div>
+      </div>
+      <div class="fr"><label>页面归属</label>
+        <div class="locked" style="padding:7px 11px;font-size:12.4px;line-height:1.6"><span class="lk" style="margin-right:6px">继承项目</span>双节常温奶满减 · MN-WX-202612-0041</div>
+        <div class="mut" style="font-size:11.6px;margin-top:4px">归属随项目锁定，不可修改；要挂到其他项目请从该项目进入</div>
+      </div>
+    </div>
+
+    <div class="fr"><label>页面有效期<em>*</em></label>
+      <div class="flex" style="gap:8px;max-width:420px"><input class="inp" value="2026-12-20" style="flex:1"><span class="muted">至</span><input class="inp" value="2027-01-05" style="flex:1"></div>
+      <div class="mut" style="font-size:11.6px;margin-top:4px">留空则跟随批次有效期；超出批次有效期的部分自动截断。页面到期自动下架，二维码扫开显示「活动已结束」</div>
+    </div>
+
+    <div class="fr"><label>勾选券批次<em>*</em>（只能选本项目批次，勾选顺序即券卡展示顺序）</label>
+      <div class="bfilter">
+        <select class="inp" id="bFStatus" onchange="renderBlist()" style="max-width:104px">
+          <option value="">全部状态</option>
+          <option value="可建页">可建页</option>
+          <option value="已占用">已占用</option>
+        </select>
+        <select class="inp" id="bFPlan" onchange="renderBlist()" style="max-width:128px">
+          <option value="">全部计划</option>
+          <option value="双节满减主推">双节满减主推</option>
+          <option value="跨年场景承接">跨年场景承接</option>
+          <option value="高端礼盒拉新">高端礼盒拉新</option>
+        </select>
+        <input class="inp" id="bFKw" placeholder="批次编码 / 标题" style="flex:1;min-width:120px" oninput="renderBlist()">
+      </div>
+      <div class="tw scroll" style="border:1px solid var(--line2);border-radius:7px">
+        <table class="bt mini blist-tbl" style="table-layout:fixed">
+          <thead><tr>
+            <th style="width:34px"></th>
+            <th style="width:82px">批次编码</th>
+            <th style="width:110px">标题</th>
+            <th>机制</th>
+            <th style="width:80px">开始日期</th>
+            <th style="width:80px">结束日期</th>
+            <th style="width:66px">状态</th>
+            <th style="width:68px">核销上限</th>
+            <th style="width:66px">累计发放</th>
+            <th style="width:62px">渠道</th>
+          </tr></thead>
+          <tbody id="blist"><tr class="b-row" onclick="bToggleRow(event,this,'23020101')" data-id="23020101" data-amt="15" data-cond="满 99 元可用" data-name="双节满减主推" data-exp="2026-12-20 至 2026-12-27 有效"><td><label class="chk"><input type="checkbox" onchange="bToggle(this,'23020101')"></label></td><td class="sx-mono" style="font-size:11.8px">23020101</td><td>双节满减主推</td><td class="muted" style="font-size:11.8px">满99元减15元</td><td class="muted" style="font-size:11.6px">2026-12-20</td><td class="muted" style="font-size:11.6px">2026-12-27</td><td><span class="tg tg-g xs">可建页</span></td><td class="num">9,000</td><td class="num">6,320</td><td class="muted" style="font-size:11.6px">扫码</td></tr><tr class="b-row" onclick="bToggleRow(event,this,'23020102')" data-id="23020102" data-amt="15" data-cond="满 99 元可用" data-name="跨年场景承接" data-exp="2026-12-28 至 2027-01-05 有效"><td><label class="chk"><input type="checkbox" onchange="bToggle(this,'23020102')"></label></td><td class="sx-mono" style="font-size:11.8px">23020102</td><td>跨年场景承接</td><td class="muted" style="font-size:11.8px">满99元减15元</td><td class="muted" style="font-size:11.6px">2026-12-28</td><td class="muted" style="font-size:11.6px">2027-01-05</td><td><span class="tg tg-g xs">可建页</span></td><td class="num">7,000</td><td class="num">3,610</td><td class="muted" style="font-size:11.6px">扫码</td></tr><tr class="b-row" onclick="bToggleRow(event,this,'23020103')" data-id="23020103" data-amt="20" data-cond="满 129 元可用" data-name="高端礼盒拉新" data-exp="2026-12-20 至 2027-01-05 有效"><td><label class="chk"><input type="checkbox" onchange="bToggle(this,'23020103')"></label></td><td class="sx-mono" style="font-size:11.8px">23020103</td><td>高端礼盒拉新</td><td class="muted" style="font-size:11.8px">满129元减20元</td><td class="muted" style="font-size:11.6px">2026-12-20</td><td class="muted" style="font-size:11.6px">2027-01-05</td><td><span class="tg tg-g xs">可建页</span></td><td class="num">5,000</td><td class="num">2,498</td><td class="muted" style="font-size:11.6px">扫码</td></tr></tbody>
+        </table>
+      </div>
+      <div class="pager" style="margin:9px 0 0;padding:0;border:none;background:none">
+        <div class="pg-info">共 <b id="bTotal">3</b> 个批次，每页 15 条</div>
+        <div class="pg-btns" id="bPager"><button class="pg dis" onclick="bGo(0)">上一页</button><button class="pg on" onclick="bGo(1)">1</button><button class="pg dis" onclick="bGo(2)">下一页</button></div>
+      </div>
+      <div class="bcnt">
+        已选 <b id="selCnt">0</b> 个批次
+        <span class="warn" id="selWarn" style="display:none">· 超过 6 个批次会明显影响领取体验，建议拆分页面</span>
+        <span>· 建议单页不超过 6 个批次</span>
+      </div>
+      <div class="mut" style="font-size:11.8px;margin-top:7px;line-height:1.75">置灰说明：<b>已占用</b> = 该批次已挂在其他启用中的页面上，同一批次只能挂一个启用页面（停用原页面后释放）。</div>
+    </div>
+
+    <div class="fr"><label>券卡展示顺序</label>
+      <div class="sortlist" id="sortList"><div class="si"><span>未勾选批次</span></div></div>
+      <div class="mut" style="font-size:11.6px;margin-top:5px">默认按勾选顺序排列；高面额券建议置顶，提升点击率</div>
+    </div>
+
+    <div class="fg c2">
+      <div class="fr"><label>分发渠道（仅记录，用于归因）</label>
+        <div style="display:flex;flex-direction:column;gap:3px">
+          <label class="chk"><input type="checkbox" checked="">线下物料</label>
+          <label class="chk"><input type="checkbox" checked="">公众号</label>
+          <label class="chk"><input type="checkbox">私域</label>
+        </div>
+        <div class="mut" style="font-size:11.6px;margin-top:4px">同一页面多渠到投放，数据在看板合并统计；带参链接按渠道单独归因</div>
+      </div>
+      <div class="fr"><label>页面背景</label>
+        <div class="bgpick">
+          <div class="g" onclick="pickBg(this,'')"><i></i><span>默认样式​</span></div>
+          
+          
+          <div class="g up on" onclick="pickBg(this,'')"><i style="background:#FAFCFB;border-bottom:1px dashed var(--line);display:flex;align-items:center;justify-content:center;color:var(--ink4);font-size:16px">＋</i><span style="white-space: pre-wrap;">上传背景图​</span></div>
+        </div>
+        <div class="mut" style="font-size:11.6px;margin-top:5px">仅可换背景图（建议 750×420px，≤500KB），券卡布局与文案固定，不可拖拽</div>
+      </div>
+    </div>
+
+    <div class="st" style="margin:18px 0 10px">消费者端预览 <span class="sub">随勾选实时联动</span></div>
+    <div class="stg">
+      <div class="phone">
+        <div class="notch"></div>
+        <div class="scr">
+          <div class="bg " id="pvBg">
+            <em id="pvTitle">双节主推页·常温奶</em>
+            <small>活动时间 2026.12.20 - 2027.01.05</small>
+          </div>
+          <div class="rulebar"><span>每人每种券限领 1 张</span><span>先到先得</span></div>
+          <div class="bd2">
+            <div class="ph" id="pvHint">请先勾选批次</div>
+            <div id="pvList"></div>
+          </div>
+          <div class="cfoot">券由微信支付发放，领取后可在微信卡包查看<br>活动最终解释权归主办方所有</div>
+        </div>
+        <div class="statelab">预览态：未领取</div>
+      </div>
+      <div class="rules" id="stateDescDrawer">
+        <div class="r"><span class="k">i</span><div><b>保存草稿：</b>校验只做「页面名称必填」，可先存后补；草稿占用的批次不做锁定，他人仍可建页。</div></div>
+        <div class="r"><span class="k">ii</span><div><b>生成页面：</b>至少勾选 1 个批次、有效期不早于批次开始日；生成后页面状态为「未启用」，需手动启用才对外可领。</div></div>
+        <div class="r"><span class="k">iii</span><div><b>启用：</b>启用时二次校验批次是否已被占用 / 是否失效，任一不通过则拒绝启用并提示具体批次；启用后批次即被锁定到本页面。</div></div>
+      </div>
+    </div>
+  </div>
+  <div class="dw-f">
+    <div class="lft">已选 <b id="selCnt2">0</b> 个批次 · 页面归属 <b>双节常温奶满减</b></div>
+    <div class="rgt">
+      <button class="btn btn-g" onclick="closeDrawer()">取消</button>
+      <button class="btn btn-o" onclick="closeDrawer()">保存草稿</button>
+      <button class="btn btn-p" onclick="closeDrawer()">生成页面与二维码</button>
+    </div>
+  </div>
+</div><div class="drawer" id="dw-edit">
+  <div class="dw-h">
+    <h3>编辑领券页面 <span class="sub" id="edSub">双节主推页（常温奶） · MN-WX-202612-0041</span></h3>
+    <div class="flex" style="gap:12px"><span class="tg tg-g" id="edStatus">启用中</span><span class="dw-x" onclick="closeDrawer()">×</span></div>
+  </div>
+  <div class="dw-b">
+    <div class="fg c2">
+      <div class="fr"><label>页面名称</label><input class="inp" id="edName" value="双节主推页（常温奶）"></div>
+      <div class="fr"><label>页面归属</label><div class="locked" style="padding:7px 11px;font-size:12.4px;line-height:1.6"><span class="lk" style="margin-right:6px">继承项目</span>双节常温奶满减 · MN-WX-202612-0041</div></div>
+    </div>
+    <div class="fr"><label>含券批次（锁定，不可修改）</label>
+      <div class="blist" id="edBatch"><div class="bi lock" data-id="23020101"><label class="chk"><input type="checkbox" checked="" disabled=""></label><span class="id">23020101</span><span class="info">¥15 / 满 99 · 9,000 张<small>2026-12-20 ~ 2026-12-27</small></span><span class="rt"><span class="tg tg-n xs">已锁定</span></span></div><div class="bi lock" data-id="23020102"><label class="chk"><input type="checkbox" checked="" disabled=""></label><span class="id">23020102</span><span class="info">¥15 / 满 99 · 7,000 张<small>2026-12-28 ~ 2027-01-05</small></span><span class="rt"><span class="tg tg-n xs">已锁定</span></span></div></div>
+    </div>
+    <div class="fr"><label>页面背景</label>
+      <div class="bgpick">
+        <div class="g on"><i></i><span>默认样式​</span></div>
+        <div class="g"><i style="background:#FAFCFB;border-bottom:1px dashed var(--line)"></i><span style="white-space: pre-wrap;">上传背景图​</span></div>
+      </div>
+    </div>
+    <div class="fr"><label>分发渠道</label>
+      <div style="display:flex;flex-direction:column;gap:3px">
+        <label class="chk"><input type="checkbox" checked="">线下物料</label>
+        <label class="chk"><input type="checkbox" checked="">公众号</label>
+        <label class="chk"><input type="checkbox">私域</label>
+      </div>
+    </div>
+    <div class="st" style="margin:18px 0 10px">页面预览 <span class="sub">与消费者实际看到的一致</span></div>
+    <div class="stg">
+      <div class="phone">
+        <div class="notch"></div>
+        <div class="scr">
+          <div class="bg" id="edBg">
+            <em id="edTitle">双节主推页·常温奶</em>
+            <small>活动时间 2026.12.20 - 2027.01.05</small>
+          </div>
+          <div class="rulebar"><span>每人每种券限领 1 张</span><span>先到先得</span></div>
+          <div class="bd2">
+            <div class="ph">共 2 张券</div>
+            <div id="edList"><div class="cp"><div class="amt">¥<b>15</b></div><div class="mid"><b>双节常温奶满减券</b><small>满 99 元可用 · 12.20-12.27 有效</small></div><div class="btn2 ">立即领取</div></div><div class="cp"><div class="amt">¥<b>15</b></div><div class="mid"><b>双节常温奶满减券</b><small>满 99 元可用 · 12.28-01.05 有效</small></div><div class="btn2 ">立即领取</div></div></div>
+          </div>
+          <div class="cfoot">券由微信支付发放，领取后可在微信卡包查看<br>活动最终解释权归主办方所有</div>
+        </div>
+      </div>
+      <div class="rules" id="edInfo"><div class="r"><span class="k">·</span><div><b>含券批次：</b><span class="sx-mono">23020101、23020102</span>（共 2 个，锁定不可改）</div></div><div class="r"><span class="k">·</span><div><b>分发渠道：</b>线下物料、公众号</div></div><div class="r"><span class="k">·</span><div><b>页面链接：</b><span class="sx-mono">mn-act.cn/h5/g/7f3a2c</span></div></div><div class="r"><span class="k">·</span><div><b>有效期：</b>2026-12-20 ~ 2027-01-05</div></div></div>
+    </div>
+
+  </div>
+  <div class="dw-f">
+    <div class="lft">最近保存 2026-10-19 16:05</div>
+    <div class="rgt">
+      <button class="btn btn-g" onclick="closeDrawer()">取消</button>
+      <button class="btn btn-d" id="edStop" onclick="closeDrawer()">停用页面</button>
+      <button class="btn btn-d" id="edDel" style="display:none" onclick="closeDrawer()">删除草稿</button>
+      <button class="btn btn-p" onclick="closeDrawer()">保存</button>
+    </div>
+  </div>
+</div><div class="drawer" id="dw-role" style="width:560px">
+  <div class="dw-h">
+    <h3 id="roleDwTitle">角色配置</h3>
+    <span class="dw-x" onclick="closeDrawer()">×</span>
+  </div>
+  <div class="dw-b">
+    <div class="fr">
+      <label>数据范围</label>
+      <select class="inp" id="roleScope">
+        <option value="全量">全量</option>
+        <option value="全量（只读）">全量（只读）</option>
+        <option value="本级">本级</option>
+        <option value="本级及下级">本级及下级</option>
+      </select>
+      <div class="fld-hint">按组织架构收窄：本级及下级 = 本部门与其所有下级部门的数据</div>
+    </div>
+    <div class="psec"><h4>菜单权限</h4><span class="psec-r">勾选可访问的菜单</span></div>
+    <table class="bt mini" style="table-layout:fixed">
+      <thead><tr><th>菜单</th><th style="width:110px">启用</th></tr></thead>
+      <tbody id="roleMenuBody"></tbody>
+    </table>
+  </div>
+  <div class="dw-f">
+    <div class="lft">系统管理菜单不对业务角色开放</div>
+    <div class="rgt">
+      <button class="btn btn-g" onclick="closeDrawer()">取消</button>
+      <button class="btn btn-p" onclick="roleSave()">保存</button>
+    </div>
+  </div>
+</div></div>
+
+<noscript>
+  <p style="padding:24px">本页需要启用 JavaScript 才能正常显示。</p>
+</noscript>
+
+<!-- ---------- 核心 ---------- -->
+<script src="js/core/format.js"></script>
+<script src="js/core/drawer.js"></script>
+<script src="js/core/router.js"></script>
+
+<!-- ---------- 示例数据 ---------- -->
+<script src="js/data/vendors.js"></script>
+<script src="js/data/retailers.js"></script>
+<script src="js/data/products.js"></script>
+<script src="js/data/plans.js"></script>
+<script src="js/data/po.js"></script>
+<script src="js/data/coupon-pages.js"></script>
+<script src="js/data/qr.js"></script>
+<script src="js/data/projects.js"></script>
+<script src="js/data/roles.js"></script>
+<script src="js/data/dashboard.js"></script>
+
+<!-- ---------- 数据仓库 / 就绪计算 ---------- -->
+<script src="js/core/store.js"></script>
+<script src="js/core/readiness.js"></script>
+
+<!-- ---------- 共享组件（抽屉 / 浮层） ---------- -->
+<script src="js/components/import-drawer.js"></script>
+<script src="js/components/plan-drawer.js"></script>
+<script src="js/components/plan-list.js"></script>
+<script src="js/components/batch-drawer.js"></script>
+<script src="js/components/qr-drawer.js"></script>
+<script src="js/components/pagedata.js"></script>
+<script src="js/components/flow-drawer.js"></script>
+<script src="js/components/project-drawer.js"></script>
+<script src="js/components/vendor-drawer.js"></script>
+
+<!-- ---------- 业务模块（一个模块一个文件） ---------- -->
+<script src="js/pages/home.js"></script>
+<script src="js/pages/project-create.js"></script>
+<script src="js/pages/project-approve.js"></script>
+<script src="js/pages/project-manage.js"></script>
+<script src="js/pages/plan-batch.js"></script>
+<script src="js/pages/coupon-page.js"></script>
+<script src="js/pages/dashboard.js"></script>
+<script src="js/pages/system-admin.js"></script>
+<script src="js/pages/vendor-portal.js"></script>
+
+<!-- ---------- 业务流程动作 ---------- -->
+<script src="js/core/workflow.js"></script>
+
+<!-- ---------- 启动 ---------- -->
+<script src="js/app.js"></script>
+
+<script>
+setTimeout(function(){
+  var out=[];
+  function txt(e){ return e.textContent.replace(/\s+/g,' ').trim(); }
+  try{
+    go('v-approve');
+    out.push('还有状态页签='+(document.querySelectorAll('#v-approve .steps').length));
+    var sel=document.getElementById('apStat');
+    out.push('筛选项='+[].map.call(sel.options,function(o){return o.text+'='+o.value;}).join(',')+' 默认='+sel.value);
+    out.push('默认列表='+document.querySelectorAll('#apList .pcard').length+' 信息='+txt(document.getElementById('apInfo')));
+    sel.value='approved'; renderApproveList();
+    out.push('已通过='+document.querySelectorAll('#apList .pcard').length);
+    sel.value=''; renderApproveList();
+    out.push('全部='+document.querySelectorAll('#apList .pcard').length);
+    document.getElementById('apKw').value='年货'; renderApproveList();
+    out.push('关键字年货='+document.querySelectorAll('#apList .pcard').length+' 信息='+txt(document.getElementById('apInfo')));
+    apReset();
+    out.push('重置后状态='+sel.value+' 关键字='+document.getElementById('apKw').value+' 列表='+document.querySelectorAll('#apList .pcard').length);
+    out.push('徽标='+txt(document.getElementById('apCnt')));
+  }catch(e){ out.push('ERR '+e.message); }
+  var pre=document.createElement('pre'); pre.id='qaC2'; pre.textContent=out.join(String.fromCharCode(10)); document.body.appendChild(pre);
+},1500);
+</script>
+
+
+<pre id="qaC2">还有状态页签=0
+筛选项=待审批=pending,已通过=approved,已终止=stopped,全部= 默认=pending
+默认列表=1 信息=共 1 条，每页 15 条
+已通过=4
+全部=7
+关键字年货=1 信息=共 1 条，每页 15 条
+重置后状态=pending 关键字= 列表=1
+徽标=1</pre></body></html>

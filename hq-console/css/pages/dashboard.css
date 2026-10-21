@@ -1,0 +1,52 @@
+/* =============================================================================
+ * pages/dashboard.css — 数据看板
+ * 指标卡、折线、环形、条形、热力图与表格密度。
+ * ========================================================================== */
+
+.db-wrap{display:flex;flex-direction:column;gap:14px}
+.kpis{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}
+@media(max-width:1000px){.kpis{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:680px){.kpis{grid-template-columns:repeat(2,1fr)}}
+.kpi{background:#fff;border:1px solid var(--line);border-radius:var(--r);padding:12px 13px;box-shadow:var(--sh);min-width:0}
+.kpi .kl{font-size:12.2px;color:var(--ink3);display:flex;align-items:center;gap:5px;margin-bottom:6px}
+.kpi .kl .q{width:13px;height:13px;border-radius:50%;border:1px solid var(--ink4);color:var(--ink4); font-size:9px;line-height:11px;text-align:center;font-style:normal;flex:0 0 auto}
+.kpi .kv2{font-size:20px;font-weight:700;color:var(--ink);line-height:1.25;letter-spacing:-.2px; font-variant-numeric:tabular-nums}
+.kpi .kd{font-size:11.6px;margin-top:6px;display:flex;gap:10px;flex-wrap:wrap}
+.kpi .up{color:var(--red)}
+.kpi .dn{color:var(--aux-green)}
+.kpi .mut2{color:var(--ink4)}
+.chart-box{background:#fff;border:1px solid var(--line);border-radius:var(--r);padding:14px 16px 10px}
+.chart-hd{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:8px;flex-wrap:wrap}
+.chart-hd .t{font-size:13px;font-weight:700;color:var(--ink)}
+.legend{display:flex;gap:16px;flex-wrap:wrap;font-size:11.8px;color:var(--ink2)}
+.legend span{display:inline-flex;align-items:center;gap:5px;cursor:default}
+.legend i{width:9px;height:9px;border-radius:2px;display:inline-block;flex:0 0 auto}
+.svgline{width:100%;height:auto;display:block}
+.duo{display:grid;grid-template-columns:300px 1fr;gap:14px;align-items:stretch}
+@media(max-width:980px){.duo{grid-template-columns:1fr}}
+.donut-box{background:#fff;border:1px solid var(--line);border-radius:var(--r);padding:14px 16px; display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px}
+.donut-box .cap{font-size:12px;color:var(--ink3)}
+.hbar-list{display:flex;flex-direction:column;gap:2px}
+.hbar-row{display:grid;grid-template-columns:186px 1fr;gap:12px;align-items:center;padding:5px 0}
+.hbar-row .nm{font-size:12.2px;color:var(--ink2);text-align:right;line-height:1.35; overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.hbar-row .track{position:relative;height:19px;background:transparent;border-radius:3px}
+.hbar-row .fill{height:100%;background:linear-gradient(90deg,var(--aux-olive),var(--aux-green));border-radius:3px; min-width:2px;transition:width .4s}
+.hbar-row .val{font-size:11.4px;color:var(--ink3);margin-left:8px;white-space:nowrap; font-variant-numeric:tabular-nums}
+.hbar-axis{display:grid;grid-template-columns:186px 1fr;gap:12px;margin-top:6px}
+.hbar-axis .ticks{display:flex;justify-content:space-between;font-size:10.8px;color:var(--ink4)}
+.heat-wrap{padding-bottom:2px}
+.heat{display:grid;grid-template-columns:32px repeat(24,1fr);gap:2px;align-items:center}
+.heat .hl{font-size:10.4px;color:var(--ink3);text-align:right;padding-right:3px;white-space:nowrap}
+.heat .cell{height:15px;border-radius:50%;background:var(--bg-soft);min-width:0}
+.hx{position:relative;height:15px;margin-top:5px;padding-left:34px}
+.hx .hx-in{position:relative;height:100%}
+.hx .hx-in span{position:absolute;top:0;transform:translateX(-50%); font-size:10px;color:var(--ink4);white-space:nowrap}
+@media(max-width:700px){.heat .cell{height:12px}.heat .hx{font-size:8px}}
+.sqbar{display:inline-block;width:74px;height:6px;background:var(--line2);border-radius:3px; vertical-align:middle;margin-left:7px;overflow:hidden}
+.sqbar i{display:block;height:100%;background:linear-gradient(90deg,var(--aux-olive),var(--aux-green))}
+.db-table td,.db-table th{padding:10px 12px;font-size:12.2px}
+.db-table tbody tr:nth-child(even){background:#fff}
+.db-table tbody tr:hover{background:var(--bg-tint)}
+.chart-empty{display:flex;align-items:center;justify-content:center;height:150px;color:var(--ink4);font-size:12.2px}
+.duo2{display:grid;grid-template-columns:1fr 340px;gap:14px;align-items:start}
+@media(max-width:980px){.duo2{grid-template-columns:1fr}}
