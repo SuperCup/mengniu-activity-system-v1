@@ -7,3 +7,4 @@ _analysis/node_modules/
 _analysis/
 hq-console/.dsh/
 *.auditscan.txt
+**/node_modules/
