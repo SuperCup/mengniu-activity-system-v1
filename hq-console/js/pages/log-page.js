@@ -1,6 +1,6 @@
 /* =============================================================================
  * pages/log-page.js — 系统日志
- *   · 记录项目、审批、计划批次、领券页、系统管理等关键动作与结果
+ *   · 记录项目、审批、计划批次、挂券与配置、系统管理等关键动作与结果
  *   · 筛选：模块 / 结果 / 时间范围 / 关键字；每页 15 条
  *   · 只读，不提供编辑与删除
  * ========================================================================== */
@@ -80,7 +80,7 @@ function renderLogs(){
       + '<td>' + pnEsc(r.user) + '<div class="muted" style="font-size:11px">' + pnEsc(r.role) + '</div></td>'
       + '<td>' + pnEsc(r.mod) + '</td>'
       + '<td><b>' + pnEsc(r.act) + '</b></td>'
-      + '<td>' + pnEsc(r.obj) + (r.objId ? '<div class="muted sx-mono" style="font-size:11px">' + pnEsc(r.objId) + '</div>' : '') + '</td>'
+      + '<td>' + pnEsc(r.obj) + (r.objId ? '<div class="muted sx-mono" style="font-size:11px">' + pnEsc(typeof projCodeText === 'function' ? projCodeText(r.objId) : r.objId) + '</div>' : '') + '</td>'
       + '<td class="mut" style="font-size:12px">' + pnEsc(r.detail || '—') + '</td>'
       + '<td><span class="tg ' + (r.result === '失败' ? 'tg-r' : 'tg-g') + ' xs">' + pnEsc(r.result) + '</span></td>'
       + '<td class="sx-mono mut" style="font-size:11.4px">' + pnEsc(r.ip) + '</td>'
@@ -130,7 +130,7 @@ function tplPagelog(){
     <div class="panel-h">
       <h3>系统日志 <span class="tg tg-n" id="logCnt">0 条</span></h3>
       <div class="flex" style="gap:8px">
-        <span class="muted">记录项目、审批、计划批次、领券页与系统管理的关键操作，只读留痕</span>
+        <span class="muted">记录项目、审批、计划批次、挂券与配置、系统管理的关键操作，只读留痕</span>
         <button class="btn btn-o btn-xs" onclick="logExport()">导出当前结果</button>
       </div>
     </div>
@@ -142,7 +142,7 @@ function tplPagelog(){
           <option>项目管理</option>
           <option>项目审批</option>
           <option>计划与批次</option>
-          <option>领券页面</option>
+          <option>挂券与配置</option>
           <option>服务商门户</option>
           <option>系统管理</option>
           <option>登录</option>

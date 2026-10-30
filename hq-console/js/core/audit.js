@@ -15,15 +15,15 @@ function logNow(){
 }
 
 function sysRoleLabel(u){
-  if(!u) return '业务人员';
+  if(!u) return '业务运营';
   if(u.roleLabel) return u.roleLabel;
-  var map = { biz:'业务人员', approve:'审批人', admin:'系统管理员', vendor:'服务商', sys:'系统管理员' };
-  return map[u.role] || u.role || '业务人员';
+  var map = { biz:'业务运营', admin:'管理员', vendor:'服务商', sys:'管理员' };
+  return map[u.role] || u.role || '业务运营';
 }
 
 /**
  * 写一条系统日志
- * @param {string} mod    模块：项目管理 / 项目审批 / 计划与批次 / 领券页面 / 系统管理 / 登录
+ * @param {string} mod    模块：项目管理 / 项目审批 / 计划与批次 / 挂券与配置 / 系统管理 / 登录
  * @param {string} act    操作：提交审批 / 审批通过 / 保存批次配置 ...
  * @param {string} obj    对象名称
  * @param {string} [objId] 对象编号
@@ -31,7 +31,7 @@ function sysRoleLabel(u){
  * @param {string} [result] 成功 / 失败
  */
 function sysLog(mod, act, obj, objId, detail, result){
-  var u = (typeof mnCurrentUser === 'function') ? mnCurrentUser() : { name:'李雪', role:'biz', dept:'数字化中心' };
+  var u = (typeof mnCurrentUser === 'function') ? mnCurrentUser() : { name:'张明', role:'biz', dept:'数字化中心' };
   var at = logNow();
   var rec = {
     at: at,

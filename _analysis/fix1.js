@@ -1,1 +1,0 @@
-const fs=require('fs');const p='D:/Project/蒙牛-原型-ds-harness/hq-console/css/components.css';let s=fs.readFileSync(p,'utf8');s=s.replace('.fld-hint.err,{color:var(--red)}','.fld-hint.err{color:var(--red)}');fs.writeFileSync(p,s,'utf8');console.log('fixed');

@@ -6,10 +6,9 @@
 var MENUS = [
   { key:'v-home',    name:'工作台' },
   { key:'v-create',  name:'项目创建' },
-  { key:'v-approve', name:'项目审批' },
   { key:'v-manage',  name:'项目管理' },
   { key:'v-plan',    name:'计划与批次' },
-  { key:'v-h5',      name:'领券页面' },
+  { key:'v-h5',      name:'挂券与配置' },
   { key:'v-board',   name:'数据看板' },
   { key:'v-admin',   name:'系统管理' }
 ];
@@ -17,31 +16,17 @@ var MENUS = [
 var ROLES = [
   {
     key:'admin', name:'管理员', owner:'数字化中心',
-    desc:'全部菜单，全量数据，可维护角色与字典',
-    scope:'全量', status:'启用',
+    desc:'全部菜单，可维护角色与字典；可见全部项目',
+    status:'启用',
     menus:MENUS.map(function(m){ return m.key; }),
     noAccount:false
   },
   {
     key:'biz', name:'业务运营', owner:'总部市场部 / 事业部 / 区域 / 经销商',
-    desc:'按组织架构收窄数据范围，不可进入系统管理',
-    scope:'本级及下级', status:'启用',
-    menus:['v-home','v-create','v-approve','v-manage','v-plan','v-h5','v-board'],
+    desc:'可创建项目；默认仅见自己创建、担任负责人或作为审批人的项目，不可进入系统管理',
+    status:'启用',
+    menus:['v-home','v-create','v-manage','v-plan','v-h5','v-board'],
     noAccount:false
-  },
-  {
-    key:'fin', name:'财务', owner:'财务部',
-    desc:'只看数据，不参与创建与审批',
-    scope:'全量（只读）', status:'启用',
-    menus:['v-home','v-manage','v-board'],
-    noAccount:false
-  },
-  {
-    key:'svc', name:'服务商', owner:'第三方服务公司',
-    desc:'不发账号、不进系统，通过邮件链接免登录访问活动操作页',
-    scope:'—', status:'不适用',
-    menus:[],
-    noAccount:true
   }
 ];
 

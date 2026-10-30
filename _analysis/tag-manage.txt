@@ -1,2 +1,0 @@
-           + '<span class="tg tg-n">' + pnEsc(p.source) + '</span>'
-           + ((p.planBrief && p.planBrief.length) ? '<span class="tg tg-a">计划概况 ' + p.planBrief.length + ' 个</span>' : '');

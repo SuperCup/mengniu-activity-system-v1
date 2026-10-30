@@ -1,9 +1,0 @@
-
-/* ---------- 存储限制提示条：中性样式，非报错 ---------- */
-.mn-warnbar{
-  display:flex;align-items:center;gap:12px;justify-content:space-between;
-  margin:14px 0 0;padding:9px 14px;border-radius:var(--r);
-  background:#FFF8E6;border:1px solid #F1DFB4;color:#7A5B12;
-  font-size:12.2px;line-height:1.6;
-}
-.mn-warnbar .x{cursor:pointer;color:#A9832A;text-decoration:none;flex:0 0 auto}

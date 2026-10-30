@@ -23,6 +23,7 @@ function openVs(idx){
   var c = (d && d.cms && d.cms[0]) ? d.cms[0] : { n:'', e:'' };
   document.getElementById('vsContact').value = c.n || '';
   document.getElementById('vsEmail').value = c.e || '';
+  document.getElementById('vsMch').value = d ? (d.mch || '') : '';
 
   document.querySelector('#dw-vs .dw-f .lft').innerHTML =
     '当前 <b>' + VENDORS.length + '</b> 家 · 每个服务商只维护一个对接邮箱';
@@ -35,12 +36,16 @@ function vsSave(){
   var cn   = (document.getElementById('vsContact').value || '').trim();
   var em   = (document.getElementById('vsEmail').value || '').trim();
   var rk   = (document.getElementById('vsRemark').value || '').trim();
+  var mch  = (document.getElementById('vsMch').value || '').trim();
 
+  var mchRaw = mch.replace(/\s/g, '');
+  if(!mchRaw){ MT.toast('请填写归属商户号', 'err'); document.getElementById('vsMch').focus(); return; }
+  if(!/^\d{6,16}$/.test(mchRaw)){ MT.toast('归属商户号应为 6~16 位数字', 'err'); document.getElementById('vsMch').focus(); return; }
   if(!name){ MT.toast('请填写服务商名称', 'err'); document.getElementById('vsName').focus(); return; }
   if(!cn || !em){ MT.toast('联系人与邮箱需成对填写', 'err'); (cn ? document.getElementById('vsEmail') : document.getElementById('vsContact')).focus(); return; }
   if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(em)){ MT.toast('邮箱格式不正确', 'err'); document.getElementById('vsEmail').focus(); return; }
 
-  var obj = { name:name, cms:[{ n:cn, e:em }], remark:rk };
+  var obj = { name:name, mch:mchRaw, cms:[{ n:cn, e:em }], remark:rk };
   if(VS.idx >= 0){
     var v = VENDORS[VS.idx];
     for(var k in obj) v[k] = obj[k];
@@ -72,9 +77,16 @@ function tplDrawervs(){
       <input class="inp" id="vsName" placeholder="营业执照上的公司全称">
     </div>
 
-    <div class="fr">
-      <label>服务商编码</label>
-      <input class="inp" id="vsCode" readonly style="background:var(--bg-soft);color:var(--ink-60)">
+    <div class="fg c2">
+      <div class="fr">
+        <label>服务商编码</label>
+        <input class="inp" id="vsCode" readonly style="background:var(--bg-soft);color:var(--ink-60)">
+      </div>
+      <div class="fr">
+        <label>归属商户号<em>*</em></label>
+        <input class="inp" id="vsMch" placeholder="微信支付商户号，如 1035891372">
+        <div class="fld-hint">项目选用该服务商时自动带出，可按项目调整</div>
+      </div>
     </div>
 
     <div class="psec"><h4>对接联系人</h4><span class="psec-r">唯一</span></div>

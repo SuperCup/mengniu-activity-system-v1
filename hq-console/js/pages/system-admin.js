@@ -14,6 +14,7 @@ function renderVendors(){
     var c = (v.cms && v.cms[0]) || { n:'—', e:'' };
     h += '<tr>'
       + '<td><b>' + pnEsc(v.name) + '</b><div class="muted sx-mono">' + pnEsc(v.code) + '</div></td>'
+      + '<td class="sx-mono">' + pnEsc(v.mch || '—') + '</td>'
       + '<td class="vc-cm"><b>' + pnEsc(c.n) + '</b><div class="muted" style="font-size:11.2px;line-height:1.4">' + pnEsc(c.e) + '</div></td>'
       + '<td class="vc-rm">' + pnEsc(v.remark || '—') + '</td>'
       + '<td><span class="tg tg-g">启用</span></td>'
@@ -21,7 +22,7 @@ function renderVendors(){
       + '<button class="btn btn-g btn-xs">停用</button></td>'
       + '</tr>';
   });
-  box.innerHTML = h || '<tr><td colspan="5" class="empty-row">暂无服务商</td></tr>';
+  box.innerHTML = h || '<tr><td colspan="6" class="empty-row">暂无服务商</td></tr>';
 
   var tg = document.getElementById('vsCnt');
   if(tg) tg.textContent = VENDORS.length + ' 家';
@@ -39,7 +40,6 @@ function renderRoles(){
       + '<td><b>' + pnEsc(r.name) + '</b><div class="muted" style="font-size:11.4px">' + pnEsc(r.desc) + '</div></td>'
       + '<td>' + pnEsc(r.owner) + '</td>'
       + '<td>' + menuTxt + '</td>'
-      + '<td>' + pnEsc(r.scope) + '</td>'
       + '<td><span class="tg ' + (r.status === '启用' ? 'tg-g' : 'tg-n') + '">' + r.status + '</span></td>'
       + '<td style="white-space:nowrap">'
       + (r.noAccount ? '<span class="muted">—</span>'
@@ -83,7 +83,6 @@ function openRole(key){
   ROLE_EDIT = key;
 
   document.getElementById('roleDwTitle').innerHTML = '角色配置 <span class="sub">' + pnEsc(r.name) + '</span>';
-  document.getElementById('roleScope').value = r.scope;
   document.getElementById('roleMenuBody').innerHTML = MENUS.map(function(m){
     var on = r.menus.indexOf(m.key) >= 0;
     return '<tr><td>' + pnEsc(m.name) + '</td>'
@@ -101,7 +100,6 @@ function roleSave(){
   for(var i=0;i<boxes.length;i++){ if(boxes[i].checked) menus.push(boxes[i].getAttribute('data-menu')); }
   if(!menus.length){ MT.toast('至少保留一个菜单', 'err'); return; }
   r.menus = menus;
-  r.scope = document.getElementById('roleScope').value;
   closeDrawer();
   renderRoles();
   MT.toast('「' + r.name + '」权限已更新');
@@ -116,7 +114,7 @@ function tplPageadmin(){
       <div class="flex"><span class="muted">角色与权限、组织架构、服务商配置集中在此维护</span></div>
     </div>
     <div id="admTabs" class="steps">
-      <div class="atab on" data-tab="role" onclick="admTab('role')">角色与权限 <span class="c" id="roleCnt">4 个角色</span></div>
+      <div class="atab on" data-tab="role" onclick="admTab('role')">角色与权限 <span class="c" id="roleCnt">2 个角色</span></div>
       <div class="atab" data-tab="org" onclick="admTab('org')">组织架构 <span class="c">5 个节点</span></div>
       <div class="atab" data-tab="vendor" onclick="admTab('vendor')">服务商配置 <span class="c" id="vsCnt">5 家</span></div>
     </div>
@@ -127,17 +125,16 @@ function tplPageadmin(){
     <div class="panel">
       <div class="panel-h">
         <h3>角色列表</h3>
-        <div class="flex"><span class="muted">点「配置」维护该角色的菜单范围与数据范围</span></div>
+        <div class="flex"><span class="muted">点「配置」维护菜单；数据可见范围固定为项目创建人、活动负责人及对应审批人</span></div>
       </div>
       <div class="panel-b" style="padding:0">
         <div class="tw scroll" style="border:none;box-shadow:none;border-radius:0">
           <table class="bt">
             <thead><tr>
-              <th style="width:30%">角色</th>
-              <th style="width:22%">人员归属</th>
-              <th style="width:16%">菜单范围</th>
-              <th style="width:18%">数据范围</th>
-              <th style="width:8%">状态</th>
+              <th style="width:36%">角色</th>
+              <th style="width:24%">人员归属</th>
+              <th style="width:20%">菜单范围</th>
+              <th style="width:10%">状态</th>
               <th style="width:96px">操作</th>
             </tr></thead>
             <tbody id="roleTbody"></tbody>
@@ -152,7 +149,7 @@ function tplPageadmin(){
     <div class="panel">
       <div class="panel-h">
         <h3>组织架构</h3>
-        <div class="flex"><span class="muted">数据范围按组织架构收窄，服务商不发账号</span></div>
+        <div class="flex"><span class="muted">组织架构用于人员归属与创建项目时的人员选择</span></div>
       </div>
       <div class="panel-b" style="padding:0">
         <div class="tw scroll" style="border:none;box-shadow:none;border-radius:0">
@@ -186,7 +183,8 @@ function tplPageadmin(){
           <table class="bt vcs-tbl">
             <thead><tr>
               <th style="width:28%">服务商名称</th>
-              <th style="width:24%">对接联系人 / 邮箱</th>
+              <th style="width:14%">归属商户号</th>
+              <th style="width:22%">对接联系人 / 邮箱</th>
               <th>备注</th>
               <th style="width:8%">状态</th>
               <th style="width:116px">操作</th>
@@ -208,16 +206,6 @@ function tplDrawerrole(){
     <span class="dw-x" onclick="closeDrawer()">×</span>
   </div>
   <div class="dw-b">
-    <div class="fr">
-      <label>数据范围</label>
-      <select class="inp" id="roleScope">
-        <option value="全量">全量</option>
-        <option value="全量（只读）">全量（只读）</option>
-        <option value="本级">本级</option>
-        <option value="本级及下级">本级及下级</option>
-      </select>
-      <div class="fld-hint">按组织架构收窄：本级及下级 = 本部门与其所有下级部门的数据</div>
-    </div>
     <div class="psec"><h4>菜单权限</h4><span class="psec-r">勾选可访问的菜单</span></div>
     <table class="bt mini" style="table-layout:fixed">
       <thead><tr><th>菜单</th><th style="width:110px">启用</th></tr></thead>

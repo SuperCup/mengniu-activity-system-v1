@@ -99,6 +99,19 @@ td.num{white-space:nowrap}
 .dw-f{flex:0 0 auto;padding:12px 22px;border-top:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;gap:12px;background:#fff}
 .dw-f .lft{font-size:12.1px;color:var(--ink3)}
 .dw-f .rgt{display:flex;gap:8px}
+/* 门店 / 商品编辑抽屉：复用 drawer 外壳，内部 dr-* 结构 */
+#dw-store{width:520px}
+#dw-sku{width:560px}
+#dw-store .dr-panel,#dw-sku .dr-panel{width:100%!important;height:100%;display:flex;flex-direction:column;background:#fff}
+#dw-store .dr-h,#dw-sku .dr-h{padding:15px 22px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;gap:12px;flex:0 0 auto}
+#dw-store .dr-h h4,#dw-sku .dr-h h4{margin:0;font-size:15.2px;font-weight:600;color:var(--ink)}
+#dw-store .dr-h .x,#dw-sku .dr-h .x{cursor:pointer;color:var(--ink3);font-size:20px;line-height:1;padding:2px 6px;border-radius:5px}
+#dw-store .dr-h .x:hover,#dw-sku .dr-h .x:hover{background:var(--line2);color:var(--ink)}
+#dw-store .dr-b,#dw-sku .dr-b{flex:1;overflow-y:auto;padding:18px 22px;background:var(--bg-tint)}
+#dw-store .dr-f,#dw-sku .dr-f{flex:0 0 auto;padding:12px 22px;border-top:1px solid var(--line);display:flex;align-items:center;justify-content:flex-end;gap:8px;background:#fff}
+#dw-store .fgrid,#dw-sku .fgrid{display:grid;grid-template-columns:96px 1fr;gap:10px 12px;align-items:center}
+#dw-store .fgrid label,#dw-sku .fgrid label{font-size:12.4px;color:var(--ink2);text-align:right}
+#dw-store .fgrid .inp,#dw-sku .fgrid .inp{width:100%}
 .dw-step{display:flex;align-items:center;gap:6px;font-size:12.2px;color:var(--ink4);flex-wrap:wrap}
 .dw-step .sp{display:inline-flex;align-items:center;gap:5px;padding:2px 10px;border-radius:20px;background:var(--bg-soft);color:var(--ink3)}
 .dw-step .sp i{font-style:normal;width:15px;height:15px;border-radius:50%;background:var(--brand-20);color:#fff;font-size:10px;display:inline-flex;align-items:center;justify-content:center;font-weight:700}
@@ -106,7 +119,8 @@ td.num{white-space:nowrap}
 .dw-step .sp.on i{background:var(--brand)}
 .dw-step .sp.dn i{background:var(--brand)}
 #dw-flow .stmap .nd{min-width:110px;padding:8px 8px 8px 24px}
-#dw-flow .stmap .nd .ds{font-size:11.2px}
+#dw-flow .stmap .nd .ds{font-size:11.2px;line-height:2.1}
+#dw-flow .stmap .nd .fst{display:inline-block;padding:0 8px;margin:2px 5px 2px 0;border-radius:9px;background:var(--bg-soft);border:1px solid var(--line);color:var(--ink-70);font-size:11px;line-height:18px;white-space:nowrap}
 .pcard-h h4{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
 .pcard-h h4 .nmst{font-weight:600;font-size:11.4px;flex:0 0 auto}
 #dw-pgdata .pg-ch{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px}
@@ -177,7 +191,7 @@ td.num{white-space:nowrap}
 
 /* ---------- 批次计划：多值单元格 ---------- */
 .bcell{display:flex;align-items:center;gap:8px;min-width:0}
-.bcell .bv{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:12.1px;color:var(--ink)}
+.bcell .bv{flex:1;min-width:0;overflow:hidden;font-size:12.1px;color:var(--ink);line-height:1.45;white-space:normal;overflow-wrap:anywhere;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
 .bcell .lnk{flex:0 0 auto;font-size:11.8px}
 
 /* ---------- 存储限制提示条：中性样式，非报错 ---------- */
@@ -206,11 +220,35 @@ td.num{white-space:nowrap}
 .cfg-tab i.todo{background:var(--line2);color:var(--ink-60)}
 
 /* ---------- 计划与批次：项目三项信息（与创建页一、二、三对齐） ---------- */
-.pinfo{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+.pinfo{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
 .pinfo-sec{border:1px solid var(--line);border-radius:var(--r);padding:12px 14px;background:var(--bg-soft)}
 .pinfo-sec h5{margin:0 0 8px;font-size:12.4px;font-weight:600;color:var(--ink)}
 .pinfo-row{display:flex;gap:10px;padding:3px 0;font-size:12.2px;line-height:1.65}
-.pinfo-row .k{flex:0 0 96px;color:var(--ink-40)}
+.pinfo-row .k{flex:0 0 80px;color:var(--ink-40)}
 .pinfo-row .v{color:var(--ink);word-break:break-word;min-width:0}
-@media (max-width:1220px){.pinfo{grid-template-columns:1fr 1fr}}
+@media (max-width:1280px){.pinfo{grid-template-columns:1fr 1fr}}
 @media (max-width:820px){.pinfo{grid-template-columns:1fr}}
+
+/* ---------- 项目卡片：统一进度条 ---------- */
+.psteps{display:flex;align-items:center;gap:0;margin:14px 0 4px;padding:10px 2px 2px}
+.pstep{flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;position:relative;font-size:11.6px;color:var(--ink-30)}
+.pstep .dot{width:11px;height:11px;border-radius:50%;background:#E3E7EE;border:2px solid #E3E7EE;box-sizing:border-box;position:relative;z-index:1}
+.pstep span{white-space:nowrap}
+.pstep + .pstep:before{content:"";position:absolute;left:-50%;top:5px;width:100%;height:2px;background:#EDF0F4}
+.pstep.done,.pstep.on{color:var(--brand-d)}
+.pstep.done .dot{background:var(--brand);border-color:var(--brand)}
+.pstep.done + .pstep:before{background:var(--brand)}
+.pstep.on .dot{background:var(--brand);border-color:var(--brand);box-shadow:0 0 0 4px rgba(9,108,82,.16)}
+.pstep.on span{font-weight:700}
+.psteps.stop .pstep{color:var(--red)}
+.psteps.stop .pstep .dot{background:var(--red);border-color:var(--red)}
+.psteps.stop .pstep + .pstep:before{background:var(--red)}
+
+/* ---------- 主数据选择列表 ---------- */
+.pk-row{display:flex;align-items:center;gap:8px;padding:8px 10px;border:1px solid var(--line);border-radius:8px;margin-bottom:6px;cursor:pointer;font-size:12.4px;background:#fff}
+.pk-row.on{border-color:var(--brand);background:var(--brand-l)}
+.pk-row input{flex:none}
+
+.pstep.s-todo{border:0!important;background:transparent!important;border-radius:0!important}
+.psteps.rej .pstep.on .dot{background:var(--red);border-color:var(--red)}
+.psteps.rej .pstep.on{color:var(--red)}

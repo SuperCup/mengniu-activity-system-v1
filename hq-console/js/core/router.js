@@ -59,8 +59,28 @@ MT.renderSider = function(){
   box.innerHTML = h;
 };
 
-/** 视图切换 */
-function go(id, el){
+/** 面包屑：最后一段加粗；中间能对应到页面的段落可点击返回 */
+function crumbTarget(t){
+  var pages = MT.pages || {};
+  var hit = Object.keys(pages).filter(function(k){ return pages[k].title === t; })[0];
+  return hit || '';
+}
+
+function setCrumb(crumb){
+  var cb = document.getElementById('crumb');
+  if(!cb) return;
+  var esc = (typeof pnEsc === 'function') ? pnEsc : function(s){ return String(s == null ? '' : s); };
+  var parts = String(crumb || '').split('/').map(function(t){ return t.trim(); }).filter(Boolean);
+  cb.innerHTML = parts.map(function(t, i){
+    var s = esc(t);
+    if(i === parts.length - 1) return '<b>' + s + '</b>';
+    var v = crumbTarget(t);
+    return v ? '<a onclick="go(\'' + v + '\')" title="返回' + s + '">' + s + '</a>' : s;
+  }).join('<span class="sp">/</span>');
+}
+
+/** 视图切换（keepEdit：从「编辑」进入创建页时保留回填数据） */
+function go(id, el, keepEdit){
   var target = document.getElementById(id);
   if(!target) return;
   var vs = document.querySelectorAll('.view');
@@ -71,19 +91,28 @@ function go(id, el){
   for(var j=0;j<as.length;j++) as[j].classList.toggle('on', as[j].getAttribute('data-view') === id);
 
   var p = MT.pages[id];
-  var cb = document.getElementById('crumb');
-  if(cb){
-    var crumb = (p && p.crumb) ? p.crumb : (p ? p.title : '');
-    var parts = crumb.split('/').map(function(t){ return t.trim(); }).filter(Boolean);
-    cb.innerHTML = parts.map(function(t, i){
-      return i === parts.length - 1 ? '<b>' + t + '</b>' : t;
-    }).join('<span class="sp">/</span>');
+  setCrumb((p && p.crumb) ? p.crumb : (p ? p.title : ''));
+
+  /* 从菜单新建项目时退出「编辑」回填，避免把上一次编辑带进来 */
+  if(id === 'v-create' && !keepEdit && window.CRE_EDIT_ID && typeof resetCreateMode === 'function'){
+    resetCreateMode();
   }
 
   /* 计划与批次：菜单进入看全部，由项目管理进入看当前项目 */
   if(id === 'v-plan'){
-    if(typeof PLAN_SCOPE !== 'undefined' && !PLAN_SCOPE_KEEP) PLAN_SCOPE = null;
-    if(typeof renderPlanScope === 'function') renderPlanScope();
+    if(typeof PLAN_SCOPE !== 'undefined' && !PLAN_SCOPE_KEEP){
+      PLAN_SCOPE = null;
+      if(typeof PLAN_ENTRY !== 'undefined') PLAN_ENTRY = 'menu';
+      if(typeof batchStash === 'function') batchStash();
+      if(typeof batchPage === 'function') batchPage(false);
+      else if(typeof renderPlanScope === 'function') renderPlanScope();
+    } else if(typeof renderPlanScope === 'function'){
+      renderPlanScope();
+    }
+    var cfgOn = document.getElementById('dw-batch');
+    if(!(cfgOn && cfgOn.classList.contains('on') && cfgOn.classList.contains('inpage'))){
+      if(typeof planApplyCrumb === 'function') planApplyCrumb('list');
+    }
   }
 
   /* 数据看板每次进入重算指标，保证与计划/批次数据同源 */
@@ -91,6 +120,12 @@ function go(id, el){
 
   /* 系统日志每次进入按当前筛选重绘 */
   if(id === 'v-log' && typeof renderLogs === 'function'){ renderLogs(); }
+
+  /* 主数据页每次进入重绘 */
+  if(id === 'v-store' && typeof renderStores === 'function'){ renderStores(); }
+  if(id === 'v-sku' && typeof renderSkus === 'function'){ renderSkus(); }
+  if(id === 'v-h5' && typeof renderMini === 'function'){ MINI_CUR = ''; renderMini(); }
+  if(id === 'v-vendor' && typeof renderVendorUpload === 'function'){ renderVendorUpload(); }
 
   MT.currentView = id;
   if(MT.parseHash().page !== id) MT.setHash(id, {});
@@ -167,12 +202,13 @@ window.addEventListener('hashchange', function(){
 MT.ICONS = {
   'v-home': '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><rect x="2.2" y="2.2" width="5" height="5" rx="1"/><rect x="8.8" y="2.2" width="5" height="5" rx="1"/><rect x="2.2" y="8.8" width="5" height="5" rx="1"/><rect x="8.8" y="8.8" width="5" height="5" rx="1"/></svg>',
   'v-create': '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 2.2H4.4a1.2 1.2 0 0 0-1.2 1.2v9.2a1.2 1.2 0 0 0 1.2 1.2h7.2a1.2 1.2 0 0 0 1.2-1.2V6"/><path d="M11.6 1.8v4h4"/><path d="M8 8.4v3.2M6.4 10h3.2"/></svg>',
-  'v-approve': '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="8" r="5.8"/><path d="m5.2 8.1 2 2 3.6-3.9"/></svg>',
   'v-manage': '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M2.2 5.6a1.2 1.2 0 0 1 1.2-1.2h3l1.3 1.6h4.9a1.2 1.2 0 0 1 1.2 1.2v5.4a1.2 1.2 0 0 1-1.2 1.2H3.4a1.2 1.2 0 0 1-1.2-1.2z"/></svg>',
   'v-plan': '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="m8 1.9 5.4 2.6L8 7.1 2.6 4.5z"/><path d="m2.6 8 5.4 2.6L13.4 8"/><path d="m2.6 11.5 5.4 2.6 5.4-2.6"/></svg>',
   'v-h5': '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><rect x="4.2" y="1.8" width="7.6" height="12.4" rx="1.6"/><path d="M6.8 3.6h2.4"/><path d="M7 11.4h2"/></svg>',
   'v-board': '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M2.4 13.6V2.6"/><path d="M2.4 13.6h11.2"/><rect x="4.6" y="8.4" width="2.2" height="3.4" rx="0.6"/><rect x="8.4" y="5.4" width="2.2" height="6.4" rx="0.6"/><rect x="11.4" y="9.8" width="0" height="0"/></svg>',
   'v-admin': '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="8" r="2.1"/><path d="M12.9 9.6a1 1 0 0 0 .2 1.1l.1.1a1.2 1.2 0 1 1-1.7 1.7l-.1-.1a1 1 0 0 0-1.1-.2 1 1 0 0 0-.6.9v.2a1.2 1.2 0 1 1-2.4 0v-.1a1 1 0 0 0-.7-.9 1 1 0 0 0-1.1.2l-.1.1a1.2 1.2 0 1 1-1.7-1.7l.1-.1a1 1 0 0 0 .2-1.1 1 1 0 0 0-.9-.6H2.9a1.2 1.2 0 1 1 0-2.4h.1a1 1 0 0 0 .9-.7 1 1 0 0 0-.2-1.1l-.1-.1a1.2 1.2 0 1 1 1.7-1.7l.1.1a1 1 0 0 0 1.1.2h.1a1 1 0 0 0 .6-.9V2.9a1.2 1.2 0 1 1 2.4 0v.1a1 1 0 0 0 .6.9 1 1 0 0 0 1.1-.2l.1-.1a1.2 1.2 0 1 1 1.7 1.7l-.1.1a1 1 0 0 0-.2 1.1v.1a1 1 0 0 0 .9.6h.2a1.2 1.2 0 1 1 0 2.4h-.1a1 1 0 0 0-.9.6z"/></svg>',
   'v-log': '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><rect x="2.6" y="2" width="10.8" height="12" rx="1.4"/><path d="M5.2 5.6h5.6M5.2 8h5.6M5.2 10.4h3.4"/></svg>',
+  'v-store': '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M2.2 6.2 3.4 2.8h9.2l1.2 3.4"/><path d="M2.2 6.2h11.6v1.2a2 2 0 0 1-4 0 2 2 0 0 1-4 0 2 2 0 0 1-3.6-1.2z"/><path d="M3.4 9v4.2h9.2V9"/></svg>',
+  'v-sku': '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="m8 1.9 5.4 2.6L8 7.1 2.6 4.5z"/><path d="m2.6 8 5.4 2.6L13.4 8"/><path d="m2.6 11.4 5.4 2.6 5.4-2.6"/></svg>',
   'v-vendor': '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><rect x="1.8" y="3" width="12.4" height="8.2" rx="1.2"/><path d="M5.6 13.6h4.8"/><path d="M8 11.2v2.4"/></svg>'
 };

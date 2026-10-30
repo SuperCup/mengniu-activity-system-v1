@@ -1,0 +1,40 @@
+/* =============================================================================
+ * pages/vendor.css — 服务商操作页：单列卡片式布局 + 窄屏适配
+ * ========================================================================== */
+
+/* 活动摘要 */
+.vsum{border:1px solid var(--line);border-radius:8px;background:var(--bg2,#FBFBFC);padding:14px 16px;margin:4px 0 16px}
+.vsum-h{display:flex;align-items:center;gap:10px;flex-wrap:wrap;font-size:15px}
+.vsum-h .sx-mono{font-size:12.2px;color:var(--ink3)}
+.vsum-kv{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px 18px;margin-top:12px}
+.vsum-kv>div{min-width:0}
+.vsum-kv span{display:block;font-size:11.4px;color:var(--ink4);margin-bottom:3px}
+.vsum-kv b{font-size:12.9px;font-weight:600;color:var(--ink)}
+
+/* 每一步一张卡，占满整行 */
+.vsec{border:1px solid var(--line);border-radius:8px;padding:14px 16px;margin-bottom:12px;background:var(--bg1,#fff)}
+.vsec-h{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:10px;font-size:13.4px}
+.vsec-h b{font-size:13.6px}
+.vsec .note{margin:10px 0 0}
+.vsec .file{margin-top:10px}
+.vsec-act{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:12px}
+.vsec-act .mut{font-size:11.8px}
+.vsec .tw{overflow-x:auto}
+
+/* 邮件原文折叠 */
+.vmail{margin:4px 0 14px;border:1px dashed var(--line);border-radius:8px;padding:0 14px;background:var(--bg2,#FBFBFC)}
+.vmail>summary{cursor:pointer;font-size:12.4px;color:var(--ink3);padding:11px 0;outline:none}
+.vmail .mail{margin:0 0 14px}
+.vmail[open]>summary{color:var(--ink);font-weight:600}
+
+@media(max-width:1180px){
+  .vsum-kv{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(max-width:760px){
+  .vsum-kv{grid-template-columns:1fr}
+  .vsec{padding:12px 12px}
+  .flow{flex-wrap:wrap;gap:10px}
+  .flow .fs{flex:1 1 46%;padding-left:16px}
+  .flow .fs::after{display:none}
+  .vsec-act .btn{flex:1 1 auto}
+}

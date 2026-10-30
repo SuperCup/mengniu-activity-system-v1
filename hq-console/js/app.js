@@ -27,6 +27,9 @@
   function boot(){
     /* 先装载本地数据（有则覆盖种子，没有则落库），再渲染任何视图 */
     safe(function(){ MT.store.load(); }, "store.load");
+    safe(window.projEnsureCodes, "projEnsureCodes");
+    safe(window.retEnsureSids, "retEnsureSids");
+    safe(window.mnInitIdentity, "mnInitIdentity");
 
     MT.mountDrawers();   // 抽屉 / 浮层（js/components/*.js 注册）
     MT.mountPages();     // 业务模块视图（js/pages/*.js 注册）
@@ -36,17 +39,17 @@
     safe(window.renderTodos,        'renderTodos');
     safe(window.renderVendors,      'renderVendors');
     safe(window.initProjVendor,     'initProjVendor');
+    safe(window.initProjOwner,      'initProjOwner');
     safe(window.renderProjBrief,    'renderProjBrief');
     safe(window.renderPlanScope,    'renderPlanScope');
     safe(window.renderPlans,        'renderPlans');
     safe(window.renderProjCards,    'renderProjCards');
-    safe(window.renderApproveList,  'renderApproveList');
     safe(window.renderRoles,        'renderRoles');
     safe(window.renderOrgs,         'renderOrgs');
     safe(window.renderDbAll,        'renderDbAll');
 
-    /* 默认进入「计划与批次」（与 V5 一致）；带 #v-xxx 时直达对应模块 */
-    go(MT.fromHash('v-plan'));
+    /* 默认进入「工作台」；带 #v-xxx 时直达对应模块 */
+    go(MT.fromHash('v-home'));
 
     /* 带上下文进入：#v-plan?projectId=..&planId=..&tab=config → 定位到原计划 */
     var q = MT.parseHash().q;

@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>业务对象</title>
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; background: #f4f7f6; font-family: "Microsoft YaHei", sans-serif; color: #1c2b27; }
+  .page { width: 1360px; height: 720px; padding: 26px 28px; }
+  h1 { margin: 0; font-size: 22px; }
+  .sub { margin: 4px 0 14px; color: #5d6f69; font-size: 13px; }
+  .wrap { display: grid; grid-template-columns: 300px 70px 300px 70px 300px; align-items: center; }
+  .card { background: #fff; border: 1px solid #d5e0db; border-radius: 12px; overflow: hidden; }
+  .hd { background: #096c52; color: #fff; padding: 10px 14px; font-size: 16px; font-weight: 700; }
+  .bd { padding: 10px 14px 12px; font-size: 12.5px; line-height: 1.55; }
+  .bd b { color: #096c52; }
+  .rel { text-align: center; color: #096c52; font-weight: 700; font-size: 13px; line-height: 1.35; }
+  .rel span { display: block; font-weight: 400; color: #5d6f69; font-size: 11px; margin-top: 4px; }
+  .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 14px; }
+  .box { background: #fff; border: 1px solid #d5e0db; border-radius: 10px; padding: 10px 12px; font-size: 12.5px; line-height: 1.55; }
+  .box b { display: block; margin-bottom: 2px; }
+</style>
+</head>
+<body>
+<div class="page">
+  <h1>业务对象关系</h1>
+  <div class="sub">报批阶段先定方案范围，审批通过后再补券的执行字段。批次号始终来自微信支付，不由平台编造。</div>
+  <div class="wrap">
+    <div class="card">
+      <div class="hd">项目</div>
+      <div class="bd">一次活动预算与一次服务商承接。<br><b>报批时填写：</b>名称、目标、周期、负责人、PO、服务商。<br><b>系统带出：</b>预算、科目、承担主体、预算来源、对接人与邮箱。<br><b>提交后生成：</b>项目编号、项目单号、审批快照。</div>
+    </div>
+    <div class="rel">1 对 多<span>一个项目多条计划<br>推送前至少一条</span></div>
+    <div class="card">
+      <div class="hd">计划</div>
+      <div class="bd">一条投放方案，名称按序号生成。<br><b>报批时：</b>机制（满减或减至）、零售商、商品。<br><b>通过后补充：</b>券名称、面额或减至价、门槛、可用时间、发放上限、单人可领、使用须知。<br>可用时间必须落在项目周期内。</div>
+    </div>
+    <div class="rel">1 对 1<span>一个计划只绑<br>一个批次、一张券</span></div>
+    <div class="card">
+      <div class="hd">批次 / 券</div>
+      <div class="bd">微信支付商户平台生成的批次。<br><b>创建人不可填批次号。</b><br>服务商回传批次号 + 门店商户号。<br>批次号全平台不可重复占用。<br>回传商户号必须已在门店库启用。</div>
+    </div>
+  </div>
+  <div class="grid">
+    <div class="box"><b>活动零售商明细</b>挂在计划上。字段：零售商、门店、省、市、微信商户号。可从门店库选择或按模板导入。没有商户号的门店标为待服务商补充。一个零售商可以有多家门店，一个门店只对应一个商户号。</div>
+    <div class="box"><b>活动商品明细</b>挂在计划上。至少要有 69 码或店内码。店内码必须填写所属零售商。同一「码 + 零售商」不能重复；同一店内码换零售商必须另起一行。</div>
+    <div class="box"><b>机制口径</b>一期只使用两种：满减（满 X 减 Y，Y 必须小于 X），减至（减至价大于 0；有门槛时减至价必须低于门槛）。文案由参数生成，例如「满 99 减 15」「减至 1 元」。</div>
+    <div class="box"><b>主数据</b>门店库、商品库在系统配置中维护，导入后可供全部活动引用。不迁移旧门店库，以本平台导入的数据为准。停用后不再被新活动选用，历史活动仍保留已保存明细。</div>
+  </div>
+</div>
+</body>
+</html>

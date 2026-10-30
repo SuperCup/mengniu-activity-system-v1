@@ -1,6 +1,0 @@
-  if(p.state === 'approved' || p.state === 'confirmed'){
-    var cfg = (typeof projConfigStat === 'function') ? projConfigStat(p.id) : null;
-    if(cfg && cfg.total){
-      tags += '<span class="tg ' + (cfg.todo ? 'tg-a' : 'tg-g') + '">待补配置 ' + cfg.ready + '/' + cfg.total + '</span>';
-    }
-  }

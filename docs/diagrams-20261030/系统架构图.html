@@ -1,0 +1,113 @@
+<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><title>系统架构图</title><style>
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;background:#fff;color:#163d37;font-family:"Microsoft YaHei","PingFang SC","Noto Sans SC",sans-serif}
+body{width:1800px}
+.canvas{padding:36px 40px 28px}
+.top{display:flex;justify-content:space-between;align-items:flex-start;border-bottom:2px solid #d7e7df;padding-bottom:16px;margin-bottom:16px}
+h1{margin:0;color:#075e4c;font-size:36px;letter-spacing:1px}
+.sub{margin-top:7px;color:#58756e;font-size:16px}
+.badge{background:#eef7f2;border:1px solid #9fc7b9;color:#0b715a;border-radius:999px;padding:8px 14px;font-size:13px;font-weight:700}
+.roles{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:15px}
+.role{border:1px solid #b9d5ca;border-radius:10px;background:#f2f8f5;padding:9px 12px;font-size:12.8px;color:#36564f}
+.role b{color:#075e4c;font-size:13.8px;margin-right:6px}
+.arch{display:grid;grid-template-columns:1fr 96px 1.55fr 96px 1fr;gap:0;align-items:stretch}
+.col{border-radius:14px;border:1.5px solid #b9d5ca;background:#fcfffd;padding:13px}
+.col h2{font-size:18px;color:#075e4c;margin:0 0 4px}
+.col .desc{font-size:11.8px;color:#687d77;line-height:1.5;margin-bottom:10px}
+.sys{border:1px solid #d8e4df;border-radius:10px;background:#fff;padding:10px 11px;margin-bottom:8px}
+.sys:last-child{margin-bottom:0}
+.sys b{font-size:14.2px;color:#163d37;display:block}
+.sys span{display:block;font-size:11.8px;color:#687d77;line-height:1.55;margin-top:3px}
+.sys.key{border-color:#bdd1ea;background:#f7fbff}
+.sys.warn{border-color:#ecd2a8;background:#fffaf2}
+.center{border-color:#0b715a;border-width:2px;background:#fff}
+.center-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:9px}
+.center-head h2{font-size:20px;margin:0}
+.pill{font-size:11.5px;background:#e6f3ed;border:1px solid #a9cbbf;border-radius:999px;padding:4px 9px;color:#075e4c;font-weight:700}
+.mods{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.mod{border:1px solid #c5ddd4;border-radius:10px;background:#f7fcfa;padding:9px 10px}
+.mod b{font-size:13.8px;color:#075e4c}
+.mod p{font-size:11.7px;color:#5d746d;line-height:1.55;margin:4px 0 0}
+.biz{margin-top:8px;border:1px solid #0b715a;border-radius:10px;background:#eef7f2;padding:9px 11px}
+.biz b{font-size:13.2px;color:#075e4c}
+.biz p{font-size:11.8px;color:#36564f;line-height:1.6;margin:3px 0 0}
+.conn{display:flex;flex-direction:column;justify-content:space-around;align-items:center;padding:54px 0 46px;gap:5px}
+.conn .item{text-align:center;color:#5d746d;font-size:10.8px;line-height:1.35;max-width:88px}
+.conn .ar{font-size:25px;color:#0b715a;line-height:1;font-weight:300}
+.conn .ar.blue{color:#2b6cb0}
+.right .sys{border-color:#e1d5bf;background:#fffdf8}
+.right .sys.key{border-color:#bdd1ea;background:#f7fbff}
+.right{display:flex;flex-direction:column}
+.right .sys:last-child{flex:1}
+.bottom{display:grid;grid-template-columns:1.1fr 1.3fr;gap:14px;margin-top:14px}
+.box{border:1px solid #c5ddd4;border-radius:12px;background:#fff;padding:12px 14px}
+.box h2{font-size:16px;color:#075e4c;margin:0 0 7px}
+.box p{font-size:11.9px;color:#5d746d;line-height:1.65;margin:0}
+.integs{display:flex;gap:6px;flex-wrap:wrap}
+.integ{font-size:11.6px;border:1px solid #c5ddd4;background:#f7fcfa;border-radius:6px;padding:4px 7px;color:#36564f}
+.note{margin-top:11px;background:#fffaf0;border:1px solid #ecd2a8;border-radius:9px;padding:9px 12px;font-size:12px;line-height:1.65;color:#6b4b16}
+.foot{display:flex;justify-content:space-between;border-top:1px solid #d7e7df;margin-top:13px;padding-top:9px;color:#7a8f89;font-size:11.7px}
+</style></head><body><div class="canvas">
+<div class="top"><div><h1>蒙牛活动管理平台 · 系统架构图</h1><div class="sub">总部端一期：逻辑架构、状态边界与外部系统协作</div></div><div class="badge">4 节点 / 11 状态 · 2026-10-30</div></div>
+
+<div class="roles">
+  <div class="role"><b>业务运营</b>创建 / 负责 / 审批项目</div>
+  <div class="role"><b>管理员</b>角色、服务商与主数据</div>
+  <div class="role"><b>审批人</b>BPM 内处理，无系统审批权</div>
+  <div class="role"><b>服务商</b>项目专属邮件链接，无账号</div>
+</div>
+
+<div class="arch">
+  <div class="col left">
+    <h2>客户现有系统</h2>
+    <div class="desc">内部身份、审批、预算与通知</div>
+    <div class="sys"><b>钉钉</b><span>内部人员登录与组织信息；不承载业务审批</span></div>
+    <div class="sys key"><b>BPM 审批</b><span>审批单发起、并联审批、按人结果与意见回写</span></div>
+    <div class="sys"><b>TPM / MEM</b><span>预算单校验与预算来源；创建项目时选择预算系统</span></div>
+    <div class="sys"><b>邮件通知</b><span>推送服务商、专属链接与确认提醒</span></div>
+  </div>
+
+  <div class="conn">
+    <div class="item"><div class="ar">→</div>登录</div>
+    <div class="item"><div class="ar">→</div>审批单<br>结果回写</div>
+    <div class="item"><div class="ar">→</div>预算校验</div>
+    <div class="item"><div class="ar">→</div>邮件触达</div>
+  </div>
+
+  <div class="col center">
+    <div class="center-head"><h2>蒙牛活动管理平台</h2><span class="pill">项目：草稿 → 审批 → 推送 → 执行</span></div>
+    <div class="mods">
+      <div class="mod"><b>管理端</b><p>项目创建 / 列表（按 4 节点分组筛选 11 个状态）/ 详情时间轴 / 计划与批次 / 推送</p></div>
+      <div class="mod"><b>服务商专属页</b><p>确认承接、下载工作簿、回传批次号与商户号；仅当前项目</p></div>
+      <div class="mod"><b>数据与看板</b><p>本人项目查询、回传数据、核销订单分析与趋势</p></div>
+      <div class="mod"><b>配置与留痕</b><p>角色权限、服务商、门店 / 商户号 / 商品、操作日志</p></div>
+    </div>
+    <div class="biz"><b>业务数据</b><p>项目 · 计划 · 批次 · 活动零售商明细 · 活动商品明细 · 门店与商户号 · 商品 · 发券任务 · 核销 / 账单 · 日志</p></div>
+    <div class="biz" style="background:#f7fbff;border-color:#bdd1ea"><b>状态与规则</b><p>审批：并联、无先后，全部同意才通过；推送后批次只读；<b>已配置属于执行节点</b>；门店编码取客户系统原值、格式不限。</p></div>
+  </div>
+
+  <div class="conn">
+    <div class="item"><div class="ar blue">→</div>投放</div>
+    <div class="item"><div class="ar blue">→</div>推送 /<br>回传</div>
+    <div class="item"><div class="ar blue">←</div>批次 /<br>账单</div>
+    <div class="item"><div class="ar blue">↔</div>券能力</div>
+  </div>
+
+  <div class="col right">
+    <h2>外部协作</h2>
+    <div class="desc">会员触达、制券与微信支付能力</div>
+    <div class="sys key"><b>既有会员小程序</b><span>开放 API：鉴权、发券、批次查询；消费者领券页由其承接</span></div>
+    <div class="sys warn"><b>制券服务商</b><span>在微信商户平台建券；回传批次号、商户号与账单</span></div>
+    <div class="sys warn"><b>微信支付能力</b><span>公共发券 / 券批次、卡包展示、核销数据；平台不替代商户平台</span></div>
+    <div class="sys"><b>接口约定</b><span>项目编号 / 计划 ID / 批次号按文本传输；BPM 按人回写结果与意见；字段校验以平台为准。</span></div>
+  </div>
+</div>
+
+<div class="bottom">
+  <div class="box"><h2>后台任务与数据处理</h2><p>BPM / 预算状态同步 · 批次与账单入库 · 对账与异常检查 · 邮件通知与运行维护 · 看板指标汇总</p></div>
+  <div class="box"><h2>关键集成</h2><div class="integs"><span class="integ">登录 · 钉钉</span><span class="integ">审批 · BPM</span><span class="integ">预算 · TPM / MEM</span><span class="integ">投放 · 会员小程序</span><span class="integ">制券 · 服务商</span><span class="integ">券能力 · 微信支付</span></div></div>
+</div>
+
+<div class="note"><b>架构边界：</b>平台只提交审批单并接收 BPM 的按人结果，不建设审批引擎；不代替微信商户平台建券；服务商无独立账号；批次配置在推送后锁定。门店编码来自客户系统，当前不限定格式。</div>
+<div class="foot"><span>蒙牛活动管理平台 · 总部端一期</span><span>示意 · 系统架构图 · 与原型构建 h 同步</span></div>
+</div></body></html>

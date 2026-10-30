@@ -1,17 +1,52 @@
 /* =============================================================================
- * data/products.js — 商品数据（示例）
- * 一期不对接商品库；导入模板列为 69码/店内码 + 商品名称 + 店内码所属零售商。
+ * data/products.js — 商品主数据（全平台通用）
+ *   来源：活动投放过程中导入 / 手工新增；店内码所属零售商来自计划创建时维护的
+ *         「内码 ↔ 零售商」对应关系，每遇到一个新名称就追加，不覆盖历史。
+ *   字段：code 69码 / n 商品名称 / inCode 店内码 / rets 店内码所属零售商（数组）/
+ *        spec 规格 / status 状态 / src 来源
+ *   注：品牌、品类已按客户要求删除，不再维护。
  * ========================================================================== */
 
-/* ---------- 逻辑 ---------- */
-var SKU_DB=[
-  {g:'常温奶',n:'特仑苏纯牛奶 250ml×12',d:'SKU 6901234500011'},
-  {g:'常温奶',n:'蒙牛纯甄酸奶 200g×12',d:'SKU 6901234500028'},
-  {g:'常温奶',n:'未来星儿童奶 190ml×12',d:'SKU 6901234500035'},
-  {g:'礼盒装',n:'特仑苏 / 精选礼盒',d:'2 款礼盒 · 18 SKU'},
-  {g:'礼盒装',n:'纯甄果粒礼盒装',d:'SKU 6901234500042'},
-  {g:'冰品',n:'随变 / 蒂兰圣雪冰品',d:'夏季档专用 · 64 SKU'}
+var SKU_DB = [
+  { code:'6901234500011', n:'特仑苏纯牛奶 250ml×12',  inCode:'',        rets:[],                       spec:'250ml×12',  status:'启用', src:'导入' },
+  { code:'6901234500028', n:'蒙牛纯甄酸奶 200g×12',   inCode:'',        rets:[],                       spec:'200g×12',   status:'启用', src:'导入' },
+  { code:'6901234500035', n:'未来星儿童奶 190ml×12',  inCode:'',        rets:[],                       spec:'190ml×12',  status:'启用', src:'导入' },
+  { code:'6901234500042', n:'纯甄果粒礼盒装 200g×10', inCode:'',        rets:[],                       spec:'200g×10',   status:'启用', src:'导入' },
+  { code:'',              n:'特仑苏 / 精选礼盒',      inCode:'SPU-2318', rets:['永辉超市','特易购'],     spec:'2 款组合',  status:'启用', src:'导入' },
+  { code:'',              n:'随变 / 蒂兰圣雪冰品',    inCode:'SPU-2601', rets:['华润万家','永辉超市'],   spec:'64 SKU',    status:'停用', src:'导入' }
 ];
+
+/* 兼容历史数据：老版本只有 ret 字符串 */
+SKU_DB.forEach(function(s){
+  if(!s.rets){
+    s.rets = [];
+    if(s.ret) String(s.ret).split(/[、,，\/]/).forEach(function(x){ x = x.trim(); if(x) s.rets.push(x); });
+  }
+  delete s.ret;
+  delete s.brand;
+  delete s.cat;
+});
+
+/** 追加店内码所属零售商：同名不重复，新名称追加到末尾（名称不同就追加显示） */
+function skuAddRet(s, name){
+  if(!s || !name) return false;
+  s.rets = s.rets || [];
+  var n = String(name).trim();
+  if(!n || s.rets.indexOf(n) >= 0) return false;
+  s.rets.push(n);
+  return true;
+}
+
+/** 多个零售商统一用「、」拼接展示 */
+function skuRetsText(s){ return (s && s.rets ? s.rets : []).join('、'); }
+
+/** 按 69码 / 店内码 找商品（先 69码，再店内码） */
+function skuFind(code, inCode){
+  var db = window.SKU_DB || [];
+  if(code){ for(var i=0;i<db.length;i++){ if(db[i].code === code) return db[i]; } }
+  if(inCode){ for(var j=0;j<db.length;j++){ if(db[j].inCode === inCode) return db[j]; } }
+  return null;
+}
 
 /* 计划数据（创建时填写） */
 

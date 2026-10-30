@@ -1,0 +1,63 @@
+schema_version: 1
+request_id: "20261030-sow"
+created_at: "2026-10-30T18:15:00+08:00"
+updated_at: "2026-10-30T18:20:00+08:00"
+
+entry_type: full_pipeline
+stage_chain: [1, 2, 3]
+
+output_docx_path: "D:\\Project\\蒙牛-原型-ds-harness\\deliverables\\蒙牛活动管理平台_一期工作说明书SOW_V1.1.docx"
+output_docx_user_specified: true
+output_note: "用户指定 deliverables/ 目录；首版 V1.0 生成后该文件被 WPS 占用无法覆盖，按金额复核修订升版为 V1.1"
+
+current_stage: completed
+
+stages:
+  stage_0:
+    status: completed
+    completed_at: "2026-10-30T18:15:00+08:00"
+    decision: full_pipeline
+    note: "无既有文档 + 创作动词（创建一份 SOW）→ S1→S2→S3"
+
+  stage_1:
+    status: completed
+    started_at: "2026-10-30T18:15:00+08:00"
+    completed_at: "2026-10-30T18:28:00+08:00"
+    output_path: "stage1/final_draft.md"
+    genre: "legal-contract"
+    expert_used: "legal-contract-expert"
+    route_tag: "expert_legal"
+
+  stage_2:
+    status: completed
+    started_at: "2026-10-30T18:28:00+08:00"
+    completed_at: "2026-10-30T18:16:00+08:00"
+    route: html
+    html_sub: template
+    output_path: "stage2/formatted-SOW.html"
+    output_format: html
+    skills_invoked: [design-token, doc-typeset, html-review]
+    design_tokens_path: null
+    fallback: false
+    fallback_reason: null
+    review: "passed, score 100（六维度全通过；TQ-05 16 个 h2 为 16 章结构所致，warning 可接受）"
+
+  stage_3:
+    status: completed
+    started_at: "2026-10-30T18:16:00+08:00"
+    completed_at: "2026-10-30T18:20:00+08:00"
+    executor: "doc-converter"
+    input_format: html
+    output_path: "D:\\Project\\蒙牛-原型-ds-harness\\deliverables\\蒙牛活动管理平台_一期工作说明书SOW_V1.1.docx"
+    skill_used: ["html-to-doc"]
+    present_files_opened: true
+    fallback: false
+    fallback_reason: null
+    chunks: null
+    warnings: []
+
+consistency_check:
+  output_files_exist: pass
+  stage_chain_complete: pass
+  last_checked_at: "2026-10-30T18:20:00+08:00"
+  errors: []

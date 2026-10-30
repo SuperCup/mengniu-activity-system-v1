@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>状态流转</title>
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; background: #f4f7f6; font-family: "Microsoft YaHei", sans-serif; color: #1c2b27; }
+  .page { width: 1360px; height: 760px; padding: 26px 28px; }
+  h1 { margin: 0 0 4px; font-size: 22px; }
+  .sub { margin: 0 0 16px; color: #5d6f69; font-size: 13px; }
+  h2 { margin: 0 0 10px; font-size: 15px; color: #096c52; }
+  .flow { display: flex; align-items: stretch; gap: 0; margin-bottom: 8px; }
+  .nd { flex: 1; background: #fff; border: 1px solid #cfe0d9; border-radius: 10px; padding: 10px 10px 8px; }
+  .nd b { display: block; font-size: 14px; }
+  .nd span { display: block; margin-top: 4px; font-size: 12px; color: #4c615a; line-height: 1.45; }
+  .ar { width: 28px; display: flex; align-items: center; justify-content: center; color: #096c52; font-size: 18px; font-weight: 700; }
+  .nd.on { background: #096c52; color: #fff; border-color: #096c52; }
+  .nd.on span { color: rgba(255,255,255,.88); }
+  .nd.end { background: #fdecec; border-color: #e7b4b4; }
+  table { width: 100%; border-collapse: collapse; background: #fff; font-size: 12.5px; margin-top: 8px; }
+  th, td { border: 1px solid #d7e2de; padding: 6px 8px; text-align: left; vertical-align: top; }
+  th { background: #eef6f3; color: #096c52; }
+  .sec { margin-top: 16px; }
+  .pills { display: flex; gap: 8px; }
+  .p { background: #fff; border: 1px solid #d5e0db; border-radius: 8px; padding: 8px 10px; flex: 1; font-size: 12.5px; line-height: 1.45; }
+  .p b { display: block; margin-bottom: 2px; }
+</style>
+</head>
+<body>
+<div class="page">
+  <h1>项目状态与计划状态</h1>
+  <div class="sub">项目状态决定能做哪些动作。计划状态跟着批次号和项目状态变化，不能在列表里手工修改。</div>
+  <h2>项目六个状态</h2>
+  <div class="flow">
+    <div class="nd"><b>01 草稿</b><span>可编辑、删除、提交。驳回和撤回都回到这里。</span></div>
+    <div class="ar">›</div>
+    <div class="nd"><b>02 待审批</b><span>锁定编辑。等待审批结论，创建人可撤回。</span></div>
+    <div class="ar">›</div>
+    <div class="nd on"><b>03 待推送</b><span>审批已通过。补齐全部计划后才能推送，也可终止。</span></div>
+    <div class="ar">›</div>
+    <div class="nd"><b>04 待确认</b><span>邮件已发。可重发、复制链接、终止。未确认不算执行。</span></div>
+    <div class="ar">›</div>
+    <div class="nd"><b>05 执行中</b><span>服务商已确认。可推送小程序、看看板。可终止则停发券。</span></div>
+    <div class="ar">›</div>
+    <div class="nd end"><b>06 已终止</b><span>终态。不可恢复，只能复制成新草稿重建。</span></div>
+  </div>
+  <table>
+    <tr><th style="width:14%">状态</th><th style="width:38%">进入条件</th><th>页面上可执行的动作</th></tr>
+    <tr><td>草稿</td><td>新建，或被驳回 / 撤回</td><td>继续编辑、删除草稿、提交审批</td></tr>
+    <tr><td>待审批</td><td>创建人提交，且 PO 校验通过</td><td>审批人同意或驳回；创建人撤回。审批列表只展示报批信息</td></tr>
+    <tr><td>待推送服务商</td><td>审批同意</td><td>完善批次计划、推送服务商、终止。计划未补齐时推送被拒绝</td></tr>
+    <tr><td>待服务商确认</td><td>推送成功并留下发送记录</td><td>重发邮件、复制确认链接、终止、查看详情</td></tr>
+    <tr><td>执行中</td><td>服务商确认承接</td><td>查看计划与批次、领券小程序、数据看板；终止后释放未核销预算</td></tr>
+    <tr><td>已终止</td><td>业务执行终止</td><td>只读详情、复制为新项目</td></tr>
+  </table>
+  <div class="sec">
+    <h2>计划状态（由系统计算）</h2>
+    <div class="pills">
+      <div class="p"><b>待完善</b>还没有服务商回传的批次号。创建人点「补充配置」填写券信息。这是推送前的主要工作状态。</div>
+      <div class="p"><b>待配置</b>已有批次号，但项目尚未进入执行中。表示批次已回传、等待活动真正跑起来。</div>
+      <div class="p"><b>进行中</b>项目为执行中，且批次号已回传。可推送给小程序渠道。</div>
+      <div class="p"><b>已结束</b>计划结束日早于今天，或回传状态为已结束。</div>
+      <div class="p"><b>已中止</b>所属项目已终止，或批次被标记中止。不再发券。</div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

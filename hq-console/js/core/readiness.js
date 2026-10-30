@@ -121,5 +121,5 @@ function mnCurrentUser(){
     var u = window.MN_USER;
     if(u && u.name) return u;
   }catch(e){}
-  return { name:'李雪', role:'biz', dept:'数字化中心' };
+  return { name:'张明', role:'biz', dept:'数字化中心' };
 }

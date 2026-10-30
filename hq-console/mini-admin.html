@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>小程序管理后台</title>
+<link rel="stylesheet" href="css/tokens.css">
+<link rel="stylesheet" href="css/base.css">
+<link rel="stylesheet" href="css/components.css">
+<style>
+  body{min-height:100vh;background:var(--bg)}
+  .top{height:56px;background:#fff;border-bottom:1px solid var(--line);display:flex;align-items:center;padding:0 22px;gap:12px}
+  .top b{font-size:16px}
+  .top .tag{font-size:12px;color:var(--ink3)}
+  .wrap{max-width:880px;margin:22px auto;padding:0 16px}
+</style>
+</head>
+<body>
+  <div class="top">
+    <b id="nm">小程序管理后台</b>
+    <span class="tag">本渠道管理后台</span>
+  </div>
+  <div class="wrap">
+    <div class="panel">
+      <div class="panel-h"><h3>配券</h3></div>
+      <div class="panel-b">
+        <div class="flex" style="gap:28px">
+          <div><div class="mut" style="font-size:12px">渠道</div><div id="ch">—</div></div>
+          <div><div class="mut" style="font-size:12px">AppID</div><div class="sx-mono" id="aid">—</div></div>
+        </div>
+        <p class="mut" style="margin-top:14px;font-size:13px">总部把批次推到本渠道后，配券在这里完成。</p>
+      </div>
+    </div>
+  </div>
+<script>
+(function(){
+  var q = new URLSearchParams(location.search);
+  var name = q.get('name') || '未指定渠道';
+  var appid = q.get('appid') || '—';
+  document.title = name + ' · 小程序管理后台';
+  document.getElementById('nm').textContent = name + ' · 小程序管理后台';
+  document.getElementById('ch').textContent = name;
+  document.getElementById('aid').textContent = appid;
+})();
+</script>
+</body>
+</html>

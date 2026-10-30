@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="docx-page-size" content="A4">
+<title>蒙牛活动管理平台一期项目工作说明书（SOW）</title>
+<style>
+  /* 页面规则：正文页脚居中显示当前页码，封面不显示 */
+  @page { @bottom-center { content: "第 " counter(page) " 页"; } }
+  @page cover { @bottom-center { content: none; } }
+  section[role="cover"] { page: cover; }
+
+  :root {
+    --ff-body: "SimSun", "宋体", serif;
+    --ff-heading: "SimHei", "黑体", sans-serif;
+    --fs-body: 12pt;
+    --fs-h1: 19pt;
+    --fs-h2: 15pt;
+    --fs-h3: 12.5pt;
+    --fs-small: 10pt;
+    --fs-table: 9.5pt;
+    --fs-cover-title: 30pt;
+    --fs-cover-sub: 18pt;
+    --fs-cover-eyebrow: 10pt;
+    --color-text: #1a1a1a;
+    --color-primary: #1f3a5f;
+    --color-muted: #666666;
+    --color-border: #c2cad3;
+    --color-bg: #ffffff;
+    --color-th-bg: #eef2f6;
+    --color-note-bg: #f5f7fa;
+    --spacing-paragraph: 0.55em;
+    --spacing-block: 0.8em;
+    --spacing-section: 1.3em;
+    --spacing-li: 0.25em;
+    --spacing-list: 1.8em;
+    --spacing-cell: 5pt;
+    --spacing-page: 2.2cm;
+    --spacing-cover-top: 2.6em;
+    --spacing-cover-gap: 2.4em;
+    --spacing-rule: 4pt;
+    --page-width: 15.6cm;
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    font-family: var(--ff-body);
+    font-size: var(--fs-body);
+    line-height: 1.75;
+    color: var(--color-text);
+    background: var(--color-bg);
+    max-width: var(--page-width);
+    margin: 0 auto;
+    padding: var(--spacing-page);
+    text-align: justify;
+  }
+
+  p { margin: 0 0 var(--spacing-paragraph) 0; text-indent: 2em; }
+  section[role="cover"] p { text-indent: 0; }
+
+  h1.doc-title {
+    font-family: var(--ff-heading);
+    font-size: var(--fs-h1);
+    color: var(--color-primary);
+    font-weight: 700;
+    text-align: center;
+    text-indent: 0;
+    margin: 0 0 var(--spacing-section) 0;
+  }
+  h2 {
+    font-family: var(--ff-heading);
+    font-size: var(--fs-h2);
+    color: var(--color-primary);
+    font-weight: 700;
+    text-indent: 0;
+    margin: var(--spacing-section) 0 var(--spacing-block) 0;
+    padding-bottom: var(--spacing-rule);
+    border-bottom: 1.2pt solid var(--color-primary);
+  }
+  h3 {
+    font-family: var(--ff-heading);
+    font-size: var(--fs-h3);
+    color: var(--color-primary);
+    font-weight: 700;
+    text-indent: 0;
+    margin: var(--spacing-block) 0 var(--spacing-paragraph) 0;
+  }
+
+  table.doc-table, table.party-info, table.signature-block {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: var(--fs-table);
+    line-height: 1.55;
+    margin: 0 0 var(--spacing-section) 0;
+  }
+  table.doc-table th, table.doc-table td,
+  table.party-info th, table.party-info td,
+  table.signature-block th, table.signature-block td {
+    border: 0.75pt solid var(--color-border);
+    padding: var(--spacing-cell);
+    text-indent: 0;
+    text-align: left;
+    vertical-align: top;
+  }
+  table.doc-table th, table.party-info th, table.signature-block th {
+    background: var(--color-th-bg);
+    font-family: var(--ff-heading);
+    font-weight: 700;
+    color: var(--color-primary);
+  }
+  table.signature-block td { line-height: 2.1; }
+
+  ul, ol { margin: 0 0 var(--spacing-paragraph) var(--spacing-list); padding-left: 0; }
+  li { margin: 0 0 var(--spacing-li) 0; text-indent: 0; }
+
+  code { font-family: var(--ff-body); }
+
+  .cover-eyebrow {
+    text-align: center;
+    text-indent: 0;
+    font-family: var(--ff-heading);
+    font-size: var(--fs-cover-eyebrow);
+    color: var(--color-muted);
+    letter-spacing: 0.2em;
+    margin: var(--spacing-cover-top) 0 var(--spacing-block) 0;
+  }
+  .cover-title {
+    text-align: center;
+    text-indent: 0;
+    font-family: var(--ff-heading);
+    font-size: var(--fs-cover-title);
+    color: var(--color-primary);
+    font-weight: 700;
+    margin: 0 0 var(--spacing-block) 0;
+  }
+  .cover-subtitle {
+    text-align: center;
+    text-indent: 0;
+    font-family: var(--ff-heading);
+    font-size: var(--fs-cover-sub);
+    color: var(--color-text);
+    margin: 0 0 var(--spacing-cover-gap) 0;
+  }
+  .cover-meta {
+    text-align: center;
+    text-indent: 0;
+    font-size: var(--fs-small);
+    color: var(--color-muted);
+    margin: var(--spacing-cover-gap) 0 0 0;
+  }
+
+  nav.doc-toc { margin: 0; }
+  .toc-title {
+    text-align: center;
+    text-indent: 0;
+    font-family: var(--ff-heading);
+    font-size: var(--fs-h2);
+    color: var(--color-primary);
+    font-weight: 700;
+    margin: 0 0 var(--spacing-section) 0;
+  }
+  .toc-list, .toc-list ol, .toc-list ul { list-style: none; margin: 0; padding: 0; }
+  .toc-list li { margin: 0 0 var(--spacing-li) 0; text-indent: 0; line-height: 1.9; }
+  .toc-list a { color: var(--color-text); text-decoration: none; }
+</style>
+</head>
+<body>
+<section role="cover">
+<div class="cover-eyebrow" style="text-align: center;">STATEMENT OF WORK</div>
+<div class="cover-title" style="text-align: center;">蒙牛活动管理平台一期项目</div>
+<div class="cover-subtitle" style="text-align: center;">工作说明书（SOW）</div>
+<table class="party-info">
+<thead><tr><th>项　目</th><th>内　容</th></tr></thead>
+<tbody>
+<tr><td>文档名称</td><td>蒙牛活动管理平台一期项目工作说明书（SOW）</td></tr>
+<tr><td>文档版本</td><td>V1.1</td></tr>
+<tr><td>编制日期</td><td>2026 年 10 月 30 日</td></tr>
+<tr><td>甲方</td><td>内蒙古蒙牛乳业（集团）股份有限公司</td></tr>
+<tr><td>乙方</td><td>（乙方名称，以正式合同签署主体为准）</td></tr>
+<tr><td>项目周期</td><td>2026-10-12 至 2026-12-31</td></tr>
+<tr><td>文档用途</td><td>约定建设范围、交付物、里程碑、双方职责、验收标准与质保运维边界</td></tr>
+</tbody></table>
+<div class="cover-meta" style="text-align: center;">本文件为主合同的工作范围与交付附件，与主合同一并签署生效</div>
+</section>
+<section role="cover">
+<nav class="doc-toc" aria-label="文档目录">
+<p class="toc-title">目　录</p>
+<ol class="toc-list">
+<li><a href="#section-1">一、文档信息</a></li>
+<li><a href="#section-2">二、项目概述</a></li>
+<li><a href="#section-3">三、工作范围</a></li>
+<li><a href="#section-4">四、交付物清单</a></li>
+<li><a href="#section-5">五、里程碑与进度计划</a></li>
+<li><a href="#section-6">六、双方职责</a></li>
+<li><a href="#section-7">七、项目组织与沟通机制</a></li>
+<li><a href="#section-8">八、需求变更管理</a></li>
+<li><a href="#section-9">九、验收标准与验收流程</a></li>
+<li><a href="#section-10">十、质保与运维服务</a></li>
+<li><a href="#section-11">十一、商务条款</a></li>
+<li><a href="#section-12">十二、知识产权与保密</a></li>
+<li><a href="#section-13">十三、假设与依赖</a></li>
+<li><a href="#section-14">十四、风险与应对</a></li>
+<li><a href="#section-15">十五、法律条款</a></li>
+<li><a href="#section-16">十六、附录</a></li>
+</ol></nav>
+</section>
+<section role="body" data-page-restart="1">
+<h1 class="doc-title">蒙牛活动管理平台一期项目工作说明书（SOW）</h1>
+<h2 id="section-1">一、文档信息</h2>
+<p>本章说明本 SOW 的目的与效力、编制依据、修订规则与称谓定义。</p>
+<h3>1.1 文档目的与效力</h3>
+<p>本文档为「蒙牛活动管理平台一期项目」（以下简称「本项目」）的工作说明书（Statement of Work，以下简称「本 SOW」），用于约定本项目的建设范围、交付物、里程碑、双方职责、验收标准、变更机制、质保与运维边界，作为主合同的工作范围与交付附件。</p>
+<p>本 SOW 与主合同的关系如下：</p>
+<ol><li>本 SOW 经双方项目负责人确认并随主合同签署后生效，与主合同具有同等约束力。</li><li>本 SOW 与主合同就同一事项约定不一致时，以主合同为准；主合同未约定的事项，以本 SOW 为准。</li><li>本 SOW 未列明的功能、接口与集成工作，不构成本期交付义务，应按第八章变更程序另行评估。</li><li>本 SOW 是验收的依据文件。验收以本 SOW 约定的范围与标准为准，不以原型页面中用于示意的后续阶段内容为准。</li></ol>
+<h3>1.2 编制依据</h3>
+<table class="doc-table"><thead><tr><th>序号</th><th>文件名称</th><th>版本 / 日期</th><th>用途</th></tr></thead><tbody><tr><td>1</td><td>蒙牛活动管理平台_一期产品需求文档</td><td>V7.3 / 2026-10-30</td><td>功能范围、字段规则、验收检查点</td></tr><tr><td>2</td><td>蒙牛活动管理平台_系统开发报价单</td><td>V6.8 / 2026-10-27</td><td>价款构成、角色单价、工时口径</td></tr><tr><td>3</td><td>蒙牛活动管理平台_开发计划</td><td>V6.8</td><td>里程碑日期、任务分派、负责方</td></tr><tr><td>4</td><td>蒙牛活动管理平台_客户待确认事项清单</td><td>V4 / 2026-10-20</td><td>待确认业务规则</td></tr></tbody></table>
+<p>编制依据文件发生版本更新时，应由双方项目负责人书面确认其适用版本；未确认的版本不改变本 SOW 的义务。</p>
+<h3>1.3 版本与变更记录</h3>
+<table class="doc-table"><thead><tr><th>版本</th><th>日期</th><th>编制 / 修订</th><th>变更摘要</th></tr></thead><tbody><tr><td>V1.0</td><td>2026-10-30</td><td>乙方项目组</td><td>首次成稿，依据 PRD V7.3、报价单 V6.8、开发计划 V6.8 编制</td></tr><tr><td>V1.1</td><td>2026-10-30</td><td>乙方项目组</td><td>复核合同金额：含税合计按小计与增值税之和列示为 ¥1,626,582.72；附录 C 增加金额核对事项</td></tr></tbody></table>
+<p>本 SOW 修订应经双方项目负责人确认并记录变更摘要；未经确认的修改版本不生效。</p>
+<h3>1.4 称谓与术语</h3>
+<table class="doc-table"><thead><tr><th>称谓 / 术语</th><th>含义</th></tr></thead><tbody><tr><td>甲方</td><td>内蒙古蒙牛乳业（集团）股份有限公司，本项目委托方与需求方</td></tr><tr><td>乙方</td><td>本项目受托开发方，以主合同签署主体为准</td></tr><tr><td>服务商</td><td>承担微信支付建券、批次回传与核销数据回传的第三方，通过项目专属链接免登录访问，不设系统账号</td></tr><tr><td>会员小程序</td><td>蒙牛会员服务中心小程序，消费者领券与核销的承载方</td></tr><tr><td>项目 / 计划 / 批次</td><td>本项目三级业务对象，一个项目包含若干计划，一个计划对应一个批次</td></tr><tr><td>工作日</td><td>中华人民共和国法定工作日，不含法定节假日与休息日</td></tr><tr><td>UAT</td><td>用户验收测试，由甲方业务人员按真实业务场景执行</td></tr><tr><td>缺陷</td><td>系统行为与 PRD 及本 SOW 约定不一致的问题，按 9.3 分级</td></tr></tbody></table>
+<h2 id="section-2">二、项目概述</h2>
+<p>本章说明项目背景、建设目标、成功判据与总体周期，作为范围与验收的前提。</p>
+<h3>2.1 项目背景</h3>
+<p>甲方活动券能力当前分散在多处：活动提报与审批依赖邮件正文传递关键信息，计划与外部制券批次缺少稳定映射，零售商与商品明细分散保存，核销与执行数据回流后缺少统一台账。由此产生三类问题：方案与批次错配、执行过程不可追溯、数据口径不一致。</p>
+<p>本项目在一期范围内建设总部端活动管理平台，把「创建项目并提交审批 → BPM 审批 → 批次配置 → 服务商执行 → 挂券与投放 → 发券核销 → 数据回流」这一条主链路纳入系统管理，并沉淀可追溯的项目、计划、批次与数据台账。</p>
+<h3>2.2 建设目标</h3>
+<ol><li>一个活动从提报到执行，全流程在系统内留下结构化记录，不再依赖邮件正文传递关键信息。</li><li>计划与外部批次建立稳定的一对一对应关系，批次号全平台唯一，消除方案与批次错配。</li><li>活动零售商与活动商品明细在创建项目、维护批次计划时导入，合法记录汇总写入门店与商品数据表，并保留来源项目与计划。</li><li>业务用户可查询本人创建、担任负责人或被指定为审批人的项目及相关数据；管理员可访问全部项目。</li></ol>
+<h3>2.3 成功判据</h3>
+<table class="doc-table"><thead><tr><th>编号</th><th>判据</th><th>判定规则</th><th>检查方式</th></tr></thead><tbody><tr><td>G-01</td><td>主流程贯通</td><td>创建项目并提交审批至有效业务回传可完整串联</td><td>联调场景核对</td></tr><tr><td>G-02</td><td>映射清晰</td><td>计划与有效外部批次一一对应</td><td>核对项目计划批次</td></tr><tr><td>G-03</td><td>操作可追溯</td><td>提交、审批、通知、确认及回传均有结果记录</td><td>核对系统日志</td></tr><tr><td>G-04</td><td>数据有效</td><td>有效回传入库，重复与异常分别处理</td><td>正常与异常样例</td></tr><tr><td>G-05</td><td>授权有效</td><td>内部角色及创建人、负责人、审批人数据边界生效；服务商项目授权生效</td><td>授权与越权用例</td></tr></tbody></table>
+<h3>2.4 项目周期</h3>
+<table class="doc-table"><thead><tr><th>项</th><th>约定</th></tr></thead><tbody><tr><td>计划启动日</td><td>2026-10-12</td></tr><tr><td>计划上线日</td><td>2026-12-29</td></tr><tr><td>计划交付完成日</td><td>2026-12-31</td></tr><tr><td>履约基准日</td><td>主合同生效日。生效日晚于 2026-10-12 时，各里程碑节点按延迟天数顺延，双方书面确认后执行</td></tr><tr><td>缺陷质保期</td><td>验收通过之日起 12 个月</td></tr><tr><td>年度运维服务期</td><td>2027-01-04 起 12 个月，与缺陷质保并行</td></tr></tbody></table>
+<h2 id="section-3">三、工作范围</h2>
+<p>本章界定本期做什么、不做什么，以及范围争议的解释顺序。</p>
+<h3>3.1 范围内工作</h3>
+<p>本期交付内容包括管理端页面与操作页、两类开放 API、后台任务、公共模块及交付保障工作，具体如下。</p>
+<table class="doc-table"><thead><tr><th>序号</th><th>范围类别</th><th>工作内容</th><th>数量口径</th></tr></thead><tbody><tr><td>S-01</td><td>管理端页面与操作页</td><td>登录与访问框架、项目创建、项目审批与 BPM 对接、项目管理、计划与批次、服务商操作页、挂券与配置、门店与商户号、商品维护、数据看板、系统管理、系统日志</td><td>12 项</td></tr><tr><td>S-02</td><td>开放 API（发券小程序侧）</td><td>接口鉴权、优惠券批次查询、优惠券发放、批次信息推送、核销事件推送</td><td>5 项</td></tr><tr><td>S-03</td><td>开放 API（制券服务商侧）</td><td>接口鉴权、项目确认接收、项目计划及批次回传、核销事件回传、执行情况回传、账单数据回传</td><td>6 项</td></tr><tr><td>S-04</td><td>后台任务</td><td>外部与审批状态同步、指标计算与报表生成、台账更新与自动对账、账单数据入库及检查、通知与运行维护</td><td>5 项</td></tr><tr><td>S-05</td><td>公共模块</td><td>甲方内部接口封装、钉钉单点登录、用户身份、审批流发起与查询接口、TPM 预算查询、通知接口、微信支付发放优惠券</td><td>7 项</td></tr><tr><td>S-06</td><td>交付保障</td><td>单元测试与代码审查、前后端联调、外部系统联调、测试用例编写、功能及流程测试、接口测试、性能测试、集成测试、数据一致性测试、UAT 支持、环境与培训、部署发布、监控与资料归档</td><td>按第五章节点执行</td></tr></tbody></table>
+<p>业务规则、字段级校验与检查点以 PRD V7.3 第四至九章及 13.4 检查清单为准，本 SOW 不重复列举。</p>
+<h3>3.2 范围外工作（本期不做）</h3>
+<p>以下能力不纳入本期。甲方提出时按第八章变更程序评估范围、费用与交期，不因原型中存在示意页面而自动纳入。</p>
+<table class="doc-table"><thead><tr><th>序号</th><th>范围外事项</th><th>边界说明</th></tr></thead><tbody><tr><td>N-01</td><td>消费者端领券页面、独立 H5 或独立小程序</td><td>由会员小程序实现，乙方仅提供领券开放 API 与联调支持</td></tr><tr><td>N-02</td><td>执行中计划变更（新增批次、增删门店、增删商品）</td><td>属后续阶段，不以原型页面自动纳入本期</td></tr><tr><td>N-03</td><td>第三方埋点（如神策）及曝光、点击类事件上报</td><td>本期不增加曝光、点击事件或第三方分析工程</td></tr><tr><td>N-04</td><td>机制附件上传与文件管理</td><td>本期项目表单不含附件区，机制以结构化字段记录</td></tr><tr><td>N-05</td><td>通知已读状态采集</td><td>本期只记录通知发送成功或失败，不采集阅读状态</td></tr><tr><td>N-06</td><td>独立工作台、独立消息中心</td><td>待办、状态与操作通过项目管理页面及导航完成</td></tr><tr><td>N-07</td><td>平台直连微信支付建券、直连订单拉取、直连核销回调</td><td>核销、执行与账单由服务商按约定回传；公共模块仅封装发券能力</td></tr><tr><td>N-08</td><td>三方资金结算、差异裁决、结算单审批</td><td>本期只做台账与数据对账，不做资金划付</td></tr><tr><td>N-09</td><td>独立主数据治理、替代预算系统</td><td>主数据按本期约定维护，预算查询仍对接 TPM</td></tr><tr><td>N-10</td><td>多平台渠道管理</td><td>面向既有会员小程序完成约定 API 及联调，不建设多渠道池</td></tr><tr><td>N-11</td><td>组织架构接入与自定义角色体系</td><td>本期数据权限按创建人、负责人、审批人控制，不接入甲方组织架构</td></tr><tr><td>N-12</td><td>服务商系统账号与登录体系</td><td>服务商通过项目专属链接免登录访问，有效期与活动终止绑定</td></tr></tbody></table>
+<h3>3.3 范围解释顺序</h3>
+<p>范围争议时，按下列顺序解释：主合同约定 → 本 SOW 第三、四章 → PRD V7.3 第四至九章 → PRD 第十三章检查清单 → 原型页面。原型中标注为演示限制的说明（如数据存于浏览器本地、图片不落存储、邮件与审批为模拟）不构成功能承诺。</p>
+<h2 id="section-4">四、交付物清单</h2>
+<p>本章列出乙方应提交的过程交付物、系统交付物与交付形式要求。</p>
+<h3>4.1 过程交付物</h3>
+<table class="doc-table"><thead><tr><th>编号</th><th>交付物</th><th>形式</th><th>交付时点</th><th>验收方式</th></tr></thead><tbody><tr><td>D-01</td><td>需求规格与业务规则确认稿</td><td>文档（PDF / DOCX）</td><td>M1 前</td><td>需求评审会议纪要签署</td></tr><tr><td>D-02</td><td>原型与界面设计稿</td><td>可访问原型或设计稿</td><td>M1 前</td><td>评审确认</td></tr><tr><td>D-03</td><td>产品需求文档（PRD）</td><td>文档</td><td>M1 前</td><td>评审通过</td></tr><tr><td>D-04</td><td>系统架构、数据库与接口设计说明</td><td>文档</td><td>M1 前</td><td>设计评审通过</td></tr><tr><td>D-05</td><td>开发计划与测试计划</td><td>文档（含进度表）</td><td>M1 前</td><td>双方确认</td></tr><tr><td>D-06</td><td>部署与运行方案（含配置项清单、回滚方案）</td><td>文档</td><td>M5 前</td><td>甲方 IT 确认可执行</td></tr><tr><td>D-07</td><td>测试用例与测试报告</td><td>文档</td><td>M4 后</td><td>报告结论确认</td></tr><tr><td>D-08</td><td>接口文档（两类开放 API）</td><td>文档（含字段、错误码、幂等约定）</td><td>M3 后</td><td>联调方确认可对接</td></tr><tr><td>D-09</td><td>用户操作手册与培训材料</td><td>文档</td><td>M5 内</td><td>培训完成签到确认</td></tr><tr><td>D-10</td><td>系统运维手册与资料移交清单</td><td>文档</td><td>M6 内</td><td>移交清单签收</td></tr></tbody></table>
+<h3>4.2 系统交付物</h3>
+<table class="doc-table"><thead><tr><th>编号</th><th>交付物</th><th>形式</th><th>交付时点</th><th>验收方式</th></tr></thead><tbody><tr><td>D-11</td><td>管理端应用（含 12 项页面与操作页）</td><td>可部署程序包与源代码</td><td>M6</td><td>按第九章验收</td></tr><tr><td>D-12</td><td>开放 API 服务（发券侧 5 项、服务商侧 6 项）</td><td>可部署服务与接口文档</td><td>M6</td><td>接口测试与联调记录</td></tr><tr><td>D-13</td><td>后台任务（5 项）</td><td>可部署任务配置与执行记录</td><td>M6</td><td>执行日志核对</td></tr><tr><td>D-14</td><td>数据库结构与初始化脚本</td><td>SQL 脚本与说明</td><td>M6</td><td>部署验证</td></tr><tr><td>D-15</td><td>生产环境部署与上线</td><td>已部署可用环境</td><td>M6</td><td>上线确认单</td></tr></tbody></table>
+<h3>4.3 交付形式要求</h3>
+<ol><li>文档类交付物应以电子文件形式提交，可编辑源文件与定稿版并行移交。</li><li>源代码应以甲方可获取的代码仓库或压缩包形式移交，含构建说明与依赖清单。</li><li>交付物应以中文编写；接口字段名与错误码可使用英文，但应附中文说明。</li><li>交付物存在缺陷需修订时，乙方应修订后重新提交，修订不重复计费。</li></ol>
+<h2 id="section-5">五、里程碑与进度计划</h2>
+<p>本章约定里程碑节点、出口条件、关联交付物与进度顺延规则。</p>
+<h3>5.1 里程碑</h3>
+<table class="doc-table"><thead><tr><th>里程碑</th><th>名称</th><th>计划完成日</th><th>出口条件</th><th>关联交付物</th></tr></thead><tbody><tr><td>M1</td><td>需求与设计确认</td><td>2026-10-30</td><td>需求评审通过、系统设计评审通过、依赖清单与就绪时间确认</td><td>D-01 至 D-05</td></tr><tr><td>M2</td><td>管理端与公共模块开发完成</td><td>2026-11-20</td><td>管理端 12 项与公共模块 7 项开发完成，单元测试与代码审查通过</td><td>D-11、D-12 部分</td></tr><tr><td>M3</td><td>开放 API 与后台任务开发完成</td><td>2026-12-11</td><td>两类 API 11 项、后台任务 5 项完成，外部系统联调完成</td><td>D-08、D-12、D-13</td></tr><tr><td>M4</td><td>系统测试完成</td><td>2026-12-20</td><td>功能、接口、性能、集成、数据一致性测试完成，致命与严重缺陷为 0</td><td>D-07</td></tr><tr><td>M5</td><td>用户验收与培训完成</td><td>2026-12-25</td><td>UAT 用例执行完成，遗留问题整改完成并经甲方确认，培训交付</td><td>D-06、D-09</td></tr><tr><td>M6</td><td>上线与交付完成</td><td>2026-12-31</td><td>2026-12-28 生产部署与数据初始化、2026-12-29 发布上线并试运行、2026-12-31 完成监控与资料移交</td><td>D-10 至 D-15</td></tr></tbody></table>
+<h3>5.2 进度调整与顺延</h3>
+<ol><li>下列情形导致进度受阻的，里程碑节点相应顺延，顺延天数由双方项目负责人书面确认：甲方依赖项未按 13.2 约定时间就绪；甲方需求确认或验收反馈迟延超过约定时限；外部接口方联调窗口不可用；不可抗力。</li><li>乙方应在发现进度风险后 2 个工作日内书面告知甲方，说明影响范围、预计顺延天数与补救措施；未及时告知的，不构成顺延理由。</li><li>因乙方原因导致里程碑迟延的，按 15.2 承担违约责任。</li><li>阶段任务的具体起止日期依开发计划 V6.8 执行；个别任务日期调整不影响里程碑出口条件。</li></ol>
+<h2 id="section-6">六、双方职责</h2>
+<p>本章分列甲方职责、乙方职责与共同职责，并约定配合时限与迟延后果。</p>
+<h3>6.1 甲方职责</h3>
+<table class="doc-table"><thead><tr><th>编号</th><th>职责</th><th>时限要求</th></tr></thead><tbody><tr><td>A-01</td><td>指定项目负责人与业务对接人，明确需求决策人</td><td>合同生效后 3 个工作日内</td></tr><tr><td>A-02</td><td>提供钉钉登录、审批流（BPM）、预算系统（TPM / MEM）、通知接口的文档与对接人</td><td>2026-10-30 前</td></tr><tr><td>A-03</td><td>提供微信支付商户号、API 密钥及证书，确认可发券商户号清单</td><td>2026-11-13 前</td></tr><tr><td>A-04</td><td>提供会员服务中心小程序 AppID、接口资料与联调环境</td><td>2026-11-13 前</td></tr><tr><td>A-05</td><td>提供测试环境与生产环境（服务器、域名、网络策略、数据库）并保证可用</td><td>测试环境 2026-11-02 前；生产环境 2026-12-21 前</td></tr><tr><td>A-06</td><td>提供业务样例数据（项目、门店、商品、商户号）用于测试与初始化</td><td>2026-11-06 前</td></tr><tr><td>A-07</td><td>组织 UAT，指定业务人员执行用例并反馈问题</td><td>2026-12-21 至 2026-12-25</td></tr><tr><td>A-08</td><td>对需求确认、变更申请、验收结论在 3 个工作日内书面答复</td><td>全程</td></tr><tr><td>A-09</td><td>协调服务商完成建券、批次号回传与数据回传约定</td><td>2026-11-27 前</td></tr></tbody></table>
+<h3>6.2 乙方职责</h3>
+<table class="doc-table"><thead><tr><th>编号</th><th>职责</th><th>时限要求</th></tr></thead><tbody><tr><td>B-01</td><td>按本 SOW 与 PRD 完成范围内设计、开发、测试、部署与交付</td><td>按第五章</td></tr><tr><td>B-02</td><td>指定项目经理与技术负责人，保持核心人员稳定；核心人员变更应提前 5 个工作日书面通知并完成交接</td><td>全程</td></tr><tr><td>B-03</td><td>按 7.2 提交周报与阶段报告，及时披露进度、质量与风险</td><td>每周</td></tr><tr><td>B-04</td><td>对甲方提供的接口文档、密钥、证书与业务数据承担保密与安全保管义务</td><td>全程</td></tr><tr><td>B-05</td><td>提供测试用例、测试报告与缺陷清单，缺陷修复后执行回归</td><td>按第九章</td></tr><tr><td>B-06</td><td>提供上线部署、试运行观察与运行监控支持</td><td>2026-12-28 至 2026-12-31</td></tr><tr><td>B-07</td><td>提供培训并交付操作手册，培训不少于 2 场（管理员场、业务运营场）</td><td>M5 内</td></tr><tr><td>B-08</td><td>质保期内免费修复范围内缺陷，按 10.3 响应级别处理</td><td>质保期内</td></tr></tbody></table>
+<h3>6.3 共同职责</h3>
+<table class="doc-table"><thead><tr><th>编号</th><th>职责</th></tr></thead><tbody><tr><td>C-01</td><td>双方项目负责人每周召开项目例会，确认进度、问题与下周计划</td></tr><tr><td>C-02</td><td>依赖项就绪状态由双方共同核对，未就绪项列入风险清单跟踪</td></tr><tr><td>C-03</td><td>需求争议、范围争议由双方项目负责人协商，必要时提交双方管理层决策</td></tr><tr><td>C-04</td><td>上线决策由双方共同确认，任一方未确认不得发布上线</td></tr></tbody></table>
+<h3>6.4 配合时限与迟延后果</h3>
+<ol><li>甲方未在约定时限内提供 6.1 所列资料或环境，且未书面说明的，乙方有权按 5.2 申请顺延，且不承担该期间的迟延责任。</li><li>依赖项迟延超过 10 个工作日的，双方应评估替代方案：以人工或离线方式过渡，或调整对应范围至后续版本，评估结论书面记录。</li><li>乙方未按 6.2 履行配合义务的，甲方有权要求限期整改；整改后仍不满足的，按 15.2 处理。</li></ol>
+<h2 id="section-7">七、项目组织与沟通机制</h2>
+<p>本章约定项目组织、例会与报告机制，以及问题升级路径。</p>
+<h3>7.1 项目组织</h3>
+<table class="doc-table"><thead><tr><th>角色</th><th>人数（建议）</th><th>主要职责</th></tr></thead><tbody><tr><td>甲方项目负责人</td><td>1</td><td>需求决策、资源协调、验收签署</td></tr><tr><td>甲方业务对接人</td><td>1 至 2</td><td>业务规则确认、UAT 组织</td></tr><tr><td>甲方 IT 对接人</td><td>1</td><td>环境、接口、网络与安全配合</td></tr><tr><td>乙方项目经理</td><td>1</td><td>计划、进度、风险、交付管理</td></tr><tr><td>乙方产品 / 需求</td><td>2</td><td>需求梳理、PRD、原型、评审</td></tr><tr><td>乙方技术负责人</td><td>1</td><td>架构、接口、技术决策</td></tr><tr><td>乙方开发 / 测试</td><td>按资源计划</td><td>开发、联调、测试</td></tr></tbody></table>
+<p>双方应在 M1 前提交项目组织与联系人清单，人员变更应在 3 个工作日内更新。</p>
+<h3>7.2 例会与报告</h3>
+<table class="doc-table"><thead><tr><th>机制</th><th>频率</th><th>内容</th><th>输出</th></tr></thead><tbody><tr><td>项目周会</td><td>每周 1 次，30 至 60 分钟</td><td>进度对比、问题清单、风险、下周计划</td><td>会议纪要（乙方整理，甲方确认）</td></tr><tr><td>阶段评审会</td><td>每个里程碑 1 次</td><td>出口条件核对、交付物验收</td><td>评审结论</td></tr><tr><td>周报</td><td>每周</td><td>完成项、进行项、阻塞项、风险与需求变更</td><td>书面周报</td></tr><tr><td>问题跟踪</td><td>实时</td><td>缺陷与问题状态、责任人、期限</td><td>问题清单（共享台账）</td></tr></tbody></table>
+<h3>7.3 问题升级</h3>
+<ol><li>一般问题由双方项目负责人在周会解决。</li><li>问题在 3 个工作日内未解决，或涉及范围、费用、交期变更的，升级至双方项目主管部门。</li><li>问题在 5 个工作日内仍未解决，且影响里程碑的，升级至双方管理层决策，期间相关任务暂停计时。</li></ol>
+<h2 id="section-8">八、需求变更管理</h2>
+<p>本章约定变更的提出、影响评估、计价方式与范围冻结规则。</p>
+<h3>8.1 变更提出与评估</h3>
+<ol><li>任何一方提出需求变更，应以书面形式（变更单或邮件）提交，说明变更内容、原因与期望时间。</li><li>乙方应在收到变更申请后 3 个工作日内完成影响评估，评估内容包含五项：影响范围、工期变化、费用变化、风险变化、对既有需求的一致性影响。</li><li>变更经双方项目负责人书面确认后方可实施；未确认的变更不进入开发，乙方有权拒绝执行。</li><li>变更实施后应更新 PRD 版本与需求追踪矩阵，并通知受影响干系人。</li></ol>
+<h3>8.2 变更计价</h3>
+<p>变更工作量按人天计价，人天单价沿用报价单 V6.8 角色日单价，1 人天等于 8 小时。</p>
+<table class="doc-table"><thead><tr><th>角色</th><th>日单价（元，未税）</th></tr></thead><tbody><tr><td>产品经理</td><td>2,400</td></tr><tr><td>项目经理</td><td>2,800</td></tr><tr><td>UI 设计师</td><td>2,200</td></tr><tr><td>需求分析师</td><td>2,500</td></tr><tr><td>前端开发工程师</td><td>2,500</td></tr><tr><td>后端开发工程师</td><td>2,800</td></tr><tr><td>软件测试工程师</td><td>2,200</td></tr><tr><td>系统测试 / 网络优化工程师</td><td>2,300</td></tr><tr><td>交付 / 实施工程师</td><td>2,300</td></tr><tr><td>培训顾问</td><td>2,400</td></tr></tbody></table>
+<p>变更计价规则：</p>
+<ol><li>单项变更工作量不超过 3 人天的，可由双方项目负责人确认后计入本期内调整，不单独计费，但累计不超过 15 人天。</li><li>超过上述额度的变更，按评估工作量与日单价计算费用，签订补充协议或变更单后实施。</li><li>因乙方设计或实现缺陷导致的返工，不计入变更工作量。</li></ol>
+<h3>8.3 范围冻结</h3>
+<ol><li>需求基线在 M1 评审通过后冻结。冻结后新增或调整需求一律按本章处理。</li><li>上线前 15 个自然日内不受理影响主流程的变更；确需受理的，由双方项目负责人共同确认并相应顺延上线时间。</li></ol>
+<h2 id="section-9">九、验收标准与验收流程</h2>
+<p>本章约定验收前置条件、判定方法、缺陷分级，以及通过与视为通过的规则。</p>
+<h3>9.1 验收前置条件</h3>
+<p>甲方启动验收应同时满足以下条件：</p>
+<ol><li>M4 已完成，功能、接口、性能、集成与数据一致性测试通过，致命与严重缺陷为 0。</li><li>生产环境已部署，系统可正常访问，核心主流程可完整执行。</li><li>D-07、D-08、D-09、D-10 等交付物已提交。</li><li>UAT 用例已由甲方确认，测试数据已准备。</li></ol>
+<h3>9.2 验收内容与判定方法</h3>
+<table class="doc-table"><thead><tr><th>验收维度</th><th>判定方法</th><th>通过标准</th></tr></thead><tbody><tr><td>范围完整性</td><td>对照 3.1 与 4.2 逐项核对</td><td>范围内条目全部交付，无缺失项</td></tr><tr><td>功能正确性</td><td>按 PRD 13.4 检查清单与 UAT 用例执行</td><td>用例通过率不低于 95%，且致命、严重缺陷为 0</td></tr><tr><td>接口与联调</td><td>按 D-08 接口文档核对实际调用结果</td><td>接口可用、幂等有效、错误码可读；未就绪接口不记为通过</td></tr><tr><td>权限与安全</td><td>合法与越权用例执行</td><td>越权请求被拒绝，权限由接口层校验</td></tr><tr><td>数据正确性</td><td>计划与批次映射、批次号唯一性、回传入库结果核对</td><td>一一对应成立，重复与异常按约定处理</td></tr><tr><td>非功能</td><td>按测试计划在约定环境验证页面可用性、导入校验、负载表现</td><td>无阻断性问题；性能数值按测试计划与甲方环境约定执行，不另设未经约定的门槛</td></tr><tr><td>文档完整性</td><td>核对交付物清单</td><td>清单内文档齐全、可读、与系统一致</td></tr></tbody></table>
+<p>验收以操作输入、允许条件与预期结果的核对结论为依据。原型仅用于理解信息结构与交互，不作为验收基准；截图、日志、接口结果与数据核对记录作为验收证据留存。</p>
+<h3>9.3 缺陷分级与修复时限</h3>
+<table class="doc-table"><thead><tr><th>等级</th><th>定义</th><th>示例</th><th>修复时限</th></tr></thead><tbody><tr><td>致命</td><td>主流程中断、数据错误或丢失、资金或权限安全问题</td><td>推送后状态不变、核销金额算错、越权可见他人项目</td><td>1 个工作日内</td></tr><tr><td>严重</td><td>主要功能不可用或结果错误，存在临时绕行方案</td><td>导入大面积失败、批次号重复未拦截</td><td>2 个工作日内</td></tr><tr><td>一般</td><td>次要功能异常或体验明显受损</td><td>筛选不生效、分页错乱、提示文案含糊</td><td>5 个工作日内</td></tr><tr><td>轻微</td><td>文案、样式、对齐类问题</td><td>字段间距不一致、提示语措辞</td><td>纳入后续版本，不阻断验收</td></tr></tbody></table>
+<p>修复时限自缺陷在共享台账登记并经双方确认之日起算。修复后乙方应执行回归并将结果记入台账；同一缺陷两次修复未通过的，按严重等级升级处理。</p>
+<h3>9.4 验收通过与视为通过</h3>
+<ol><li>验收结论分为通过、有条件通过、不通过。有条件通过应列明遗留问题、责任方与完成时限，遗留问题不影响主流程使用。</li><li>甲方应在收到验收申请后 10 个工作日内组织验收并出具书面结论。</li><li>甲方逾期未组织验收且未提出书面异议的，视为验收通过；乙方应书面提示一次，提示后 5 个工作日内仍无答复的，视为通过。</li><li>验收不通过时，乙方应在 10 个工作日内完成整改并重新提交验收；因甲方新增需求导致的不通过，按第八章处理。</li></ol>
+<h3>9.5 试运行期</h3>
+<ol><li>2026-12-29 发布上线后进入试运行观察，至 2026-12-31 完成监控与资料移交。</li><li>试运行期内发现的范围内缺陷按 9.3 处理，不重复计费。</li><li>试运行期不改变验收结论；如需延长，由双方书面确认，延长期间乙方持续提供支持。</li></ol>
+<h2 id="section-10">十、质保与运维服务</h2>
+<p>本章约定缺陷质保范围、年度运维服务内容、响应级别与服务边界。</p>
+<h3>10.1 缺陷质保</h3>
+<ol><li>质保期为验收通过之日起 12 个月。</li><li>质保范围为本期交付范围内的缺陷修复，含缺陷定位、修复、回归与必要的数据修正。</li><li>质保期内缺陷修复不另行收费。</li><li>下列情形不属于质保范围：甲方或第三方擅自修改代码或配置；甲方环境、网络、数据库或第三方接口变更导致的异常；新增功能与范围外需求；甲方人员操作不当导致的数据问题（乙方可提供协助，按运维服务计）。</li></ol>
+<h3>10.2 年度运维服务</h3>
+<table class="doc-table"><thead><tr><th>项</th><th>约定</th></tr></thead><tbody><tr><td>服务期限</td><td>验收通过后 12 个月，与缺陷质保并行</td></tr><tr><td>服务费用</td><td>人民币壹拾陆万肆仟肆佰壹拾贰元整（¥164,412.00），为开发费未税金额的 12%</td></tr><tr><td>服务方式</td><td>以远程支持为主；现场服务与差旅另行确认</td></tr><tr><td>工作量上限</td><td>最多 36 人天</td></tr><tr><td>服务内容</td><td>系统故障响应、范围内缺陷修复及回归、已对接接口运行维护、后台任务运行检查、每月 1 次系统巡检、运行监控与问题处理、使用咨询（5×8）、维护性发布支持</td></tr><tr><td>服务边界</td><td>仅限本期交付系统；不增加功能范围；新增功能按变更程序评估</td></tr></tbody></table>
+<h3>10.3 服务响应级别</h3>
+<table class="doc-table"><thead><tr><th>级别</th><th>定义</th><th>响应时限</th></tr></thead><tbody><tr><td>P1</td><td>系统不可用或主流程中断，影响业务执行</td><td>2 小时内响应</td></tr><tr><td>P2</td><td>主要功能异常，存在绕行方案</td><td>4 小时内响应</td></tr><tr><td>P3</td><td>次要功能异常、使用咨询</td><td>1 个工作日内响应</td></tr></tbody></table>
+<p>响应时限指乙方确认受理并给出处理安排的时限，不等同于承诺修复时间。修复时间按缺陷等级与实际情况协商确定。</p>
+<h3>10.4 服务边界</h3>
+<ol><li>运维服务不含甲方基础设施（服务器、网络、数据库、中间件）的运维责任。</li><li>运维服务不含第三方平台（微信支付、会员小程序、BPM、TPM）自身故障的处理，乙方负责定位与配合排查。</li><li>超出 10.2 工作量上限的服务需求，按第八章变更程序评估。</li></ol>
+<h2 id="section-11">十一、商务条款</h2>
+<p>本章列明合同金额构成、支付节点、税费处理与不包含费用。</p>
+<h3>11.1 合同金额构成</h3>
+<table class="doc-table"><thead><tr><th>项目</th><th>未税金额</th><th>说明</th></tr></thead><tbody><tr><td>系统开发</td><td>人民币壹佰叁拾柒万零壹佰元整（¥1,370,100.00）</td><td>按角色工时计价，合计 528 人天</td></tr><tr><td>系统维保服务（1 年）</td><td>人民币壹拾陆万肆仟肆佰壹拾贰元整（¥164,412.00）</td><td>开发费未税金额的 12%，与开发费另列</td></tr><tr><td>小计（未税）</td><td>人民币壹佰伍拾叁万肆仟伍佰壹拾贰元整（¥1,534,512.00）</td><td>—</td></tr><tr><td>增值税（税率 6%）</td><td>人民币玖万贰仟零柒拾元柒角贰分（¥92,070.72）</td><td>开具增值税专用发票</td></tr><tr><td>合计（含税）</td><td>人民币壹佰陆拾贰万陆仟伍佰捌拾贰元柒角贰分（¥1,626,582.72）</td><td>小计与增值税之和</td></tr></tbody></table>
+<p>计价口径：日单价乘以角色合计人天，配置人数不重复乘算，1 人天等于 8 小时。工时为基于本期范围的工程估算，角色工时明细见附录 B。</p>
+<h3>11.2 支付节点</h3>
+<table class="doc-table"><thead><tr><th>期次</th><th>比例</th><th>金额（未税）</th><th>触发条件</th><th>支付期限</th></tr></thead><tbody><tr><td>第一期</td><td>30%</td><td>人民币肆拾壹万壹仟零叁拾元整（¥411,030.00）</td><td>主合同生效</td><td>生效后 10 个工作日内</td></tr><tr><td>第二期</td><td>20%</td><td>人民币贰拾柒万肆仟零贰拾元整（¥274,020.00）</td><td>M1 需求与设计确认</td><td>确认后 10 个工作日内</td></tr><tr><td>第三期</td><td>25%</td><td>人民币叁拾肆万贰仟伍佰贰拾伍元整（¥342,525.00）</td><td>M4 系统测试完成</td><td>确认后 10 个工作日内</td></tr><tr><td>第四期</td><td>20%</td><td>人民币贰拾柒万肆仟零贰拾元整（¥274,020.00）</td><td>M6 验收通过</td><td>验收后 10 个工作日内</td></tr><tr><td>第五期</td><td>5%</td><td>人民币陆万捌仟伍佰零伍元整（¥68,505.00）</td><td>质保期满</td><td>期满后 10 个工作日内</td></tr></tbody></table>
+<p>上述比例为建议值，最终以主合同约定为准；各期金额合计等于开发费未税金额。支付以乙方开具合规发票为前提。</p>
+<h3>11.3 税费与发票</h3>
+<ol><li>上述金额为含税价与未税价分列，税率按 6% 计，开具增值税专用发票。</li><li>税率因国家政策调整而变化的，按调整后税率执行，未税金额不变。</li></ol>
+<h3>11.4 不包含费用</h3>
+<ol><li>第三方资源与用量费：服务器、带宽、对象存储、短信、邮件网关、微信支付相关费用。</li><li>甲方现有系统（钉钉、BPM、TPM / MEM、会员小程序）的改造费用。</li><li>现场服务差旅费，以及超出 10.2 范围的运维服务费用。</li><li>本 SOW 未列明的新增功能开发费用。</li></ol>
+<h2 id="section-12">十二、知识产权与保密</h2>
+<p>本章约定成果归属、第三方组件使用要求与保密义务。</p>
+<h3>12.1 成果归属</h3>
+<ol><li>乙方为本项目定制的应用软件、源代码、数据库结构、接口文档与项目文档，其著作权自甲方付清相应款项之日起归甲方所有。</li><li>乙方在项目中使用的通用组件、开发框架、工具与既有底层技术，其权利仍归乙方或原权利人所有；乙方授予甲方在本项目范围内永久、免费、不可转让的使用权。</li><li>乙方保证交付成果不侵犯第三方知识产权；因权利瑕疵引发争议的，由乙方负责处理并承担相应责任。</li></ol>
+<h3>12.2 第三方组件</h3>
+<ol><li>乙方使用的开源组件应符合其许可证要求，并在交付时提供组件清单与许可证说明。</li><li>交付成果不得包含要求甲方开源自有代码的组件。</li></ol>
+<h3>12.3 保密义务</h3>
+<ol><li>保密信息指一方以书面、口头或电子形式披露并标注或应合理认定为保密的技术、业务、财务与用户数据，包括接口凭证、商户号、密钥、证书与业务规则。</li><li>双方应对保密信息承担保密义务，保密期限自本 SOW 生效之日起至项目终止后 3 年。</li><li>甲方业务数据与消费者相关信息仅可用于本项目开发、测试与运维，不得复制、外传或用于其他用途；测试数据应脱敏使用。</li><li>违反保密义务的一方应承担相应赔偿责任。</li></ol>
+<h2 id="section-13">十三、假设与依赖</h2>
+<p>本章列明范围与工时的前提假设，以及依赖项的分级与就绪要求。</p>
+<h3>13.1 前提假设</h3>
+<p>本 SOW 的范围、工时与交期基于以下假设。假设不成立时，双方应按第八章评估影响。</p>
+<ol><li>甲方现有系统（钉钉、BPM、TPM / MEM、会员小程序）提供可用接口，接口语义稳定，不要求乙方改造甲方系统。</li><li>审批在 BPM 完成，系统只提交审批单并接收审批结果，不建设审批引擎，不提供审批动作。</li><li>微信支付建券由服务商在商户平台线下完成，平台不直连建券 API。</li><li>本期仅面向一个会员小程序（蒙牛会员服务中心）与一个投放平台（微信支付）。</li><li>数据看板的正式取数以服务商回传数据为准，T+1 数据链路单独立项。</li><li>甲方在约定时限内提供资料、环境与人员配合。</li><li>需求在 M1 冻结，冻结后变更按第八章处理。</li></ol>
+<h3>13.2 依赖就绪度</h3>
+<table class="doc-table"><thead><tr><th>依赖项</th><th>提供方</th><th>就绪状态</th><th>分级</th><th>最晚就绪时限</th><th>未就绪时的处理</th></tr></thead><tbody><tr><td>微信支付商户号、API 密钥、证书、可发券商户号清单</td><td>甲方</td><td>待提供</td><td>阻塞</td><td>2026-11-13</td><td>发券相关开发与联调无法完成，M2 顺延</td></tr><tr><td>会员小程序 AppID、接口资料与联调环境</td><td>甲方及小程序方</td><td>待提供</td><td>阻塞</td><td>2026-11-13</td><td>开放 API 侧联调无法完成，M3 顺延</td></tr><tr><td>测试环境与生产环境（服务器、域名、网络策略）</td><td>甲方 IT</td><td>部分就绪</td><td>阻塞</td><td>测试 2026-11-02；生产 2026-12-21</td><td>无法部署与验证，M4、M6 顺延</td></tr><tr><td>钉钉登录与用户身份接口</td><td>甲方 IT</td><td>待提供</td><td>并行</td><td>2026-11-06</td><td>登录先用本地鉴权过渡，接口就绪后切换</td></tr><tr><td>BPM 审批流接口</td><td>甲方 IT 及业务方</td><td>待提供</td><td>并行</td><td>2026-11-20</td><td>审批状态以手工回写过渡，接口就绪后切换</td></tr><tr><td>TPM / MEM 预算查询接口</td><td>甲方预算系统方</td><td>待提供</td><td>并行</td><td>2026-11-20</td><td>预算校验降级为登记与提示，不跳过校验</td></tr><tr><td>邮件与消息通知接口</td><td>甲方 IT</td><td>待提供</td><td>可绕过</td><td>2026-12-04</td><td>只记录发送结果，接口就绪后切换真实发送</td></tr><tr><td>服务商建券与批次号回传约定</td><td>甲方与服务商</td><td>待确认</td><td>并行</td><td>2026-11-27</td><td>回传模板与工作簿导入过渡</td></tr></tbody></table>
+<h3>13.3 依赖未就绪的记录要求</h3>
+<p>依赖未就绪时，双方应记录接口资料缺项、环境缺项与影响范围，并在周报中跟踪。未就绪项对应的功能不得在测试报告中记为通过。</p>
+<h2 id="section-14">十四、风险与应对</h2>
+<p>本章识别本期主要风险，给出等级判定、应对措施与责任方。</p>
+<table class="doc-table"><thead><tr><th>编号</th><th>风险描述</th><th>类别</th><th>概率</th><th>影响</th><th>等级</th><th>应对措施</th><th>责任方</th></tr></thead><tbody><tr><td>RK-01</td><td>微信支付商户号与证书迟延，导致发券链路无法联调</td><td>技术</td><td>4</td><td>5</td><td>20 高</td><td>提前锁定清单与提供时点；联调用测试商户号先行；逾期启动顺延程序</td><td>甲方 / 乙方</td></tr><tr><td>RK-02</td><td>会员小程序接口资料不全或字段语义不一致</td><td>技术</td><td>4</td><td>4</td><td>16 高</td><td>M1 前完成接口对齐会；以接口契约冻结字段；差异列入变更</td><td>双方</td></tr><tr><td>RK-03</td><td>BPM 审批人明细回写能力不足，无法支撑审批人维度展示</td><td>技术</td><td>3</td><td>4</td><td>12 中</td><td>M1 确认回写字段；不足时降级为汇总结果展示并记录</td><td>甲方 IT</td></tr><tr><td>RK-04</td><td>上线时点与业务活动档期冲突，导致验收仓促</td><td>进度</td><td>3</td><td>4</td><td>12 中</td><td>提前确认档期；UAT 用例预置；必要时分模块先上线</td><td>甲方</td></tr><tr><td>RK-05</td><td>门店编码与商品数据质量不足，导入大面积失败</td><td>数据</td><td>4</td><td>3</td><td>12 中</td><td>提供导入模板与校验说明；上线前抽样校验；失败行定位到行号</td><td>甲方 / 乙方</td></tr><tr><td>RK-06</td><td>服务商回传数据延迟或格式不符，看板数据不可用</td><td>数据</td><td>3</td><td>3</td><td>9 中</td><td>约定回传模板与校验规则；异常入库隔离并留痕；对账任务日检</td><td>乙方</td></tr><tr><td>RK-07</td><td>范围蔓延：原型示意内容被当作交付要求</td><td>需求</td><td>4</td><td>3</td><td>12 中</td><td>以 3.2 与 3.3 为边界；变更走第八章；周会同步范围状态</td><td>双方</td></tr><tr><td>RK-08</td><td>核心人员变动导致知识断层</td><td>进度</td><td>2</td><td>3</td><td>6 低</td><td>关键模块双人熟悉；文档留痕；变更提前 5 个工作日交接</td><td>乙方</td></tr></tbody></table>
+<p>风险值等于概率乘以影响，各分 1 至 5 级。15 至 25 为高，8 至 14 为中，1 至 7 为低。高风险项每周复查，中风险项双周复查。</p>
+<h2 id="section-15">十五、法律条款</h2>
+<p>本章约定生效与效力顺序、违约责任、不可抗力、合同解除、争议解决与通知送达。</p>
+<p>本章条款在主合同已约定时以主合同为准；主合同未约定或本 SOW 单独签署时，按本章执行。</p>
+<h3>15.1 生效与效力顺序</h3>
+<ol><li>本 SOW 自双方授权代表签字并加盖公章之日起生效。</li><li>效力顺序：主合同 → 本 SOW → PRD 与开发计划 → 其他过程文档。</li><li>本 SOW 一式两份，双方各持一份，具有同等效力。</li></ol>
+<h3>15.2 违约责任</h3>
+<ol><li>乙方未按第五章里程碑交付且无 5.2 约定顺延理由的，每逾期 1 个自然日，按合同开发费未税金额的 0.3% 支付违约金，累计不超过开发费未税金额的 5%。</li><li>甲方未按 11.2 支付节点付款的，每逾期 1 个自然日，按逾期金额的 0.3% 支付违约金，累计不超过逾期金额的 5%。</li><li>违约金不足以弥补实际损失的，违约方应就超出部分另行赔偿；赔偿总额不超过合同总金额。</li><li>因一方违约导致合同目的无法实现的，另一方有权解除合同。</li></ol>
+<h3>15.3 不可抗力</h3>
+<ol><li>不可抗力指不能预见、不能避免且不能克服的客观情况。</li><li>受影响方应在不可抗力发生后 5 个自然日内书面通知对方，并在 15 个自然日内提供有效证明。</li><li>因不可抗力不能履行义务的，根据影响程度部分或全部免除责任；受影响方应采取措施减少损失。</li><li>不可抗力持续超过 30 个自然日，双方应协商调整履行方案或解除合同。</li></ol>
+<h3>15.4 合同解除</h3>
+<ol><li>双方协商一致可以解除合同，已履行部分的费用按实际完成工作量结算。</li><li>出现下列情形，守约方可书面通知解除：一方迟延履行主要义务超过 30 个自然日且经催告仍未履行；一方严重违约致使合同目的无法实现；一方违反保密义务造成实质损害。</li><li>解除合同不影响保密、知识产权、争议解决条款的效力。</li></ol>
+<h3>15.5 争议解决</h3>
+<ol><li>争议发生后双方应先行友好协商，协商期不少于 15 个自然日。</li><li>协商不成的，任何一方均可向甲方所在地有管辖权的人民法院提起诉讼。</li><li>争议解决期间，不影响无争议部分的继续履行。</li></ol>
+<h3>15.6 通知与送达</h3>
+<table class="doc-table"><thead><tr><th>项</th><th>约定</th></tr></thead><tbody><tr><td>通知方式</td><td>书面文件、电子邮件、加盖公章的扫描件</td></tr><tr><td>送达地址</td><td>以主合同或双方项目组织清单载明的地址、邮箱为准，变更应在 3 个工作日内书面告知</td></tr><tr><td>送达认定</td><td>专人送达以签收为准；电子邮件以发送成功且未收到退信为准；邮寄以寄出后第 3 个自然日为准</td></tr><tr><td>项目日常沟通</td><td>项目例会、周报与即时通讯消息可作为过程沟通记录，但不替代变更与验收的书面确认</td></tr></tbody></table>
+<h2 id="section-16">十六、附录</h2>
+<p>本章提供范围与交付物对照、角色工时明细与待确认事项清单。</p>
+<h3>附录 A 范围与交付物对照</h3>
+<table class="doc-table"><thead><tr><th>范围编号</th><th>范围内容</th><th>主要交付物</th><th>验收依据</th></tr></thead><tbody><tr><td>S-01</td><td>管理端 12 项页面与操作页</td><td>D-11</td><td>PRD 第八章、13.4 检查清单</td></tr><tr><td>S-02</td><td>发券小程序侧 API 5 项</td><td>D-12</td><td>PRD 10.1、10.2</td></tr><tr><td>S-03</td><td>制券服务商侧 API 6 项</td><td>D-12</td><td>PRD 10.1、10.2</td></tr><tr><td>S-04</td><td>后台任务 5 项</td><td>D-13</td><td>PRD 10.3</td></tr><tr><td>S-05</td><td>公共模块 7 项</td><td>D-11、D-12</td><td>PRD 10.4</td></tr><tr><td>S-06</td><td>交付保障工作</td><td>D-07 至 D-10</td><td>第五章里程碑出口条件</td></tr></tbody></table>
+<h3>附录 B 角色工时与费用</h3>
+<table class="doc-table"><thead><tr><th>角色</th><th>日单价（元，未税）</th><th>工时（人天）</th><th>费用（元，未税）</th></tr></thead><tbody><tr><td>产品经理</td><td>2,400</td><td>22</td><td>52,800</td></tr><tr><td>项目经理</td><td>2,800</td><td>41</td><td>114,800</td></tr><tr><td>UI 设计师</td><td>2,200</td><td>13</td><td>28,600</td></tr><tr><td>需求分析师</td><td>2,500</td><td>39</td><td>97,500</td></tr><tr><td>前端开发工程师</td><td>2,500</td><td>88</td><td>220,000</td></tr><tr><td>后端开发工程师</td><td>2,800</td><td>231</td><td>646,800</td></tr><tr><td>软件测试工程师</td><td>2,200</td><td>70</td><td>154,000</td></tr><tr><td>系统测试 / 网络优化工程师</td><td>2,300</td><td>5</td><td>11,500</td></tr><tr><td>交付 / 实施工程师</td><td>2,300</td><td>15</td><td>34,500</td></tr><tr><td>培训顾问</td><td>2,400</td><td>4</td><td>9,600</td></tr><tr><td>合计</td><td>—</td><td>528</td><td>1,370,100</td></tr></tbody></table>
+<p>分阶段工时：需求与设计 104 人天（19.7%）、功能开发 253 人天（47.9%）、测试与联调 135 人天（25.6%）、交付 29 人天（5.5%）、培训 7 人天（1.3%）。</p>
+<h3>附录 C 待确认事项</h3>
+<table class="doc-table"><thead><tr><th>编号</th><th>待确认事项</th><th>影响</th><th>建议确认时点</th></tr></thead><tbody><tr><td>Q-01</td><td>乙方签署主体名称、地址、联系人</td><td>文档与合同主体一致性</td><td>签署前</td></tr><tr><td>Q-02</td><td>支付节点比例与支付方式</td><td>商务条款定稿</td><td>签署前</td></tr><tr><td>Q-03</td><td>争议解决方式（诉讼管辖地）与违约金比例</td><td>法律条款定稿</td><td>签署前</td></tr><tr><td>Q-04</td><td>履约基准日（合同生效日）与里程碑顺延口径</td><td>交期计算</td><td>签署前</td></tr><tr><td>Q-05</td><td>可发券商户号清单由谁维护、锁定触发时点</td><td>批次配置规则</td><td>M1 前</td></tr><tr><td>Q-06</td><td>券详情图生产存储方案（对象存储、审核与删除策略）</td><td>生产可用性</td><td>M1 前</td></tr><tr><td>Q-07</td><td>商品数量上限（满减 15000、减至 5000）属平台限制还是业务限制</td><td>校验提示口径</td><td>M1 前</td></tr><tr><td>Q-08</td><td>批次号唯一性范围（全平台或项目内）</td><td>回传校验规则</td><td>M1 前</td></tr><tr><td>Q-09</td><td>数据看板正式取数口径与指标字典</td><td>看板验收范围</td><td>另行立项前</td></tr><tr><td>Q-10</td><td>报价单 V6.8 的含税合计（¥1,627,582.72）与小计加税额（¥1,626,582.72）相差 1,000 元</td><td>金额口径一致性</td><td>签署前双方核对</td></tr></tbody></table>
+<p>本 SOW 为项目工作范围与交付约定文件，商务与法律条款最终以双方签署文本为准；涉及数据处理的实施细节应结合甲方合规与法务要求确认。</p>
+<table class="signature-block">
+<thead><tr><th>甲方（盖章）</th><th>乙方（盖章）</th></tr></thead>
+<tbody><tr>
+<td class="signature-party">内蒙古蒙牛乳业（集团）股份有限公司<br><br><br>授权代表（签字）：<br><br>日期：　　　年　　月　　日</td>
+<td class="signature-party">（乙方名称）<br><br><br>授权代表（签字）：<br><br>日期：　　　年　　月　　日</td>
+</tr></tbody></table>
+</section>
+</body>
+</html>

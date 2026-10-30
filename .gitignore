@@ -1,1 +1,9 @@
 _analysis/chromeprof/
+.dsh-office-preview-*/
+.audit/
+.vscode/
+.workbuddy/
+_analysis/node_modules/
+_analysis/
+hq-console/.dsh/
+*.auditscan.txt

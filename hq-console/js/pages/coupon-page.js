@@ -1,539 +1,335 @@
 /* =============================================================================
- * pages/coupon-page.js — 领券页面（建页 / 编辑 / 预览 / 分渠道二维码）
- * 标黄项 16：一个活动多分发渠道生成多个二维码。
+ * pages/coupon-page.js — 挂券与配置（小程序发券渠道）
+ * 第一层：发券渠道列表；第二层：该渠道的发券任务与已推送批次。
+ * 旧「领券页面 / 二维码」模块已下线，相关代码与数据文件不再保留。
  * ========================================================================== */
-
-/* ---------- 逻辑 ---------- */
-
-/* ============ 批次勾选 → 实时预览 ============ */
-
-function toggleB(cb){
-  var bi=cb.closest('.bi');
-  if(cb.checked){
-    document.getElementById('pvList').appendChild(makeCard(bi));
-  }else{
-    var box=document.getElementById('pvList');
-    var ex=box.querySelector('[data-for="'+bi.dataset.id+'"]');
-    if(ex)ex.remove();
-  }
-  refresh();
-}
-
-function makeCard(bi){
-  var d=document.createElement('div');
-  d.className='cp';d.dataset.for=bi.dataset.id;
-  d.innerHTML='<div class="amt">¥'+bi.dataset.amt+'</div><div class="mid"><b>'+bi.dataset.name+'</b><small>'+bi.dataset.cond+' · '+bi.dataset.exp+'</small></div><div class="btn2">立即领取</div>';
-  return d;
-}
-
-function refresh(){
-  var list=document.getElementById('pvList');
-  if(!list)return;
-  var n=list.querySelectorAll('.cp').length;
-  document.getElementById('selCnt').textContent=n;
-  var c2=document.getElementById('selCnt2'); if(c2)c2.textContent=n;
-  document.getElementById('selWarn').style.display=n>6?'inline':'none';
-  document.getElementById('pvHint').textContent=n?('共 '+n+' 张券，点击「立即领取」逐张领取'):'请先勾选批次';
-  var rows='';var i=1;
-  list.querySelectorAll('.cp').forEach(function(c){
-    var id=c.dataset.for;var amt=c.querySelector('.amt').textContent;
-    rows+='<div class="si"><span>'+i+'. <b>'+id+'</b> '+amt+'</span><span class="mv">↑ ↓</span></div>';i++;
-  });
-  document.getElementById('sortList').innerHTML=rows||'<div class="si"><span>未勾选批次</span></div>';
-}
-
-function pickBg(el,cls){
-  var box=el.closest('.bgpick');
-  box.querySelectorAll('.g').forEach(function(g){g.classList.remove('on')});
-  el.classList.add('on');
-  var bg=document.getElementById('pvBg'); if(bg)bg.className='bg '+(cls||'');
-}
-
-function syncPreview(){
-  var v=document.getElementById('pgName').value||'活动领券页';
-  var t=document.getElementById('pvTitle'); if(t)t.textContent=v.replace('（','·').replace('）','');
-}
-/* ============ 抽屉 ============ */
-
-function openEditDrawer(key){
-  var d=PAGES[key]||PAGES.r1;
-  var isDraft = d.status==='草稿';
-  document.getElementById('edSub').textContent=d.name+' · MN-WX-202612-0041';
-  document.getElementById('edName').value=d.name;
-  var st=document.getElementById('edStatus'); st.textContent=d.status; st.className='tg '+d.cls;
-  /* 批次 */
-  document.getElementById('edBatch').innerHTML=d.batches.map(function(b){
-    return '<div class="bi lock" data-id="'+b.id+'"><label class="chk"><input type="checkbox" checked disabled></label>'+
-           '<span class="id">'+b.id+'</span><span class="info">¥'+b.face+' / '+b.cond+' · '+b.qty+
-           '<small>'+b.exp+'</small></span><span class="rt"><span class="tg tg-'+(isDraft?'a':'n')+' xs">'+(isDraft?'草稿':'已锁定')+'</span></span></div>';
-  }).join('');
-  /* 预览券卡 */
-  document.getElementById('edTitle').textContent=d.title;
-  document.querySelector('#edBg small').textContent='活动时间 '+d.actTime;
-  document.getElementById('edList').innerHTML=d.batches.map(function(b){
-    return '<div class="cp"><div class="amt">¥<b>'+b.face+'</b></div>'+
-           '<div class="mid"><b>'+b.card+'</b><small>'+b.cond+' 元可用 · '+b.cardExp+'</small></div>'+
-           '<div class="btn2 '+(isDraft?'off':'')+'">'+(isDraft?'未启用':'立即领取')+'</div></div>';
-  }).join('');
-  document.querySelector('#dw-edit .ph').textContent='共 '+d.batches.length+' 张券';
-  /* 右侧信息 */
-  var info=[
-    ['含券批次','<span class="sx-mono">'+d.batches.map(function(b){return b.id}).join('、')+'</span>（共 '+d.batches.length+' 个，锁定不可改）'],
-    ['分发渠道',d.chan.join('、')],
-    ['页面链接',d.link?'<span class="sx-mono">'+d.link+'</span>':'<span class="muted">未生成</span>'],
-    ['有效期',d.period]
-  ];
-  document.getElementById('edInfo').innerHTML=info.map(function(x){
-    return '<div class="r"><span class="k">·</span><div><b>'+x[0]+'：</b>'+x[1]+'</div></div>';
-  }).join('');
-  /* 底部按钮与状态一致 */
-  document.getElementById('edStop').style.display = isDraft?'none':'';
-  document.getElementById('edDel').style.display  = isDraft?'':'none';
-  document.querySelector('#dw-edit .dw-f .lft').textContent = isDraft?'草稿 · 启用后对外可领':'最近保存 2026-10-19 16:05';
-  openDrawer('dw-edit');
-}
-
-function setState(el,key){
-  if(el)el.classList.add('on');
-  var map=STATEMAP[key]||STATEMAP.default;
-  var box=document.getElementById('pvList'); if(!box)return;
-  var cards=box.querySelectorAll('.cp');
-  cards.forEach(function(c,i){
-    var m=map[i]||map[map.length-1];
-    var b=c.querySelector('.btn2');b.textContent=m[0];b.className='btn2 '+(m[1]==='got'?'':m[1]);
-    c.classList.remove('dim');
-    if(key==='sold'&&i===0)c.classList.add('dim');
-    var old=c.querySelector('.tagv');if(old)old.remove();
-    if(key==='got'&&i===0){var t=document.createElement('span');t.className='tagv';t.textContent='已领取';c.querySelector('.mid').appendChild(t);}
-  });
-  var host=box.closest('.phone');
-  var lab=host?host.querySelector('.statelab'):null;
-  if(lab&&el)lab.textContent='预览态：'+el.textContent.replace(/^[①②③④⑤⑥]\s*/,'');
-  var hint=document.getElementById('pvHint');
-  if(hint){
-    hint.textContent = key==='got'?'已领取 1 张，可继续领取其余券'
-      : key==='repeat'?'每人限领 1 张，该券已领取'
-      : key==='sold'?'第 1 张券已领完，其余仍可领取'
-      : key==='expired'?'活动已结束，感谢关注'
-      : ('共 '+cards.length+' 张券，点击「立即领取」逐张领取');
-  }
-}
-/* ============ 页面二维码（每页独立） ============ */
-
-function batList(){
-  return PLANS.filter(function(p){ return !!p.bat; }).map(function(p){
-    return {
-      id:p.bat,
-      ttl:p.btitle||p.name,
-      mech:p.bmech||'',
-      s:p.bs||p.s,
-      e:p.be||p.e,
-      st: p.bstat==='\u5df2\u7ec8\u6b62' ? '\u5df2\u7ec8\u6b62' : '\u53ef\u5efa\u9875',
-      cap:(p.bqty||0).toLocaleString('en-US'),
-      sent:(p.used||0).toLocaleString('en-US'),
-      ch:'\u626b\u7801',
-      amt:String(p.face),
-      cond:'\u6ee1 '+p.thr+' \u5143\u53ef\u7528',
-      name:p.btitle||p.name,
-      exp:(p.bs?mnDate(p.bs):'')+' 至 '+(p.be?mnDate(p.be):'')+' 有效',
-      plan:p.name,
-      used:p.used||0,
-      usedAmt:p.usedAmt||0
-    };
-  });
-}
-
-var BAT = batList();
-
-var BPAGE = 1, BSIZE = 15;
-
-var BPICK = [];
-
-function bFiltered(){
-  var fst = (document.getElementById('bFStatus')||{}).value || '';
-  var fpl = (document.getElementById('bFPlan')||{}).value || '';
-  var fkw = ((document.getElementById('bFKw')||{}).value || '').trim();
-  return BAT.filter(function(b){
-    if(fst && b.st!==fst) return false;
-    if(fpl && b.plan!==fpl) return false;
-    if(fkw && b.id.indexOf(fkw)<0 && b.ttl.indexOf(fkw)<0) return false;
-    return true;
-  });
-}
-
-function openPageDrawer(){
-  var kw=document.getElementById('bFKw'); if(kw) kw.value='';
-  var fs=document.getElementById('bFStatus'); if(fs) fs.value='';
-  var fp=document.getElementById('bFPlan'); if(fp) fp.value='';
-  BPAGE=1; BPICK=[];
-  var pv=document.getElementById('pvList'); if(pv) pv.innerHTML='';
-  var ph=document.getElementById('pvHint'); if(ph) ph.style.display='';
-  var sc=document.getElementById('selCnt2'); if(sc) sc.textContent='0';
-  renderBlist();
-  openDrawer('dw-page');
-}
-
-function renderBlist(){
-  var rows = bFiltered();
-  var box = document.getElementById('blist'); if(!box) return;
-  var tot = rows.length;
-  var pages = Math.max(1, Math.ceil(tot/BSIZE));
-  if(BPAGE>pages) BPAGE = pages;
-  var slice = rows.slice((BPAGE-1)*BSIZE, BPAGE*BSIZE);
-
-  var h='';
-  slice.forEach(function(b){
-    var has = (b.st==='已占用');
-    var on  = BPICK.indexOf(b.id)>=0;
-    h += '<tr class="b-row'+(on?' on':'')+(has?' dis':'')+'" onclick="bToggleRow(event,this,\''+b.id+'\')"'
-       + ' data-id="'+b.id+'" data-amt="'+b.amt+'" data-cond="'+b.cond+'" data-name="'+b.name+'" data-exp="'+b.exp+'">'
-       + '<td><label class="chk"><input type="checkbox"'+(on?' checked':'')+(has?' disabled':'')
-       + ' onchange="bToggle(this,\''+b.id+'\')"></label></td>'
-       + '<td class="sx-mono" style="font-size:11.8px">'+b.id+'</td>'
-       + '<td>'+b.ttl+'</td>'
-       + '<td class="muted" style="font-size:11.8px">'+b.mech+'</td>'
-       + '<td class="muted" style="font-size:11.6px">'+b.s+'</td>'
-       + '<td class="muted" style="font-size:11.6px">'+b.e+'</td>'
-       + '<td><span class="tg '+(has?'tg-a':'tg-g')+' xs">'+b.st+'</span></td>'
-       + '<td class="num">'+b.cap+'</td>'
-       + '<td class="num">'+b.sent+'</td>'
-       + '<td class="muted" style="font-size:11.6px">'+b.ch+'</td>'
-       + '</tr>';
-  });
-  if(!h) h='<tr><td colspan="10" class="empty-row">没有匹配的批次</td></tr>';
-  box.innerHTML=h;
-
-  document.getElementById('bTotal').textContent = tot;
-  var pg='';
-  pg += '<button class="pg '+(BPAGE<=1?'dis':'')+'" onclick="bGo('+(BPAGE-1)+')">上一页</button>';
-  for(var i=1;i<=pages;i++) pg += '<button class="pg '+(i===BPAGE?'on':'')+'" onclick="bGo('+i+')">'+i+'</button>';
-  pg += '<button class="pg '+(BPAGE>=pages?'dis':'')+'" onclick="bGo('+(BPAGE+1)+')">下一页</button>';
-  document.getElementById('bPager').innerHTML = pg;
-
-  refresh();
-}
-
-function bGo(n){
-  var pages = Math.max(1, Math.ceil(bFiltered().length/BSIZE));
-  if(n<1||n>pages) return;
-  BPAGE=n; renderBlist();
-}
-
-function bToggleRow(e, tr, id){
-  if(e.target && (e.target.tagName==='INPUT' || e.target.tagName==='LABEL')) return;
-  if(tr.classList.contains('dis')) return;
-  var cb = tr.querySelector('input[type=checkbox]');
-  if(!cb) return;
-  cb.checked = !cb.checked;
-  bToggle(cb, id);
-}
-
-function bToggle(cb, id){
-  var k = BPICK.indexOf(id);
-  if(cb.checked){ if(k<0) BPICK.push(id); } else { if(k>=0) BPICK.splice(k,1); }
-  var tr = cb.closest('tr');
-  if(tr) tr.classList.toggle('on', cb.checked);
-
-  // 同步消费者端预览
-  var box = document.getElementById('pvList');
-  if(cb.checked){
-    var b = BAT.filter(function(x){ return x.id===id; })[0];
-    if(b && !box.querySelector('[data-for="'+id+'"]')) box.appendChild(makeCard({dataset:{id:b.id,amt:b.amt,cond:b.cond,name:b.name,exp:b.exp}}));
-  } else {
-    var ex = box.querySelector('[data-for="'+id+'"]');
-    if(ex) ex.remove();
-  }
-  refresh();
-}
-
-/* ============ 项目状态流转说明（隐式弹窗） ============ */
 
 /* ---------- 模板：v-h5 ---------- */
 function tplPageh5(){
   return `<div class="view" id="v-h5">
-  <div class="panel">
-    <div class="panel-b">
-      <div class="flex" style="margin-bottom:0">
-        <input class="inp" placeholder="所属项目（项目名称 / 活动 ID）" value="双节常温奶满减" style="max-width:280px">
-        <input class="inp" placeholder="页面名称" style="max-width:180px">
-        <input class="inp" placeholder="含批次编码" style="max-width:150px">
-        <button class="btn btn-p btn-xs">查询</button>
-        <button class="btn btn-g btn-xs">重置</button>
-      </div>
-    </div>
-  </div>
-
-  <div class="panel">
-    <div class="panel-h">
-      <h3>领券页面</h3>
-      <div class="flex"><button class="btn btn-p btn-xs" onclick="openPageDrawer()">＋ 新建领券页面</button></div>
-    </div>
-    <div class="panel-b">
-      <div class="tw scroll">
-        <table>
-          <tbody><tr><th style="width:180px">页面名称</th><th style="width:64px">所属项目</th><th style="width:70px">批次数</th><th style="width:62px">状态</th><th style="width:104px">有效期</th><th style="width:84px">渠道</th><th style="width:76px">二维码</th><th>操作</th></tr>
-          <tr>
-            <td><b>双节主推页（常温奶）</b></td>
-            <td><a class="pjl sx-mono" onclick="event.stopPropagation()">…0041<span class="pjt"><span class="pjt-h">双节常温奶满减</span><span class="pjt-b"><span class="row"><span>活动编码</span><span class="sx-mono">MN-WX-202612-0041</span></span><span class="row"><span>业务部门</span><span>BU03 华东事业部</span></span><span class="row"><span>服务商</span><span>上海智士网络科技</span></span><span class="row"><span>项目状态</span><span style="color:var(--brand-d)">执行中</span></span><span class="row"><span>项目周期</span><span>2026-12-20 ~ 2027-01-05</span></span></span><span class="pjt-f">点击查看项目详情 →</span></span></a></td>
-            <td>2 个</td>
-            <td><span class="tg tg-g">启用中</span></td>
-            <td style="white-space:nowrap;font-size:11.8px">2026-12-20 ~ 2027-01-05</td>
-            <td style="font-size:11.8px"><span class="tg tg-n xs">线下物料</span> <span class="tg tg-n xs">公众号</span> <span class="tg tg-n xs">私域</span></td>
-            
-            <td style="white-space:nowrap;font-size:11.6px"><a class="lnk" onclick="openQr('r1','OFF')">物料</a> <a class="lnk" onclick="openQr('r1','MP')">公众号</a> <a class="lnk" onclick="openQr('r1','PRI')">私域</a></td>
-            <td style="white-space:nowrap">
-              <button class="btn btn-o btn-xs" onclick="openPgData('双节主推页（常温奶）','86,420','41,230','18,606')">数据</button>
-              <button class="btn btn-o btn-xs" onclick="openEditDrawer('r1')">编辑</button>
-              <button class="btn btn-g btn-xs">停用</button>
-            </td>
-          </tr>
-          <tr>
-            <td><b>高端礼盒页（满 129）</b></td>
-            <td><a class="pjl sx-mono" onclick="event.stopPropagation()">…0041<span class="pjt"><span class="pjt-h">双节常温奶满减</span><span class="pjt-b"><span class="row"><span>活动编码</span><span class="sx-mono">MN-WX-202612-0041</span></span><span class="row"><span>业务部门</span><span>BU03 华东事业部</span></span><span class="row"><span>服务商</span><span>上海智士网络科技</span></span><span class="row"><span>项目状态</span><span style="color:var(--brand-d)">执行中</span></span><span class="row"><span>项目周期</span><span>2026-12-20 ~ 2027-01-05</span></span></span><span class="pjt-f">点击查看项目详情 →</span></span></a></td>
-            <td>1 个</td>
-            <td><span class="tg tg-g">启用中</span></td>
-            <td style="white-space:nowrap;font-size:11.8px">2026-12-20 ~ 2027-01-05</td>
-            <td style="font-size:11.8px"><span class="tg tg-n xs">线下物料</span> <span class="tg tg-n xs">私域</span></td>
-            
-            <td style="white-space:nowrap;font-size:11.6px"><a class="lnk" onclick="openQr('r2','OFF')">物料</a> <a class="lnk" onclick="openQr('r2','MP')">公众号</a> <a class="lnk" onclick="openQr('r2','PRI')">私域</a></td>
-            <td style="white-space:nowrap">
-              <button class="btn btn-o btn-xs" onclick="openPgData('高端礼盒页（满 129）','32,180','15,720','6,288')">数据</button>
-              <button class="btn btn-o btn-xs" onclick="openEditDrawer('r2')">编辑</button>
-              <button class="btn btn-g btn-xs">停用</button>
-            </td>
-          </tr>
-          <tr style="background:#FCFDFC">
-            <td><b style="color:var(--ink3)">元旦补发页（草稿）</b><div class="muted" style="font-size:11.2px">未启用</div></td>
-            <td><a class="pjl sx-mono" onclick="event.stopPropagation()">…0041<span class="pjt"><span class="pjt-h">双节常温奶满减</span><span class="pjt-b"><span class="row"><span>活动编码</span><span class="sx-mono">MN-WX-202612-0041</span></span><span class="row"><span>业务部门</span><span>BU03 华东事业部</span></span><span class="row"><span>服务商</span><span>上海智士网络科技</span></span><span class="row"><span>项目状态</span><span style="color:var(--brand-d)">执行中</span></span><span class="row"><span>项目周期</span><span>2026-12-20 ~ 2027-01-05</span></span></span><span class="pjt-f">点击查看项目详情 →</span></span></a></td>
-            <td>1 个</td>
-            <td><span class="tg tg-n">草稿</span></td>
-            <td style="white-space:nowrap;font-size:11.8px">2026-12-30 ~ 2027-01-05</td>
-            <td style="font-size:11.8px">线下</td>
-            
-            <td><span class="muted" style="font-size:11.6px;white-space:nowrap" title="草稿未生成链接，启用后按渠道分别生成二维码">未生成</span></td>
-            <td style="white-space:nowrap">
-              <button class="btn btn-o btn-xs" disabled="" title="未启用，暂无数据">数据</button>
-              <button class="btn btn-o btn-xs" onclick="openEditDrawer('r3')">继续编辑</button>
-              <button class="btn btn-d btn-xs">删除</button>
-            </td>
-          </tr>
-        </tbody></table>
-      </div>
-    </div>
-</div>
-
+  <div id="miniList"></div>
+  <div id="miniDetail" style="display:none"></div>
 </div>`;
 }
+/* =============================================================================
+ * 挂券与配置：第一层是小程序列表（= 发券渠道），第二层是该渠道的发券任务
+ *   1. 创建发券任务：按「进行中项目」圈选供应商已上传批次号的批次，核对后推送给小程序方
+ *   2. 推送即完成：不做配券状态跟进，批次只记录推送时间与渠道
+ * ========================================================================== */
+var MINI_APPS = [
+  { id:'MP-01', name:'蒙牛会员服务中心', appid:'wx8f3a2c9d1e4b6a70', desc:'C 端领券主渠道，公众号与线下物料统一导流', owner:'李雪', at:'2026-08-12', status:'启用',
+    mchs:['1236057802','1252436002','1457820366','1603482917'] }
+];
 
-/* ---------- 模板：dw-page ---------- */
-function tplDrawerpage(){
-  return `<div class="drawer" id="dw-page">
-  <div class="dw-h">
-    <h3>新建领券页面 <span class="sub">项目：双节常温奶满减 · MN-WX-202612-0041</span></h3>
-    <div class="flex" style="gap:14px">
-      <div class="dw-step" id="dwStep">
-        <span class="sp on"><i>1</i>填基础信息</span><span style="color:#C9D8D2">›</span>
-        <span class="sp"><i>2</i>选批次</span><span style="color:#C9D8D2">›</span>
-        <span class="sp"><i>3</i>外观与渠道</span><span style="color:#C9D8D2">›</span>
-        <span class="sp"><i>4</i>预览与生成</span>
-      </div>
-      <span class="dw-x" onclick="closeDrawer()">×</span>
-    </div>
-  </div>
+var MINI_PUSH = [
+  { bat:'23020101', appId:'MP-01', task:'MT-20261021-01', proj:'2026101810000005', projName:'双节常温奶满减', plan:'计划1', mch:'1236057802', at:'2026-10-21 15:32' },
+  { bat:'23020102', appId:'MP-01', task:'MT-20261021-01', proj:'2026101810000005', projName:'双节常温奶满减', plan:'计划2', mch:'1603482917', at:'2026-10-21 15:32' },
+  { bat:'23020101', appId:'MP-01', task:'MT-20261022-01', proj:'2026101810000005', projName:'双节常温奶满减', plan:'计划1', mch:'1236057802', at:'2026-10-22 14:02' }
+];
+
+var MINI_CUR = '';
+
+function miniApp(id){ var l = MINI_APPS.filter(function(a){ return a.id === id; }); return l[0] || null; }
+function miniMchPool(){
+  var out = [];
+  MINI_APPS.forEach(function(a){ (a.mchs || []).forEach(function(m){ if(out.indexOf(m) < 0) out.push(m); }); });
+  return out;
+}
+function miniMchAdd(){
+  var a = miniApp(MINI_CUR); if(!a) return;
+  if(miniPushes(a.id).length){ MT.toast('已有推送批次，商户号已锁定', 'err'); return; }
+  var inp = document.getElementById('miniMchNew');
+  var v = inp ? String(inp.value || '').trim() : '';
+  if(!/^\d{8,10}$/.test(v)){ MT.toast('微信商户号须为 8~10 位数字', 'err'); return; }
+  a.mchs = a.mchs || [];
+  if(a.mchs.indexOf(v) >= 0){ MT.toast('该商户号已在列表中', 'err'); return; }
+  a.mchs.push(v);
+  if(inp) inp.value = '';
+  miniRenderDetail();
+  MT.toast('已添加可发券商户号');
+}
+function miniMchDel(m){
+  var a = miniApp(MINI_CUR); if(!a) return;
+  if(miniPushes(a.id).length){ MT.toast('已有推送批次，商户号已锁定', 'err'); return; }
+  a.mchs = (a.mchs || []).filter(function(x){ return x !== m; });
+  miniRenderDetail();
+}
+function miniPushes(id){ return MINI_PUSH.filter(function(x){ return x.appId === id; }); }
+
+/** 按任务号归并：一个任务 = 一批同时推送的批次 */
+function miniTasks(id){
+  var out = [];
+  miniPushes(id).forEach(function(x){
+    var t = out.filter(function(y){ return y.task === x.task; })[0];
+    if(!t){ t = { task:x.task, proj:x.proj, projName:x.projName, at:x.at, rows:[] }; out.push(t); }
+    t.rows.push(x);
+  });
+  return out;
+}
+
+function miniLastAt(id){
+  var ps = miniPushes(id).map(function(x){ return x.at; }).sort();
+  return ps.length ? ps[ps.length - 1] : '—';
+}
+
+function miniEnter(id){ MINI_CUR = id; renderMini(); }
+function miniBack(){ MINI_CUR = ''; renderMini(); }
+
+/* 配置跳到该渠道自己的小程序管理后台 */
+function miniConfig(id){
+  var a = miniApp(id); if(!a) return;
+  var q = 'id=' + encodeURIComponent(a.id)
+    + '&name=' + encodeURIComponent(a.name)
+    + '&appid=' + encodeURIComponent(a.appid);
+  window.open('mini-admin.html?' + q, '_blank', 'noopener');
+  sysLog('挂券与配置', '打开管理后台', a.name, a.appid, '跳转「' + a.name + '」小程序管理后台');
+}
+
+function renderMini(){
+  var list = document.getElementById('miniList');
+  var det  = document.getElementById('miniDetail');
+  if(!list || !det) return;
+  if(MINI_CUR){
+    list.style.display = 'none'; det.style.display = '';
+    miniRenderDetail();
+  } else {
+    det.style.display = 'none'; list.style.display = '';
+    miniRenderList();
+  }
+}
+
+/* ---------- 第一层：发券渠道（小程序）列表 ---------- */
+function miniRenderList(){
+  var box = document.getElementById('miniList'); if(!box) return;
+  var kw = String((document.getElementById('miniKw') || {}).value || '').trim().toLowerCase();
+  var st = (document.getElementById('miniStat') || {}).value || '';
+  var rows = MINI_APPS.filter(function(a){
+    if(st && a.status !== st) return false;
+    if(!kw) return true;
+    return (a.name + ' ' + a.appid + ' ' + a.desc).toLowerCase().indexOf(kw) >= 0;
+  });
+
+  var h = '';
+  rows.forEach(function(a){
+    var n = miniPushes(a.id).length;
+    var idq = JSON.stringify(a.id).replace(/"/g, '&quot;');
+    h += '<tr style="cursor:pointer" onclick="miniEnter(' + idq + ')">'
+      + '<td><b>' + pnEsc(a.name) + '</b><div class="muted" style="font-size:11px">' + pnEsc(a.desc) + '</div></td>'
+      + '<td class="sx-mono" style="font-size:11.4px">' + pnEsc(a.appid) + '</td>'
+      + '<td class="num">' + n + '</td>'
+      + '<td class="sx-mono" style="font-size:11.4px;white-space:nowrap">' + pnEsc(miniLastAt(a.id)) + '</td>'
+      + '<td><span class="tg ' + (a.status === '启用' ? 'tg-g' : 'tg-n') + '">' + pnEsc(a.status) + '</span></td>'
+      + '<td style="white-space:nowrap"><button class="btn btn-p btn-xs" onclick="event.stopPropagation();miniEnter(' + idq + ')">进入渠道</button> '
+      + '<button class="btn btn-o btn-xs" onclick="event.stopPropagation();miniConfig(' + idq + ')">配置</button></td>'
+      + '</tr>';
+  });
+
+  box.innerHTML = '<div class="panel"><div class="panel-h"><h3>挂券与配置</h3></div>'
+    + '<div class="panel-b" style="border-top:1px solid var(--line2)"><div class="flex" style="gap:8px;flex-wrap:wrap">'
+    + '<input class="inp" id="miniKw" placeholder="小程序名称 / AppID" style="max-width:240px" oninput="miniRenderList()">'
+    + '<select class="inp" id="miniStat" style="max-width:130px" onchange="miniRenderList()"><option value="">全部状态</option><option>启用</option><option>停用</option></select>'
+    + '<span class="mut" style="margin-left:auto">建好发券任务即推送给小程序方，配券在渠道侧完成</span>'
+    + '</div></div></div>'
+    + '<div class="panel"><div class="panel-b" style="padding:0"><table class="bt mini" style="table-layout:fixed"><thead><tr>'
+    + '<th style="width:34%">小程序 / 说明</th><th style="width:190px">AppID</th><th style="width:110px;text-align:right">已推送批次</th>'
+    + '<th style="width:130px">最近推送</th><th style="width:70px">状态</th><th style="width:168px">操作</th>'
+    + '</tr></thead><tbody>' + (h || '<tr><td colspan="6" class="empty-row">没有符合条件的渠道</td></tr>') + '</tbody></table></div></div>';
+}
+
+/* ---------- 第二层：某渠道的发券任务 + 已推送批次 ---------- */
+function miniRenderDetail(){
+  var box = document.getElementById('miniDetail'); if(!box) return;
+  var a = miniApp(MINI_CUR); if(!a){ miniBack(); return; }
+  var ps = miniPushes(a.id);
+  var tasks = miniTasks(a.id);
+  var mchLocked = ps.length > 0;
+  var mchs = a.mchs || (a.mchs = []);
+
+  var h = '';
+  h += '<div class="panel" style="margin-bottom:12px"><div class="panel-h"><h3>' + pnEsc(a.name)
+     + ' <span class="tg ' + (a.status === '启用' ? 'tg-g' : 'tg-n') + '">' + pnEsc(a.status) + '</span></h3>'
+     + '<div class="flex"><a class="lnk" style="cursor:pointer" onclick="miniBack()">← 返回渠道列表</a></div></div>'
+     + '<div class="panel-b"><div class="flex" style="gap:26px;flex-wrap:wrap;align-items:flex-start">'
+     + '<div><div class="mut" style="font-size:11.6px">小程序 AppID</div><div class="sx-mono" style="font-size:12.4px">' + pnEsc(a.appid) + '</div></div>'
+     + '<div><div class="mut" style="font-size:11.6px">接入说明</div><div style="font-size:12.4px">' + pnEsc(a.desc) + '</div></div>'
+     + '<div><div class="mut" style="font-size:11.6px">负责人</div><div style="font-size:12.4px">' + pnEsc(a.owner) + '</div></div>'
+     + '<div><div class="mut" style="font-size:11.6px">接入时间</div><div style="font-size:12.4px">' + pnEsc(a.at) + '</div></div>'
+     + '<div><div class="mut" style="font-size:11.6px">发券任务 / 已推送批次</div><div style="font-size:12.4px"><b>' + tasks.length + '</b> / ' + ps.length + ' 个</div></div>'
+     + '</div></div></div>';
+
+  /* 可发券商户号：提前提供给服务商配券使用，产生已推送批次后锁定 */
+  h += '<div class="panel" style="margin-bottom:12px"><div class="panel-h"><h3>可发券商户号 <span class="tg tg-n">' + mchs.length + ' 个</span></h3>'
+     + '<div class="flex"><span class="mut" style="font-size:12px">' + (mchLocked
+        ? '已有推送批次，商户号已锁定，不可新增或修改'
+        : '服务商配券只能使用以下商户号，推送后锁定') + '</span></div></div>'
+     + '<div class="panel-b"><div class="flex" style="gap:8px;flex-wrap:wrap;margin-bottom:10px">';
+  if(!mchs.length) h += '<span class="mut">还没有提供可发券商户号</span>';
+  mchs.forEach(function(m){
+    h += '<span class="tg tg-n sx-mono">' + pnEsc(m) + (mchLocked ? '' : ' <a style="cursor:pointer;margin-left:6px" onclick="miniMchDel(\'' + pnEsc(m) + '\')">×</a>') + '</span>';
+  });
+  h += '</div>';
+  if(!mchLocked){
+    h += '<div class="flex" style="gap:8px"><input class="inp" id="miniMchNew" placeholder="输入 8~10 位微信商户号" style="max-width:260px" onkeydown="if(event.key===\'Enter\')miniMchAdd()">'
+       + '<button class="btn btn-o btn-xs" onclick="miniMchAdd()">＋ 添加商户号</button></div>';
+  }
+  h += '<div class="fld-hint" style="margin-top:8px">' + (mchLocked
+        ? '如需调整，请在配券前完成；当前小程序已产生推送记录，按规则不可再改。'
+        : '必须在小程序配券前提供；一旦产生已推送批次，将不可新增或修改。') + '</div>'
+     + '</div></div>';
+
+  /* 发券任务 */
+  h += '<div class="panel" style="margin-bottom:12px"><div class="panel-h"><h3>发券任务 <span class="tg tg-n">' + tasks.length + ' 个</span></h3>'
+     + '<div class="flex"><button class="btn btn-p btn-xs" onclick="openMiniNew()">＋ 创建发券任务</button></div></div>'
+     + '<div class="panel-b" style="padding:0"><table class="bt mini" style="table-layout:fixed"><thead><tr>'
+     + '<th style="width:170px">任务号</th><th style="width:230px">项目</th><th>批次</th>'
+     + '<th style="width:150px">推送时间</th><th style="width:96px">状态</th>'
+     + '</tr></thead><tbody>';
+  if(!tasks.length){
+    h += '<tr><td colspan="5" class="empty-row">还没有发券任务，点右上「创建发券任务」按项目圈选批次</td></tr>';
+  } else {
+    tasks.forEach(function(t){
+      var bats = t.rows.map(function(r){ return r.bat; }).join('、');
+      h += '<tr><td class="sx-mono" style="font-size:11.6px">' + pnEsc(t.task) + '</td>'
+        + '<td>' + pnEsc(t.projName) + '<div class="muted sx-mono" style="font-size:11px">项目编号 ' + pnEsc(projCodeText(t.proj)) + '</div></td>'
+        + '<td class="sx-mono" style="font-size:11.6px">' + pnEsc(bats) + '<div class="muted" style="font-size:11px">共 ' + t.rows.length + ' 个批次</div></td>'
+        + '<td class="sx-mono" style="font-size:11.4px;white-space:nowrap">' + pnEsc(t.at) + '</td>'
+        + '<td><span class="tg tg-g">已推送</span></td></tr>';
+    });
+  }
+  h += '</tbody></table></div></div>';
+
+  /* 已推送批次 */
+  h += '<div class="panel"><div class="panel-h"><h3>已推送批次 <span class="tg tg-n">' + ps.length + ' 个</span></h3>'
+     + '<div class="flex"><span class="mut" style="font-size:12px">推送后由小程序方配券，平台不再记录配券状态</span></div></div>'
+     + '<div class="panel-b" style="padding:0"><table class="bt mini" style="table-layout:fixed"><thead><tr>'
+     + '<th style="width:110px">批次号</th><th style="width:250px">项目 / 计划</th><th style="width:130px">商户号</th>'
+     + '<th style="width:150px">推送时间</th><th style="width:96px">状态</th>'
+     + '</tr></thead><tbody>';
+  if(!ps.length){
+    h += '<tr><td colspan="5" class="empty-row">该渠道还没有推送过批次</td></tr>';
+  } else {
+    ps.forEach(function(x){
+      h += '<tr><td class="sx-mono" style="font-size:11.8px"><b>' + pnEsc(x.bat) + '</b></td>'
+        + '<td>' + pnEsc(x.projName) + '<div class="muted" style="font-size:11px">' + pnEsc(x.plan) + ' · 项目编号 ' + pnEsc(projCodeText(x.proj)) + '</div></td>'
+        + '<td class="sx-mono" style="font-size:11.6px">' + pnEsc(x.mch) + '</td>'
+        + '<td class="sx-mono" style="font-size:11.4px;white-space:nowrap">' + pnEsc(x.at) + '</td>'
+        + '<td><span class="tg tg-g">已推送</span></td></tr>';
+    });
+  }
+  h += '</tbody></table></div></div>';
+
+  box.innerHTML = h;
+}
+
+/* ---------- 创建发券任务：按进行中项目圈选「已有批次号」的批次 ---------- */
+var MINI_TASK = { proj:'', sel:{} };
+
+function miniRunningProjects(){
+  return (window.PROJECTS || []).filter(function(p){ return p.state === 'running'; });
+}
+
+function miniProjBatches(projId, appId){
+  return (window.PLANS || []).filter(function(p){
+    if(p.projectId !== projId || p.proj !== projId) return false;
+    if(!p.bat) return false;
+    return !MINI_PUSH.some(function(x){ return x.bat === p.bat && x.appId === appId; });
+  });
+}
+
+function openMiniNew(){
+  var a = miniApp(MINI_CUR); if(!a) return;
+  var ps = miniRunningProjects();
+  MINI_TASK = { proj: ps.length ? ps[0].id : '', sel:{} };
+  var sel = document.getElementById('mtProj');
+  sel.innerHTML = ps.map(function(p){ return '<option value="' + p.id + '">' + pnEsc(p.name) + ' · ' + pnEsc(p.code || p.id) + '</option>'; }).join('') || '<option value="">没有进行中的项目</option>';
+  if(ps.length) sel.value = ps[0].id;
+  document.getElementById('mtApp').textContent = a.name + '（' + a.appid + '）';
+  miniTaskBatches();
+  openDrawer('dw-minitask');
+}
+
+function miniTaskProj(v){ MINI_TASK.proj = v; MINI_TASK.sel = {}; miniTaskBatches(); }
+
+function miniTaskBatches(){
+  var a = miniApp(MINI_CUR); if(!a) return;
+  var list = miniProjBatches(MINI_TASK.proj, a.id);
+  var box = document.getElementById('mtList'); if(!box) return;
+  if(!list.length){
+    box.innerHTML = '<div class="empty-row">该项目没有可推送的批次（需先由服务商回传批次号，且未推送过当前渠道）</div>';
+  } else {
+    box.innerHTML = '<table class="bt mini" style="table-layout:fixed"><thead><tr><th style="width:34px"></th><th style="width:96px">批次号</th><th style="width:150px">计划</th><th style="width:88px">面额</th><th style="width:96px">门槛</th><th style="width:112px">商户号</th><th>有效期</th></tr></thead><tbody>'
+      + list.map(function(p){
+          var mch = (p.exec && p.exec.mch) ? p.exec.mch : '—';
+          return '<tr><td><input type="checkbox" ' + (MINI_TASK.sel[p.bat] ? 'checked' : '') + ' onchange="miniTaskToggle(\'' + pnEsc(p.bat) + '\')"></td>'
+            + '<td class="sx-mono" style="font-size:11.8px"><b>' + pnEsc(p.bat) + '</b></td>'
+            + '<td>' + pnEsc(p.name) + '</td>'
+            + '<td class="num">' + (p.face ? '¥' + p.face : '—') + '</td>'
+            + '<td class="num">' + (p.thr ? '满 ' + p.thr : '—') + '</td>'
+            + '<td class="sx-mono" style="font-size:11.6px">' + pnEsc(mch) + '</td>'
+            + '<td class="muted" style="font-size:11.4px">' + pnEsc((p.bs || p.s || '') + ' ~ ' + (p.be || p.e || '')) + '</td></tr>';
+        }).join('') + '</tbody></table>';
+  }
+  var c = document.getElementById('mtCnt');
+  if(c) c.textContent = '已选 ' + Object.keys(MINI_TASK.sel).length + ' 个批次 / 可推送 ' + list.length + ' 个';
+}
+
+function miniTaskToggle(bat){
+  if(MINI_TASK.sel[bat]) delete MINI_TASK.sel[bat]; else MINI_TASK.sel[bat] = 1;
+  miniTaskBatches();
+}
+
+function miniTaskOk(){
+  var a = miniApp(MINI_CUR); if(!a) return;
+  var keys = Object.keys(MINI_TASK.sel);
+  if(!keys.length){ MT.toast('请先勾选要推送的批次', 'err'); return; }
+  var proj = (window.PROJECTS || []).filter(function(p){ return p.id === MINI_TASK.proj; })[0] || {};
+  var now = (typeof wfNow === 'function') ? wfNow() : '';
+  var no = 'MT-' + now.replace(/[^0-9]/g, '').slice(0, 8) + '-' + String(MINI_PUSH.length + 1).padStart(2, '0');
+  keys.forEach(function(bat){
+    var p = (window.PLANS || []).filter(function(x){ return x.bat === bat; })[0] || {};
+    MINI_PUSH.unshift({
+      bat: bat, appId: a.id, task: no,
+      proj: MINI_TASK.proj, projName: proj.name || MINI_TASK.proj,
+      plan: p.name || '',
+      mch: (p.exec && p.exec.mch) ? p.exec.mch : '—',
+      at: now
+    });
+  });
+  mnPersist(); closeDrawer(); miniRenderDetail();
+  sysLog('挂券与配置', '推送批次', no, MINI_TASK.proj, '渠道 ' + a.name + '；批次 ' + keys.join('、'));
+  MT.toast('已推送 ' + keys.length + ' 个批次给「' + a.name + '」，由小程序方配券');
+}
+
+function tplDrawerminitask(){
+  return `<div class="drawer" id="dw-minitask" style="width:820px">
+  <div class="dw-h"><h3>创建发券任务 <span class="sub">圈选批次 → 核对 → 推送给小程序方</span></h3><span class="dw-x" onclick="closeDrawer()">×</span></div>
   <div class="dw-b">
-    
-
-    <div class="fg c2">
-      <div class="fr"><label>页面名称<em>*</em></label>
-        <input class="inp" id="pgName" value="双节主推页（常温奶）" placeholder="如：双节主推页（常温奶）" oninput="syncPreview()">
-        <div class="mut" style="font-size:11.6px;margin-top:4px">建议带场景或渠道，同一项目内名称不可重复，最长 30 字</div>
-      </div>
-      <div class="fr"><label>页面归属</label>
-        <div class="locked" style="padding:7px 11px;font-size:12.4px;line-height:1.6"><span class="lk" style="margin-right:6px">继承项目</span>双节常温奶满减 · MN-WX-202612-0041</div>
-        <div class="mut" style="font-size:11.6px;margin-top:4px">归属随项目锁定，不可修改；要挂到其他项目请从该项目进入</div>
-      </div>
+    <div class="note b" style="margin-top:0">只能推送<b>进行中项目</b>里<b>服务商已上传批次号</b>的批次；推送后由小程序方配券，平台只记录推送时间与渠道。</div>
+    <div class="fr" style="margin-top:14px"><label>推送渠道</label><div class="locked" id="mtApp">—</div></div>
+    <div class="fr"><label>选择项目（仅进行中）<em>*</em></label>
+      <select class="inp" id="mtProj" onchange="miniTaskProj(this.value)"></select>
+      <div class="fld-hint">项目必须是执行中状态；批次号由服务商在微信支付后台生成后回传</div>
     </div>
-
-    <div class="fr"><label>页面有效期<em>*</em></label>
-      <div class="flex" style="gap:8px;max-width:420px"><input class="inp" value="2026-12-20" style="flex:1"><span class="muted">至</span><input class="inp" value="2027-01-05" style="flex:1"></div>
-      <div class="mut" style="font-size:11.6px;margin-top:4px">留空则跟随批次有效期；超出批次有效期的部分自动截断。页面到期自动下架，二维码扫开显示「活动已结束」</div>
-    </div>
-
-    <div class="fr"><label>勾选券批次<em>*</em>（只能选本项目批次，勾选顺序即券卡展示顺序）</label>
-      <div class="bfilter">
-        <select class="inp" id="bFStatus" onchange="renderBlist()" style="max-width:104px">
-          <option value="">全部状态</option>
-          <option value="可建页">可建页</option>
-          <option value="已占用">已占用</option>
-        </select>
-        <select class="inp" id="bFPlan" onchange="renderBlist()" style="max-width:128px">
-          <option value="">全部计划</option>
-          <option value="双节满减主推">双节满减主推</option>
-          <option value="跨年场景承接">跨年场景承接</option>
-          <option value="高端礼盒拉新">高端礼盒拉新</option>
-        </select>
-        <input class="inp" id="bFKw" placeholder="批次编码 / 标题" style="flex:1;min-width:120px" oninput="renderBlist()">
-      </div>
-      <div class="tw scroll" style="border:1px solid var(--line2);border-radius:7px">
-        <table class="bt mini blist-tbl" style="table-layout:fixed">
-          <thead><tr>
-            <th style="width:34px"></th>
-            <th style="width:82px">批次编码</th>
-            <th style="width:110px">标题</th>
-            <th>机制</th>
-            <th style="width:80px">开始日期</th>
-            <th style="width:80px">结束日期</th>
-            <th style="width:66px">状态</th>
-            <th style="width:68px">核销上限</th>
-            <th style="width:66px">累计发放</th>
-            <th style="width:62px">渠道</th>
-          </tr></thead>
-          <tbody id="blist"><tr class="b-row" onclick="bToggleRow(event,this,'23020101')" data-id="23020101" data-amt="15" data-cond="满 99 元可用" data-name="双节满减主推" data-exp="2026-12-20 至 2026-12-27 有效"><td><label class="chk"><input type="checkbox" onchange="bToggle(this,'23020101')"></label></td><td class="sx-mono" style="font-size:11.8px">23020101</td><td>双节满减主推</td><td class="muted" style="font-size:11.8px">满99元减15元</td><td class="muted" style="font-size:11.6px">2026-12-20</td><td class="muted" style="font-size:11.6px">2026-12-27</td><td><span class="tg tg-g xs">可建页</span></td><td class="num">9,000</td><td class="num">6,320</td><td class="muted" style="font-size:11.6px">扫码</td></tr><tr class="b-row" onclick="bToggleRow(event,this,'23020102')" data-id="23020102" data-amt="15" data-cond="满 99 元可用" data-name="跨年场景承接" data-exp="12-28-01-05 有效"><td><label class="chk"><input type="checkbox" onchange="bToggle(this,'23020102')"></label></td><td class="sx-mono" style="font-size:11.8px">23020102</td><td>跨年场景承接</td><td class="muted" style="font-size:11.8px">满99元减15元</td><td class="muted" style="font-size:11.6px">2026-12-28</td><td class="muted" style="font-size:11.6px">2027-01-05</td><td><span class="tg tg-g xs">可建页</span></td><td class="num">7,000</td><td class="num">3,610</td><td class="muted" style="font-size:11.6px">扫码</td></tr><tr class="b-row" onclick="bToggleRow(event,this,'23020103')" data-id="23020103" data-amt="20" data-cond="满 129 元可用" data-name="高端礼盒拉新" data-exp="12-20-01-05 有效"><td><label class="chk"><input type="checkbox" onchange="bToggle(this,'23020103')"></label></td><td class="sx-mono" style="font-size:11.8px">23020103</td><td>高端礼盒拉新</td><td class="muted" style="font-size:11.8px">满129元减20元</td><td class="muted" style="font-size:11.6px">2026-12-20</td><td class="muted" style="font-size:11.6px">2027-01-05</td><td><span class="tg tg-g xs">可建页</span></td><td class="num">5,000</td><td class="num">2,498</td><td class="muted" style="font-size:11.6px">扫码</td></tr></tbody>
-        </table>
-      </div>
-      <div class="pager" style="margin:9px 0 0;padding:0;border:none;background:none">
-        <div class="pg-info">共 <b id="bTotal">3</b> 个批次，每页 15 条</div>
-        <div class="pg-btns" id="bPager"><button class="pg dis" onclick="bGo(0)">上一页</button><button class="pg on" onclick="bGo(1)">1</button><button class="pg dis" onclick="bGo(2)">下一页</button></div>
-      </div>
-      <div class="bcnt">
-        已选 <b id="selCnt">0</b> 个批次
-        <span class="warn" id="selWarn" style="display:none">· 超过 6 个批次会明显影响领取体验，建议拆分页面</span>
-        <span>· 建议单页不超过 6 个批次</span>
-      </div>
-      <div class="mut" style="font-size:11.8px;margin-top:7px;line-height:1.75">置灰说明：<b>已占用</b> = 该批次已挂在其他启用中的页面上，同一批次只能挂一个启用页面（停用原页面后释放）。</div>
-    </div>
-
-    <div class="fr"><label>券卡展示顺序</label>
-      <div class="sortlist" id="sortList"><div class="si"><span>未勾选批次</span></div></div>
-      <div class="mut" style="font-size:11.6px;margin-top:5px">默认按勾选顺序排列；高面额券建议置顶，提升点击率</div>
-    </div>
-
-    <div class="fg c2">
-      <div class="fr"><label>分发渠道（仅记录，用于归因）</label>
-        <div style="display:flex;flex-direction:column;gap:3px">
-          <label class="chk"><input type="checkbox" checked="">线下物料</label>
-          <label class="chk"><input type="checkbox" checked="">公众号</label>
-          <label class="chk"><input type="checkbox">私域</label>
-        </div>
-        <div class="mut" style="font-size:11.6px;margin-top:4px">同一页面多渠到投放，数据在看板合并统计；带参链接按渠道单独归因</div>
-      </div>
-      <div class="fr"><label>页面背景</label>
-        <div class="bgpick">
-          <div class="g" onclick="pickBg(this,'')"><i></i><span>默认样式​</span></div>
-          
-          
-          <div class="g up on" onclick="pickBg(this,'')"><i style="background:#FAFCFB;border-bottom:1px dashed var(--line);display:flex;align-items:center;justify-content:center;color:var(--ink4);font-size:16px">＋</i><span style="white-space: pre-wrap;">上传背景图​</span></div>
-        </div>
-        <div class="mut" style="font-size:11.6px;margin-top:5px">仅可换背景图（建议 750×420px，≤500KB），券卡布局与文案固定，不可拖拽</div>
-      </div>
-    </div>
-
-    <div class="st" style="margin:18px 0 10px">消费者端预览 <span class="sub">随勾选实时联动</span></div>
-    <div class="stg">
-      <div class="phone">
-        <div class="notch"></div>
-        <div class="scr">
-          <div class="bg " id="pvBg">
-            <em id="pvTitle">双节主推页·常温奶</em>
-            <small>活动时间 2026.12.20 - 2027.01.05</small>
-          </div>
-          <div class="rulebar"><span>每人每种券限领 1 张</span><span>先到先得</span></div>
-          <div class="bd2">
-            <div class="ph" id="pvHint">请先勾选批次</div>
-            <div id="pvList"></div>
-          </div>
-          <div class="cfoot">券由微信支付发放，领取后可在微信卡包查看<br>活动最终解释权归主办方所有</div>
-        </div>
-        <div class="statelab">预览态：未领取</div>
-      </div>
-      <div class="rules" id="stateDescDrawer">
-        <div class="r"><span class="k">i</span><div><b>保存草稿：</b>校验只做「页面名称必填」，可先存后补；草稿占用的批次不做锁定，他人仍可建页。</div></div>
-        <div class="r"><span class="k">ii</span><div><b>生成页面：</b>至少勾选 1 个批次、有效期不早于批次开始日；生成后页面状态为「未启用」，需手动启用才对外可领。</div></div>
-        <div class="r"><span class="k">iii</span><div><b>启用：</b>启用时二次校验批次是否已被占用 / 是否失效，任一不通过则拒绝启用并提示具体批次；启用后批次即被锁定到本页面。</div></div>
-      </div>
+    <div class="fr"><label>核对可推送批次</label>
+      <div class="tw scroll" style="border:1px solid var(--line2);border-radius:7px;max-height:300px" id="mtList"></div>
+      <div class="flex" style="margin-top:8px"><span class="mut" id="mtCnt"></span></div>
+      <div class="fld-hint">核对批次号与商户号无误后再推送；推送后不撤回，需要调整请重新推送</div>
     </div>
   </div>
   <div class="dw-f">
-    <div class="lft">已选 <b id="selCnt2">0</b> 个批次 · 页面归属 <b>双节常温奶满减</b></div>
-    <div class="rgt">
-      <button class="btn btn-g" onclick="closeDrawer()">取消</button>
-      <button class="btn btn-o" onclick="closeDrawer()">保存草稿</button>
-      <button class="btn btn-p" onclick="closeDrawer()">生成页面与二维码</button>
-    </div>
+    <div class="lft">推送 = 把批次交给小程序方配券，不在此处配券</div>
+    <div class="rgt"><button class="btn btn-g" onclick="closeDrawer()">取消</button><button class="btn btn-p" onclick="miniTaskOk()">确认推送</button></div>
   </div>
 </div>`;
 }
 
-/* ---------- 模板：dw-edit ---------- */
-function tplDraweredit(){
-  return `<div class="drawer" id="dw-edit">
-  <div class="dw-h">
-    <h3>编辑领券页面 <span class="sub" id="edSub">双节主推页（常温奶） · MN-WX-202612-0041</span></h3>
-    <div class="flex" style="gap:12px"><span class="tg tg-g" id="edStatus">启用中</span><span class="dw-x" onclick="closeDrawer()">×</span></div>
-  </div>
-  <div class="dw-b">
-    <div class="fg c2">
-      <div class="fr"><label>页面名称</label><input class="inp" id="edName" value="双节主推页（常温奶）"></div>
-      <div class="fr"><label>页面归属</label><div class="locked" style="padding:7px 11px;font-size:12.4px;line-height:1.6"><span class="lk" style="margin-right:6px">继承项目</span>双节常温奶满减 · MN-WX-202612-0041</div></div>
-    </div>
-    <div class="fr"><label>含券批次（锁定，不可修改）</label>
-      <div class="blist" id="edBatch"><div class="bi lock" data-id="23020101"><label class="chk"><input type="checkbox" checked="" disabled=""></label><span class="id">23020101</span><span class="info">¥15 / 满 99 · 9,000 张<small>2026-12-20 ~ 2026-12-27</small></span><span class="rt"><span class="tg tg-n xs">已锁定</span></span></div><div class="bi lock" data-id="23020102"><label class="chk"><input type="checkbox" checked="" disabled=""></label><span class="id">23020102</span><span class="info">¥15 / 满 99 · 7,000 张<small>2026-12-28 ~ 2027-01-05</small></span><span class="rt"><span class="tg tg-n xs">已锁定</span></span></div></div>
-    </div>
-    <div class="fr"><label>页面背景</label>
-      <div class="bgpick">
-        <div class="g on"><i></i><span>默认样式​</span></div>
-        <div class="g"><i style="background:#FAFCFB;border-bottom:1px dashed var(--line)"></i><span style="white-space: pre-wrap;">上传背景图​</span></div>
-      </div>
-    </div>
-    <div class="fr"><label>分发渠道</label>
-      <div style="display:flex;flex-direction:column;gap:3px">
-        <label class="chk"><input type="checkbox" checked="">线下物料</label>
-        <label class="chk"><input type="checkbox" checked="">公众号</label>
-        <label class="chk"><input type="checkbox">私域</label>
-      </div>
-    </div>
-    <div class="st" style="margin:18px 0 10px">页面预览 <span class="sub">与消费者实际看到的一致</span></div>
-    <div class="stg">
-      <div class="phone">
-        <div class="notch"></div>
-        <div class="scr">
-          <div class="bg" id="edBg">
-            <em id="edTitle">双节主推页·常温奶</em>
-            <small>活动时间 2026.12.20 - 2027.01.05</small>
-          </div>
-          <div class="rulebar"><span>每人每种券限领 1 张</span><span>先到先得</span></div>
-          <div class="bd2">
-            <div class="ph">共 2 张券</div>
-            <div id="edList"><div class="cp"><div class="amt">¥<b>15</b></div><div class="mid"><b>双节常温奶满减券</b><small>满 99 元可用 · 12.20-12.27 有效</small></div><div class="btn2 ">立即领取</div></div><div class="cp"><div class="amt">¥<b>15</b></div><div class="mid"><b>双节常温奶满减券</b><small>满 99 元可用 · 12.28-01.05 有效</small></div><div class="btn2 ">立即领取</div></div></div>
-          </div>
-          <div class="cfoot">券由微信支付发放，领取后可在微信卡包查看<br>活动最终解释权归主办方所有</div>
-        </div>
-      </div>
-      <div class="rules" id="edInfo"><div class="r"><span class="k">·</span><div><b>含券批次：</b><span class="sx-mono">23020101、23020102</span>（共 2 个，锁定不可改）</div></div><div class="r"><span class="k">·</span><div><b>分发渠道：</b>线下物料、公众号</div></div><div class="r"><span class="k">·</span><div><b>页面链接：</b><span class="sx-mono">mn-act.cn/h5/g/7f3a2c</span></div></div><div class="r"><span class="k">·</span><div><b>有效期：</b>2026-12-20 ~ 2027-01-05</div></div></div>
-    </div>
-
-  </div>
-  <div class="dw-f">
-    <div class="lft">最近保存 2026-10-19 16:05</div>
-    <div class="rgt">
-      <button class="btn btn-g" onclick="closeDrawer()">取消</button>
-      <button class="btn btn-d" id="edStop" onclick="closeDrawer()">停用页面</button>
-      <button class="btn btn-d" id="edDel" style="display:none" onclick="closeDrawer()">删除草稿</button>
-      <button class="btn btn-p" onclick="closeDrawer()">保存</button>
-    </div>
-  </div>
-</div>`;
-}
+MT.defineDrawer('dw-minitask', tplDrawerminitask);
 
 /* ---------- 注册模块 ---------- */
 MT.definePage({
   id: "v-h5",
-  title: "领券页面",
-  crumb: "运营执行 / 领券页面",
+  title: "挂券与配置",
+  crumb: "运营执行 / 挂券与配置",
   group: "运营执行",
   template: tplPageh5
 });
-
-MT.defineDrawer("dw-page", tplDrawerpage);
-
-MT.defineDrawer("dw-edit", tplDraweredit);

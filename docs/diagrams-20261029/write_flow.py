@@ -1,0 +1,444 @@
+# -*- coding: utf-8 -*-
+"""一期业务流程图（详细版）：对齐 PRD 主链路、S1–S7、交接点与异常分支。不插入文档。"""
+from pathlib import Path
+
+out = Path(__file__).parent
+
+# 配色：与架构图同源，按执行方区分
+# 业务运营青绿 / 审批蓝 / 服务商暖米 / 平台校验灰绿 / 小程序紫浅 / 异常橙 / 结束灰
+
+W, H = 2200, 1680
+
+svg = f"""<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="{W}" height="{H}" viewBox="0 0 {W} {H}">
+  <defs>
+    <marker id="mG" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+      <path d="M0,0 L8,4 L0,8 Z" fill="#2b7e6a"/>
+    </marker>
+    <marker id="mB" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+      <path d="M0,0 L8,4 L0,8 Z" fill="#6f8fad"/>
+    </marker>
+    <marker id="mW" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+      <path d="M0,0 L8,4 L0,8 Z" fill="#b8894a"/>
+    </marker>
+    <marker id="mO" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+      <path d="M0,0 L8,4 L0,8 Z" fill="#c45c2a"/>
+    </marker>
+    <marker id="mP" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+      <path d="M0,0 L8,4 L0,8 Z" fill="#7a6aad"/>
+    </marker>
+    <marker id="mGy" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+      <path d="M0,0 L8,4 L0,8 Z" fill="#6a7a74"/>
+    </marker>
+  </defs>
+  <rect width="100%" height="100%" fill="#ffffff"/>
+  <g font-family="Microsoft YaHei, sans-serif">
+
+    <text x="48" y="42" font-size="32" fill="#075e4c" font-weight="700">业务流程图</text>
+    <text x="48" y="72" font-size="16" fill="#58756e">蒙牛活动管理平台 · 一期主链路（创建 → 审批 → 配置 → 服务商执行 → 小程序投放 → 数据回流）</text>
+    <text x="48" y="96" font-size="13" fill="#8a9e97">对齐 PRD：项目状态 S1–S7、交接点 H-1～H-6、计划配置完整性、异常流转；业务仅本人项目，服务商仅授权项目入口</text>
+
+    <!-- 图例 -->
+    <rect x="48" y="112" width="2104" height="52" rx="10" fill="#f4f8f6" stroke="#c5d6cf"/>
+    <rect x="68" y="126" width="14" height="14" rx="3" fill="#d9ebe4" stroke="#2b7e6a"/>
+    <text x="90" y="138" font-size="13" fill="#163d37">业务运营</text>
+    <rect x="188" y="126" width="14" height="14" rx="3" fill="#e4eef7" stroke="#6f8fad"/>
+    <text x="210" y="138" font-size="13" fill="#163d37">审批人 · BPM</text>
+    <rect x="348" y="126" width="14" height="14" rx="3" fill="#f7f0e4" stroke="#b8894a"/>
+    <text x="370" y="138" font-size="13" fill="#163d37">制券服务商</text>
+    <rect x="488" y="126" width="14" height="14" rx="3" fill="#eeeaf8" stroke="#7a6aad"/>
+    <text x="510" y="138" font-size="13" fill="#163d37">会员小程序</text>
+    <rect x="628" y="126" width="14" height="14" rx="3" fill="#e8eeec" stroke="#6a7a74"/>
+    <text x="650" y="138" font-size="13" fill="#163d37">本平台校验 / 台账</text>
+    <rect x="818" y="126" width="14" height="14" rx="3" fill="#ffe8dc" stroke="#c45c2a"/>
+    <text x="840" y="138" font-size="13" fill="#163d37">异常 / 分支</text>
+    <text x="980" y="138" font-size="13" fill="#58756e">状态：S1 草稿 · S2 待审批 · S3 待推送服务商 · S4 待服务商确认 · S5 执行中 · S6 已终止 · S7 已结束</text>
+    <text x="68" y="154" font-size="12" fill="#8a9e97">菱形 = 校验 / 决策；实线箭头 = 主路径；橙线 = 驳回 / 撤回 / 失败回退；灰线 = 结束态</text>
+
+    <!-- ========== 阶段带 ========== -->
+    <!-- 阶段1 创建报批 -->
+    <rect x="48" y="184" width="340" height="28" rx="8" fill="#2b7e6a"/>
+    <text x="218" y="203" text-anchor="middle" font-size="14" fill="#fff" font-weight="700">① 创建与报批 · 业务运营</text>
+    <rect x="48" y="220" width="340" height="620" rx="14" fill="#f7fbf9" stroke="#9fc4b8" stroke-width="1.6"/>
+
+    <rect x="68" y="240" width="300" height="56" rx="10" fill="#d9ebe4" stroke="#2b7e6a" stroke-width="1.6"/>
+    <text x="218" y="262" text-anchor="middle" font-size="14" fill="#075e4c" font-weight="700">钉钉登录进入管理端</text>
+    <text x="218" y="282" text-anchor="middle" font-size="12" fill="#163d37">按角色菜单；业务仅本人项目</text>
+
+    <path d="M218 296 L218 312" stroke="#2b7e6a" stroke-width="2" marker-end="url(#mG)"/>
+
+    <rect x="68" y="312" width="300" height="88" rx="10" fill="#d9ebe4" stroke="#2b7e6a" stroke-width="1.6"/>
+    <text x="218" y="334" text-anchor="middle" font-size="14" fill="#075e4c" font-weight="700">新建 / 编辑项目（S1 草稿）</text>
+    <text x="218" y="354" text-anchor="middle" font-size="12" fill="#163d37">基本信息 · 活动周期 · 负责人</text>
+    <text x="218" y="372" text-anchor="middle" font-size="12" fill="#163d37">服务商（唯一联系人邮箱）</text>
+    <text x="218" y="390" text-anchor="middle" font-size="12" fill="#163d37">≥1 条计划：机制类型 / 机制 / 零售商·商品明细</text>
+
+    <path d="M218 400 L218 416" stroke="#2b7e6a" stroke-width="2" marker-end="url(#mG)"/>
+
+    <rect x="68" y="416" width="300" height="72" rx="10" fill="#d9ebe4" stroke="#2b7e6a" stroke-width="1.6"/>
+    <text x="218" y="438" text-anchor="middle" font-size="14" fill="#075e4c" font-weight="700">预算单号 / PO 校验</text>
+    <text x="218" y="458" text-anchor="middle" font-size="12" fill="#163d37">对接 TPM / MEM；须已审批且额度可用</text>
+    <text x="218" y="476" text-anchor="middle" font-size="12" fill="#163d37">带出核销预算、科目、承担主体、预算来源</text>
+
+    <path d="M218 488 L218 504" stroke="#2b7e6a" stroke-width="2" marker-end="url(#mG)"/>
+
+    <!-- 决策：提交校验 -->
+    <path d="M218 504 L248 534 L218 564 L188 534 Z" fill="#fff" stroke="#2b7e6a" stroke-width="1.8"/>
+    <text x="218" y="530" text-anchor="middle" font-size="12" fill="#075e4c" font-weight="700">提交校验</text>
+    <text x="218" y="546" text-anchor="middle" font-size="11" fill="#163d37">7.3 全部条件</text>
+
+    <path d="M248 534 L278 534" stroke="#c45c2a" stroke-width="1.8" marker-end="url(#mO)"/>
+    <rect x="278" y="510" width="100" height="48" rx="8" fill="#ffe8dc" stroke="#c45c2a"/>
+    <text x="328" y="530" text-anchor="middle" font-size="11" fill="#8a3a12" font-weight="700">拦截</text>
+    <text x="328" y="548" text-anchor="middle" font-size="10" fill="#8a3a12">列出全部缺项</text>
+
+    <path d="M218 564 L218 584" stroke="#2b7e6a" stroke-width="2" marker-end="url(#mG)"/>
+
+    <rect x="68" y="584" width="300" height="72" rx="10" fill="#d9ebe4" stroke="#2b7e6a" stroke-width="1.8"/>
+    <text x="218" y="608" text-anchor="middle" font-size="14" fill="#075e4c" font-weight="700">提交审批 · H-1 → S2</text>
+    <text x="218" y="628" text-anchor="middle" font-size="12" fill="#163d37">冻结报批方案快照</text>
+    <text x="218" y="646" text-anchor="middle" font-size="12" fill="#163d37">生成/沿用稳定项目与计划标识</text>
+
+    <text x="68" y="690" font-size="11" fill="#58756e">必填要点：名称/负责人/联系方式/PO/</text>
+    <text x="68" y="706" font-size="11" fill="#58756e">服务商/周期；每计划机制+两类明细≥1</text>
+    <text x="68" y="722" font-size="11" fill="#58756e">报批阶段不强制最终券批次号</text>
+    <text x="68" y="738" font-size="11" fill="#58756e">可「保存草稿」留在 S1；可删草稿（二次确认）</text>
+    <text x="68" y="754" font-size="11" fill="#58756e">日志：提交动作留痕</text>
+    <text x="68" y="770" font-size="11" fill="#8a9e97">执行券参数在审批通过后补充</text>
+    <text x="68" y="786" font-size="11" fill="#8a9e97">一期机制仅满减 / 减至</text>
+    <text x="68" y="802" font-size="11" fill="#8a9e97">项目:计划 = 1:N；计划:批次目标 1:1</text>
+    <text x="68" y="818" font-size="11" fill="#8a9e97">明细导入合法行汇总入库（门店/商品）</text>
+
+    <!-- 阶段2 审批 -->
+    <rect x="408" y="184" width="340" height="28" rx="8" fill="#6f8fad"/>
+    <text x="578" y="203" text-anchor="middle" font-size="14" fill="#fff" font-weight="700">② 审批 · BPM 授权用户</text>
+    <rect x="408" y="220" width="340" height="620" rx="14" fill="#f5f8fb" stroke="#a8bfd4" stroke-width="1.6"/>
+
+    <path d="M348 620 L390 620 L390 280 L408 280" stroke="#2b7e6a" stroke-width="2.2" fill="none" marker-end="url(#mG)"/>
+    <text x="372" y="450" font-size="11" fill="#2b7e6a" transform="rotate(-90 372 450)">S2 待审批</text>
+
+    <rect x="428" y="240" width="300" height="64" rx="10" fill="#e4eef7" stroke="#6f8fad" stroke-width="1.6"/>
+    <text x="578" y="264" text-anchor="middle" font-size="14" fill="#2a4f6e" font-weight="700">待审批列表 / 详情</text>
+    <text x="578" y="284" text-anchor="middle" font-size="12" fill="#163d37">只读报批快照；不含券面额等执行字段</text>
+
+    <path d="M578 304 L578 320" stroke="#6f8fad" stroke-width="2" marker-end="url(#mB)"/>
+
+    <path d="M578 320 L612 354 L578 388 L544 354 Z" fill="#fff" stroke="#6f8fad" stroke-width="1.8"/>
+    <text x="578" y="350" text-anchor="middle" font-size="12" fill="#2a4f6e" font-weight="700">审批决策</text>
+    <text x="578" y="366" text-anchor="middle" font-size="11" fill="#163d37">同意 / 驳回</text>
+
+    <!-- 驳回 -->
+    <path d="M544 354 L500 354 L500 430" stroke="#c45c2a" stroke-width="1.8" fill="none" marker-end="url(#mO)"/>
+    <rect x="428" y="430" width="144" height="64" rx="8" fill="#ffe8dc" stroke="#c45c2a"/>
+    <text x="500" y="454" text-anchor="middle" font-size="12" fill="#8a3a12" font-weight="700">驳回 → S1</text>
+    <text x="500" y="472" text-anchor="middle" font-size="11" fill="#8a3a12">意见必填 · H-2</text>
+    <text x="500" y="488" text-anchor="middle" font-size="10" fill="#8a3a12">保留意见可继续编辑</text>
+
+    <!-- 撤回 -->
+    <rect x="588" y="430" width="140" height="64" rx="8" fill="#ffe8dc" stroke="#c45c2a"/>
+    <text x="658" y="454" text-anchor="middle" font-size="12" fill="#8a3a12" font-weight="700">创建人撤回</text>
+    <text x="658" y="472" text-anchor="middle" font-size="11" fill="#8a3a12">S2 → S1</text>
+    <text x="658" y="488" text-anchor="middle" font-size="10" fill="#8a3a12">可改后重提</text>
+    <path d="M578 388 L578 410 L658 410 L658 430" stroke="#c45c2a" stroke-width="1.5" fill="none" stroke-dasharray="4 3"/>
+
+    <!-- 同意 -->
+    <path d="M578 388 L578 520" stroke="#6f8fad" stroke-width="2.2" marker-end="url(#mB)"/>
+    <rect x="428" y="520" width="300" height="72" rx="10" fill="#e4eef7" stroke="#6f8fad" stroke-width="1.8"/>
+    <text x="578" y="544" text-anchor="middle" font-size="14" fill="#2a4f6e" font-weight="700">同意 · H-2 → S3</text>
+    <text x="578" y="564" text-anchor="middle" font-size="12" fill="#163d37">进入「待推送服务商」</text>
+    <text x="578" y="582" text-anchor="middle" font-size="12" fill="#163d37">不自动发执行邮件（R-01）</text>
+
+    <text x="428" y="630" font-size="11" fill="#58756e">前置：项目须为待审批，否则拒绝</text>
+    <text x="428" y="648" font-size="11" fill="#58756e">BPM：平台发起审批，结果回写本平台</text>
+    <text x="428" y="666" font-size="11" fill="#58756e">不另建审批人独立账号体系</text>
+    <text x="428" y="684" font-size="11" fill="#58756e">详情可展开零售商 / 商品明细</text>
+    <text x="428" y="702" font-size="11" fill="#58756e">日志：同意 / 驳回 / 撤回均留痕</text>
+    <text x="428" y="730" font-size="11" fill="#8a9e97">驳回与撤回均回到草稿，可继续编辑后</text>
+    <text x="428" y="746" font-size="11" fill="#8a9e97">再次提交（重新走 7.3 校验与快照）</text>
+    <text x="428" y="772" font-size="11" fill="#8a9e97">橙线回草稿见左侧阶段①（S1）</text>
+    <path d="M428 462 L360 462 L360 360" stroke="#c45c2a" stroke-width="1.6" fill="none" marker-end="url(#mO)" stroke-dasharray="5 4"/>
+    <text x="366" y="410" font-size="11" fill="#c45c2a">回草稿</text>
+
+    <!-- 阶段3 配置与推送 -->
+    <rect x="768" y="184" width="360" height="28" rx="8" fill="#2b7e6a"/>
+    <text x="948" y="203" text-anchor="middle" font-size="14" fill="#fff" font-weight="700">③ 完善配置与推送 · 业务运营</text>
+    <rect x="768" y="220" width="360" height="620" rx="14" fill="#f7fbf9" stroke="#9fc4b8" stroke-width="1.6"/>
+
+    <path d="M748 556 L768 556" stroke="#6f8fad" stroke-width="2.2" marker-end="url(#mB)"/>
+
+    <rect x="788" y="240" width="320" height="72" rx="10" fill="#d9ebe4" stroke="#2b7e6a" stroke-width="1.6"/>
+    <text x="948" y="262" text-anchor="middle" font-size="14" fill="#075e4c" font-weight="700">完善批次计划（原计划 ID）</text>
+    <text x="948" y="282" text-anchor="middle" font-size="12" fill="#163d37">券名称 / 面额或减至价 / 门槛</text>
+    <text x="948" y="300" text-anchor="middle" font-size="12" fill="#163d37">可用时间 · 发放上限 · 单人可领 · 说明</text>
+
+    <path d="M948 312 L948 328" stroke="#2b7e6a" stroke-width="2" marker-end="url(#mG)"/>
+
+    <rect x="788" y="328" width="320" height="56" rx="10" fill="#e8eeec" stroke="#6a7a74" stroke-width="1.5"/>
+    <text x="948" y="350" text-anchor="middle" font-size="13" fill="#163d37" font-weight="700">计划配置状态（7.4）</text>
+    <text x="948" y="370" text-anchor="middle" font-size="12" fill="#58756e">待补充 → 存在缺项 → 校验通过</text>
+
+    <path d="M948 384 L948 400" stroke="#2b7e6a" stroke-width="2" marker-end="url(#mG)"/>
+
+    <path d="M948 400 L982 434 L948 468 L914 434 Z" fill="#fff" stroke="#2b7e6a" stroke-width="1.8"/>
+    <text x="948" y="430" text-anchor="middle" font-size="12" fill="#075e4c" font-weight="700">推送前置</text>
+    <text x="948" y="446" text-anchor="middle" font-size="11" fill="#163d37">全部计划通过?</text>
+
+    <path d="M982 434 L1048 434" stroke="#c45c2a" stroke-width="1.8" marker-end="url(#mO)"/>
+    <rect x="1048" y="410" width="70" height="48" rx="8" fill="#ffe8dc" stroke="#c45c2a"/>
+    <text x="1083" y="430" text-anchor="middle" font-size="11" fill="#8a3a12" font-weight="700">拦截</text>
+    <text x="1083" y="448" text-anchor="middle" font-size="10" fill="#8a3a12">列未完成</text>
+
+    <path d="M948 468 L948 488" stroke="#2b7e6a" stroke-width="2" marker-end="url(#mG)"/>
+
+    <rect x="788" y="488" width="320" height="56" rx="10" fill="#d9ebe4" stroke="#2b7e6a" stroke-width="1.6"/>
+    <text x="948" y="510" text-anchor="middle" font-size="13" fill="#075e4c" font-weight="700">预算校验</text>
+    <text x="948" y="530" text-anchor="middle" font-size="12" fill="#163d37">各计划预算合计 ≤ 项目核销预算</text>
+
+    <path d="M948 544 L948 560" stroke="#2b7e6a" stroke-width="2" marker-end="url(#mG)"/>
+
+    <rect x="788" y="560" width="320" height="72" rx="10" fill="#d9ebe4" stroke="#2b7e6a" stroke-width="1.8"/>
+    <text x="948" y="584" text-anchor="middle" font-size="14" fill="#075e4c" font-weight="700">推送服务商 · H-3</text>
+    <text x="948" y="604" text-anchor="middle" font-size="12" fill="#163d37">发执行通知邮件 + 专属令牌入口</text>
+    <text x="948" y="622" text-anchor="middle" font-size="12" fill="#163d37">成功 → S4；失败记失败并重试，不假成功</text>
+
+    <!-- 终止分支 -->
+    <rect x="788" y="656" width="150" height="52" rx="8" fill="#ffe8dc" stroke="#c45c2a"/>
+    <text x="863" y="676" text-anchor="middle" font-size="12" fill="#8a3a12" font-weight="700">人工终止 → S6</text>
+    <text x="863" y="694" text-anchor="middle" font-size="10" fill="#8a3a12">仅外部批次尚未产生</text>
+    <rect x="958" y="656" width="150" height="52" rx="8" fill="#e8eeec" stroke="#6a7a74"/>
+    <text x="1033" y="676" text-anchor="middle" font-size="12" fill="#163d37" font-weight="700">S4 可重发邮件</text>
+    <text x="1033" y="694" text-anchor="middle" font-size="10" fill="#58756e">可复制确认链接</text>
+
+    <text x="788" y="740" font-size="11" fill="#58756e">配置完整性 ≠ 微信已建券；批次号仍只读等回传</text>
+    <text x="788" y="758" font-size="11" fill="#58756e">可用时间须落在项目周期内；额外上限依微信接口</text>
+    <text x="788" y="776" font-size="11" fill="#58756e">零售商/商品明细各≥1；保存不生成外部批次</text>
+    <text x="788" y="794" font-size="11" fill="#58756e">执行中计划变更（增删门店商品等）不在一期</text>
+    <text x="788" y="812" font-size="11" fill="#8a9e97">S3/S4 均可在无外部批次时终止；历史只读可复制为新项目</text>
+
+    <!-- 阶段4 服务商 -->
+    <rect x="1148" y="184" width="360" height="28" rx="8" fill="#b8894a"/>
+    <text x="1328" y="203" text-anchor="middle" font-size="14" fill="#fff" font-weight="700">④ 服务商执行（免登录令牌）</text>
+    <rect x="1148" y="220" width="360" height="620" rx="14" fill="#fbf8f2" stroke="#d4c09a" stroke-width="1.6"/>
+
+    <path d="M1128 596 L1148 596" stroke="#2b7e6a" stroke-width="2.2" marker-end="url(#mG)"/>
+
+    <rect x="1168" y="240" width="320" height="56" rx="10" fill="#f7f0e4" stroke="#b8894a" stroke-width="1.6"/>
+    <text x="1328" y="262" text-anchor="middle" font-size="14" fill="#6a4a18" font-weight="700">① 确认执行 · → S5</text>
+    <text x="1328" y="282" text-anchor="middle" font-size="12" fill="#163d37">令牌有效；写确认人/时间；幂等</text>
+
+    <path d="M1328 296 L1328 312" stroke="#b8894a" stroke-width="2" marker-end="url(#mW)"/>
+
+    <rect x="1168" y="312" width="320" height="48" rx="10" fill="#f7f0e4" stroke="#b8894a" stroke-width="1.5"/>
+    <text x="1328" y="332" text-anchor="middle" font-size="13" fill="#6a4a18" font-weight="700">② 下载批次计划</text>
+    <text x="1328" y="350" text-anchor="middle" font-size="12" fill="#163d37">机制 · 门店 · 商品明细与系统一致</text>
+
+    <path d="M1328 360 L1328 376" stroke="#b8894a" stroke-width="2" marker-end="url(#mW)"/>
+
+    <rect x="1168" y="376" width="320" height="56" rx="10" fill="#fff1e4" stroke="#d0893a" stroke-width="1.6"/>
+    <text x="1328" y="398" text-anchor="middle" font-size="13" fill="#8a4f12" font-weight="700">③ 微信侧创建券批次</text>
+    <text x="1328" y="418" text-anchor="middle" font-size="12" fill="#163d37">服务商操作微信支付后台；平台不代建</text>
+
+    <path d="M1328 432 L1328 448" stroke="#b8894a" stroke-width="2" marker-end="url(#mW)"/>
+
+    <rect x="1168" y="448" width="320" height="64" rx="10" fill="#f7f0e4" stroke="#b8894a" stroke-width="1.8"/>
+    <text x="1328" y="470" text-anchor="middle" font-size="14" fill="#6a4a18" font-weight="700">④ 回传批次 / 商户号 · H-4</text>
+    <text x="1328" y="490" text-anchor="middle" font-size="12" fill="#163d37">映射既有项目·计划；批次号唯一</text>
+    <text x="1328" y="508" text-anchor="middle" font-size="12" fill="#163d37">开放 API 或操作页上传</text>
+
+    <path d="M1328 512 L1328 528" stroke="#6a7a74" stroke-width="2" marker-end="url(#mGy)"/>
+
+    <rect x="1168" y="528" width="320" height="64" rx="10" fill="#e8eeec" stroke="#6a7a74" stroke-width="1.6"/>
+    <text x="1328" y="550" text-anchor="middle" font-size="13" fill="#163d37" font-weight="700">平台逐条校验入库</text>
+    <text x="1328" y="568" text-anchor="middle" font-size="12" fill="#58756e">归属 / 唯一 / 商户号；失败可修正重传</text>
+    <text x="1328" y="586" text-anchor="middle" font-size="12" fill="#58756e">成功幂等；冲突拒绝并给原因</text>
+
+    <rect x="1168" y="612" width="320" height="48" rx="10" fill="#f7f0e4" stroke="#b8894a" stroke-width="1.5"/>
+    <text x="1328" y="632" text-anchor="middle" font-size="13" fill="#6a4a18" font-weight="700">业务数据回传入口开放（S5）</text>
+    <text x="1328" y="650" text-anchor="middle" font-size="12" fill="#163d37">核销 · 执行情况 · 账单（可与投放并行）</text>
+
+    <text x="1168" y="690" font-size="11" fill="#58756e">服务商无内部账号；专属入口不可看其他项目</text>
+    <text x="1168" y="708" font-size="11" fill="#58756e">确认与批次回传分别留痕，不可互相代替</text>
+    <text x="1168" y="726" font-size="11" fill="#58756e">无效/过期令牌拒绝访问（E-10）</text>
+    <text x="1168" y="744" font-size="11" fill="#58756e">不把「上传订单」做成独立订单管理模块</text>
+    <text x="1168" y="762" font-size="11" fill="#8a9e97">R-02 稳定计划：回传映射系统既有计划，不新建第二套</text>
+    <text x="1168" y="780" font-size="11" fill="#8a9e97">R-03 实际建券在微信侧；平台只校验关联</text>
+    <text x="1168" y="798" font-size="11" fill="#8a9e97">商户号文本存储；非法归属行拒绝</text>
+    <text x="1168" y="816" font-size="11" fill="#8a9e97">有外部批次后不可再人工终止</text>
+
+    <!-- 阶段5 投放与回流 -->
+    <rect x="1528" y="184" width="360" height="28" rx="8" fill="#7a6aad"/>
+    <text x="1708" y="203" text-anchor="middle" font-size="14" fill="#fff" font-weight="700">⑤ 小程序投放与数据回流</text>
+    <rect x="1528" y="220" width="360" height="620" rx="14" fill="#f7f5fb" stroke="#b8aed4" stroke-width="1.6"/>
+
+    <path d="M1508 636 L1528 636 L1528 280 L1528 280" stroke="#b8894a" stroke-width="2" fill="none"/>
+    <path d="M1508 556 L1558 556 L1558 280" stroke="#6a7a74" stroke-width="2" fill="none" marker-end="url(#mGy)"/>
+
+    <rect x="1548" y="240" width="320" height="72" rx="10" fill="#eeeaf8" stroke="#7a6aad" stroke-width="1.6"/>
+    <text x="1708" y="262" text-anchor="middle" font-size="14" fill="#4a3a78" font-weight="700">选择有效批次 · 推送小程序 · H-5</text>
+    <text x="1708" y="282" text-anchor="middle" font-size="12" fill="#163d37">仅执行中本人项目；生成发券任务号</text>
+    <text x="1708" y="300" text-anchor="middle" font-size="12" fill="#163d37">同渠道已推送批次不重复出现</text>
+
+    <path d="M1708 312 L1708 328" stroke="#7a6aad" stroke-width="2" marker-end="url(#mP)"/>
+
+    <rect x="1548" y="328" width="320" height="56" rx="10" fill="#eeeaf8" stroke="#7a6aad" stroke-width="1.5"/>
+    <text x="1708" y="350" text-anchor="middle" font-size="13" fill="#4a3a78" font-weight="700">小程序侧领券 / 发券</text>
+    <text x="1708" y="368" text-anchor="middle" font-size="12" fill="#163d37">调开放 API；平台封装公共微信发券</text>
+
+    <path d="M1708 384 L1708 400" stroke="#b8894a" stroke-width="2" marker-end="url(#mW)"/>
+
+    <rect x="1548" y="400" width="320" height="64" rx="10" fill="#f7f0e4" stroke="#b8894a" stroke-width="1.6"/>
+    <text x="1708" y="422" text-anchor="middle" font-size="14" fill="#6a4a18" font-weight="700">回传已发生业务 · H-6</text>
+    <text x="1708" y="442" text-anchor="middle" font-size="12" fill="#163d37">核销事件 · 执行情况 · 账单</text>
+    <text x="1708" y="460" text-anchor="middle" font-size="12" fill="#163d37">服务商按契约写入；平台不直连微信拉单</text>
+
+    <path d="M1708 464 L1708 480" stroke="#6a7a74" stroke-width="2" marker-end="url(#mGy)"/>
+
+    <rect x="1548" y="480" width="320" height="64" rx="10" fill="#e8eeec" stroke="#6a7a74" stroke-width="1.6"/>
+    <text x="1708" y="502" text-anchor="middle" font-size="13" fill="#163d37" font-weight="700">入库 · 去重 · 台账核对</text>
+    <text x="1708" y="522" text-anchor="middle" font-size="12" fill="#58756e">归属项目/计划/批次；差异可追溯</text>
+    <text x="1708" y="540" text-anchor="middle" font-size="12" fill="#58756e">后台任务：对账、账单检查、指标（口径另定）</text>
+
+    <path d="M1708 544 L1708 560" stroke="#2b7e6a" stroke-width="2" marker-end="url(#mG)"/>
+
+    <rect x="1548" y="560" width="320" height="56" rx="10" fill="#d9ebe4" stroke="#2b7e6a" stroke-width="1.6"/>
+    <text x="1708" y="582" text-anchor="middle" font-size="13" fill="#075e4c" font-weight="700">数据看板查询</text>
+    <text x="1708" y="602" text-anchor="middle" font-size="12" fill="#163d37">按项目与日期查有效回传；无数据不填示例</text>
+
+    <text x="1548" y="650" font-size="11" fill="#58756e">消费者领券页由会员小程序实现（N-01）</text>
+    <text x="1548" y="668" font-size="11" fill="#58756e">平台提供：鉴权 / 批次查询 / 发券 / 批次推送 / 核销推送</text>
+    <text x="1548" y="686" font-size="11" fill="#58756e">服务商 API：确认 / 批次回传 / 核销 / 执行 / 账单</text>
+    <text x="1548" y="704" font-size="11" fill="#58756e">幂等：重复请求不重复发券或入库</text>
+    <text x="1548" y="722" font-size="11" fill="#58756e">一期不做资金划付与结算单审批（N-08）</text>
+    <text x="1548" y="740" font-size="11" fill="#8a9e97">投放与回传可并行；有效批次才可投放</text>
+    <text x="1548" y="758" font-size="11" fill="#8a9e97">看板具体指标/公式本期不锁定</text>
+    <text x="1548" y="776" font-size="11" fill="#8a9e97">核销事件：服务商回传 ↔ 平台推小程序 方向区分</text>
+    <text x="1548" y="794" font-size="11" fill="#8a9e97">历史已关联或已核销记录不被补充配置直接覆盖</text>
+    <text x="1548" y="812" font-size="11" fill="#8a9e97">单人可领为正整数，不设固定上限拦截</text>
+
+    <!-- ========== 底部：结束态与异常汇总 ========== -->
+    <rect x="48" y="860" width="2104" height="28" rx="8" fill="#6a7a74"/>
+    <text x="1100" y="879" text-anchor="middle" font-size="14" fill="#fff" font-weight="700">⑥ 结束态 · 异常与约束（贯穿全程）</text>
+
+    <rect x="48" y="900" width="420" height="200" rx="12" fill="#e8eeec" stroke="#6a7a74" stroke-width="1.6"/>
+    <text x="68" y="928" font-size="15" fill="#163d37" font-weight="700">S7 项目周期自然结束</text>
+    <text x="68" y="952" font-size="13" fill="#163d37">停止新增配置与小程序投放</text>
+    <text x="68" y="974" font-size="13" fill="#163d37">继续接收已发生业务的核销 / 执行 / 账单回传</text>
+    <text x="68" y="996" font-size="13" fill="#163d37">保留历史查询与对账；活动详情只读</text>
+    <text x="68" y="1018" font-size="12" fill="#58756e">与人工终止（S6）分别留痕，不可混用</text>
+    <text x="68" y="1040" font-size="12" fill="#58756e">由周期到期触发，非按钮操作</text>
+    <text x="68" y="1062" font-size="12" fill="#58756e">范围说明与文档插图注记一致</text>
+    <text x="68" y="1084" font-size="12" fill="#8a9e97">S5 执行中亦可临近周期，结束后转 S7</text>
+
+    <rect x="488" y="900" width="420" height="200" rx="12" fill="#ffe8dc" stroke="#c45c2a" stroke-width="1.6"/>
+    <text x="508" y="928" font-size="15" fill="#8a3a12" font-weight="700">S6 人工终止</text>
+    <text x="508" y="952" font-size="13" fill="#163d37">仅当外部批次尚未产生时允许</text>
+    <text x="508" y="974" font-size="13" fill="#163d37">适用状态：待推送 / 待服务商确认（无批次）</text>
+    <text x="508" y="996" font-size="13" fill="#163d37">原项目只读；可「复制为新项目」→ 新草稿</text>
+    <text x="508" y="1018" font-size="12" fill="#58756e">不复制审批与交接记录；新项目独立编号</text>
+    <text x="508" y="1040" font-size="12" fill="#58756e">已有批次回传后禁止终止</text>
+    <text x="508" y="1062" font-size="12" fill="#58756e">日志记录终止人与时间</text>
+    <text x="508" y="1084" font-size="12" fill="#8a9e97">删除草稿仅 S1，须二次确认</text>
+
+    <rect x="928" y="900" width="600" height="200" rx="12" fill="#fff8f4" stroke="#d4a090" stroke-width="1.6"/>
+    <text x="948" y="928" font-size="15" fill="#8a3a12" font-weight="700">关键异常处理（节选 E-01～E-11）</text>
+    <text x="948" y="952" font-size="12" fill="#163d37">E-01 PO 无效 → 阻止提交，指出单号</text>
+    <text x="948" y="972" font-size="12" fill="#163d37">E-02 / E-06 计划缺项或配置未齐 → 列出对象与字段，不发有效通知</text>
+    <text x="948" y="992" font-size="12" fill="#163d37">E-03 日期超项目周期 → 阻止保存</text>
+    <text x="948" y="1012" font-size="12" fill="#163d37">E-07 计划预算超限 → 提示对应计划与金额</text>
+    <text x="948" y="1032" font-size="12" fill="#163d37">E-08 / E-09 批次冲突或商户号归属错误 → 拒绝非法行，可修正重传</text>
+    <text x="948" y="1052" font-size="12" fill="#163d37">E-10 授权失效 → 拒绝访问；E-11 重复业务 → 幂等保留处理记录</text>
+    <text x="948" y="1076" font-size="12" fill="#58756e">通知 / 审批 / 预算 / 微信不可用：保留真实失败，不跳过校验、不假记成功</text>
+
+    <rect x="1548" y="900" width="604" height="200" rx="12" fill="#f4f8f6" stroke="#9fc4b8" stroke-width="1.6"/>
+    <text x="1568" y="928" font-size="15" fill="#075e4c" font-weight="700">交接点速查 · 留痕</text>
+    <text x="1568" y="952" font-size="12" fill="#163d37">H-1 提交审批：业务 → 审批方 · 方案快照</text>
+    <text x="1568" y="972" font-size="12" fill="#163d37">H-2 审批结果：审批方 → 业务 · 同意/驳回意见</text>
+    <text x="1568" y="992" font-size="12" fill="#163d37">H-3 执行通知：业务 → 服务商 · 对象/时间/真实发送结果</text>
+    <text x="1568" y="1012" font-size="12" fill="#163d37">H-4 计划批次回传：服务商 → 平台 · 批次与商户号</text>
+    <text x="1568" y="1032" font-size="12" fill="#163d37">H-5 小程序投放：平台 → 会员小程序 · 任务与实际结果</text>
+    <text x="1568" y="1052" font-size="12" fill="#163d37">H-6 业务数据回传：服务商 → 平台 · 核销/执行/账单</text>
+    <text x="1568" y="1076" font-size="12" fill="#58756e">六类日志：提交、审批、推送、确认、回传、终止 + 主数据变更</text>
+
+    <!-- 底部状态机条 -->
+    <rect x="48" y="1120" width="2104" height="120" rx="12" fill="#f7fbf9" stroke="#9fc4b8" stroke-width="1.6"/>
+    <text x="68" y="1148" font-size="15" fill="#075e4c" font-weight="700">状态机主路径（7.1）</text>
+    <text x="68" y="1172" font-size="13" fill="#163d37">S1 草稿</text>
+    <path d="M160 1164 L200 1164" stroke="#2b7e6a" stroke-width="2" marker-end="url(#mG)"/>
+    <text x="210" y="1172" font-size="13" fill="#163d37">S2 待审批</text>
+    <path d="M310 1164 L350 1164" stroke="#6f8fad" stroke-width="2" marker-end="url(#mB)"/>
+    <text x="360" y="1172" font-size="13" fill="#163d37">S3 待推送</text>
+    <path d="M450 1164 L490 1164" stroke="#2b7e6a" stroke-width="2" marker-end="url(#mG)"/>
+    <text x="500" y="1172" font-size="13" fill="#163d37">S4 待确认</text>
+    <path d="M590 1164 L630 1164" stroke="#b8894a" stroke-width="2" marker-end="url(#mW)"/>
+    <text x="640" y="1172" font-size="13" fill="#163d37">S5 执行中</text>
+    <path d="M730 1164 L780 1164" stroke="#6a7a74" stroke-width="2" marker-end="url(#mGy)"/>
+    <text x="790" y="1172" font-size="13" fill="#163d37">S7 已结束（周期）</text>
+    <text x="1000" y="1172" font-size="13" fill="#8a3a12">S6 已终止（人工，无外部批次时从 S3/S4 切入）</text>
+    <text x="68" y="1204" font-size="12" fill="#58756e">回退：驳回 / 撤回 → S1；推送失败保持可重试且不进入 S4；状态仅由有效动作与真实结果推进，不以演示或未约定超时自动跳转</text>
+    <text x="68" y="1226" font-size="12" fill="#8a9e97">数据对象：项目 → 计划(N) → 批次(1:1 回传后) → 核销订单(N)；发券任务记录投放；门店/商品由计划明细汇总入库且按创建人隔离</text>
+
+    <!-- 角色动作矩阵摘要 -->
+    <rect x="48" y="1260" width="2104" height="380" rx="12" fill="#ffffff" stroke="#c5d6cf" stroke-width="1.4"/>
+    <text x="68" y="1290" font-size="15" fill="#075e4c" font-weight="700">状态 × 关键动作（7.2 摘要）</text>
+
+    <!-- 表格头 -->
+    <rect x="68" y="1308" width="2064" height="32" rx="6" fill="#e8f2ee"/>
+    <text x="100" y="1329" font-size="12" fill="#075e4c" font-weight="700">状态</text>
+    <text x="280" y="1329" font-size="12" fill="#075e4c" font-weight="700">业务运营可见动作</text>
+    <text x="780" y="1329" font-size="12" fill="#075e4c" font-weight="700">审批人</text>
+    <text x="1020" y="1329" font-size="12" fill="#075e4c" font-weight="700">服务商</text>
+    <text x="1320" y="1329" font-size="12" fill="#075e4c" font-weight="700">结果与限制</text>
+
+    <text x="100" y="1368" font-size="12" fill="#163d37">S1 草稿</text>
+    <text x="280" y="1368" font-size="12" fill="#163d37">继续编辑 · 活动详情 · 删除草稿 · 提交审批</text>
+    <text x="780" y="1368" font-size="12" fill="#8a9e97">—</text>
+    <text x="1020" y="1368" font-size="12" fill="#8a9e97">—</text>
+    <text x="1320" y="1368" font-size="12" fill="#163d37">提交走 7.3；删除须二次确认</text>
+
+    <text x="100" y="1396" font-size="12" fill="#163d37">S2 待审批</text>
+    <text x="280" y="1396" font-size="12" fill="#163d37">活动详情 · 撤回</text>
+    <text x="780" y="1396" font-size="12" fill="#163d37">同意 · 驳回 · 详情</text>
+    <text x="1020" y="1396" font-size="12" fill="#8a9e97">—</text>
+    <text x="1320" y="1396" font-size="12" fill="#163d37">撤回/驳回→草稿；同意→待推送</text>
+
+    <text x="100" y="1424" font-size="12" fill="#163d37">S3 待推送</text>
+    <text x="280" y="1424" font-size="12" fill="#163d37">详情 · 完善批次 · 终止 · 推送服务商</text>
+    <text x="780" y="1424" font-size="12" fill="#8a9e97">—</text>
+    <text x="1020" y="1424" font-size="12" fill="#8a9e97">—</text>
+    <text x="1320" y="1424" font-size="12" fill="#163d37">配置齐且预算过才可推；无批次可终止</text>
+
+    <text x="100" y="1452" font-size="12" fill="#163d37">S4 待确认</text>
+    <text x="280" y="1452" font-size="12" fill="#163d37">详情 · 重发邮件 · 复制链接 · 终止</text>
+    <text x="780" y="1452" font-size="12" fill="#8a9e97">—</text>
+    <text x="1020" y="1452" font-size="12" fill="#163d37">打开令牌入口确认</text>
+    <text x="1320" y="1452" font-size="12" fill="#163d37">复制链接≠已确认；终止受批次约束</text>
+
+    <text x="100" y="1480" font-size="12" fill="#163d37">S5 执行中</text>
+    <text x="280" y="1480" font-size="12" fill="#163d37">详情 · 计划与批次 · 领券小程序 · 看板</text>
+    <text x="780" y="1480" font-size="12" fill="#8a9e97">—</text>
+    <text x="1020" y="1480" font-size="12" fill="#163d37">回传批次与业务数据</text>
+    <text x="1320" y="1480" font-size="12" fill="#163d37">按有效批次投放；不做一期未列按钮</text>
+
+    <text x="100" y="1508" font-size="12" fill="#163d37">S6 已终止</text>
+    <text x="280" y="1508" font-size="12" fill="#163d37">活动详情（只读）· 复制为新项目</text>
+    <text x="780" y="1508" font-size="12" fill="#8a9e97">—</text>
+    <text x="1020" y="1508" font-size="12" fill="#8a9e97">—</text>
+    <text x="1320" y="1508" font-size="12" fill="#163d37">新项目=草稿，无审批/交接复制</text>
+
+    <text x="100" y="1536" font-size="12" fill="#163d37">S7 已结束</text>
+    <text x="280" y="1536" font-size="12" fill="#163d37">活动详情（只读）</text>
+    <text x="780" y="1536" font-size="12" fill="#8a9e97">—</text>
+    <text x="1020" y="1536" font-size="12" fill="#163d37">可继续既有回传</text>
+    <text x="1320" y="1536" font-size="12" fill="#163d37">停新增配置/投放；历史可查可对账</text>
+
+    <text x="68" y="1576" font-size="12" fill="#58756e">权限：越权或状态不允许的操作，接口一律返回「当前状态不允许该操作」，不以仅隐藏按钮代替校验。</text>
+    <text x="68" y="1600" font-size="12" fill="#58756e">不做项提醒：执行中计划变更、平台直连微信建券/拉单、独立工作台、消费者独立领券页、资金结算裁决 —— 均不在本流程图一期路径内。</text>
+    <text x="68" y="1624" font-size="12" fill="#8a9e97">本图供评审确认；确认后再替换 PRD「示意图 · 业务流程图」。图稿：docs/diagrams-20261029/业务流程图.svg|png</text>
+    <text x="68" y="1650" font-size="12" fill="#8a9e97">外部依赖协作：钉钉身份 · BPM 审批 · TPM/MEM 预算 · 通知邮件 · 微信支付发券能力 · 会员小程序 API · 服务商 API</text>
+
+  </g>
+</svg>
+"""
+
+(out / "业务流程图.svg").write_text(svg, encoding="utf-8")
+print("wrote", out / "业务流程图.svg")

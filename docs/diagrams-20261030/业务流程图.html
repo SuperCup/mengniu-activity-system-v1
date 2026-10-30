@@ -1,0 +1,135 @@
+<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><title>业务流程图</title><style>
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;background:#fff;color:#163d37;font-family:"Microsoft YaHei","PingFang SC","Noto Sans SC",sans-serif}
+body{width:1800px}
+.canvas{padding:36px 40px 30px}
+.top{display:flex;justify-content:space-between;align-items:flex-start;border-bottom:2px solid #d7e7df;padding-bottom:16px;margin-bottom:18px}
+h1{margin:0;color:#075e4c;font-size:36px;letter-spacing:1px}
+.sub{margin-top:7px;color:#58756e;font-size:16px;line-height:1.5}
+.badge{background:#eef7f2;border:1px solid #9fc7b9;color:#0b715a;border-radius:999px;padding:8px 14px;font-size:13px;font-weight:700}
+.legend{display:flex;gap:16px;flex-wrap:wrap;font-size:12.5px;color:#5d746d;margin-bottom:14px}
+.legend b{color:#075e4c}
+.lg{display:inline-flex;align-items:center;gap:5px}
+.lg i{width:10px;height:10px;border-radius:2px;display:inline-block}
+.lg .g{background:#0b715a}.lg .a{background:#d69e2e}.lg .b{background:#2b6cb0}.lg .r{background:#c0392b}.lg .n{background:#8aa39a}
+.flow{display:grid;grid-template-columns:1fr 58px 1fr 58px 1fr 58px 1fr;gap:0;align-items:stretch}
+.stage{border:1.5px solid #b9d5ca;border-radius:14px;background:#fcfffd;overflow:hidden;display:flex;flex-direction:column}
+.stage-h{padding:12px 14px 11px;background:#eef7f2;border-bottom:1px solid #c5ddd4}
+.stage-h .no{font-size:11px;letter-spacing:1px;color:#0b715a;font-weight:800}
+.stage-h h2{font-size:18px;margin:2px 0 0;color:#075e4c}
+.stage.s1 .stage-h{background:#f2f8f5}
+.stage.s2 .stage-h{background:#f6f3fb}
+.stage.s3 .stage-h{background:#fff8ec}
+.stage.s4 .stage-h{background:#edf4fb}
+.stage-body{padding:11px;display:flex;flex-direction:column;gap:8px;flex:1}
+.step{border:1px solid #d8e4df;border-radius:9px;background:#fff;padding:9px 10px}
+.step h3{font-size:13.6px;margin:0 0 4px;color:#163d37}
+.step p{font-size:12.2px;line-height:1.55;color:#5d746d;margin:0}
+.step p + p{margin-top:2px}
+.tags{display:flex;gap:5px;flex-wrap:wrap;margin-top:6px}
+.tag{font-size:11.3px;border-radius:5px;padding:2px 6px;background:#eef7f2;color:#36564f;border:1px solid #c5ddd4}
+.tag.green{background:#e8f5ee;border-color:#a9d3bd;color:#075e4c}
+.tag.amber{background:#fff4df;border-color:#ecd2a8;color:#8a5a0a}
+.tag.blue{background:#eaf2fb;border-color:#bdd1ea;color:#234d7a}
+.tag.red{background:#fbecea;border-color:#e8c9c4;color:#8a2c1d}
+.tag.gray{background:#f2f4f3;border-color:#d8e0dc;color:#5d746d}
+.step.key{border-color:#0b715a;background:#f7fcfa}
+.step.warn{border-color:#e6c58f;background:#fffaf2}
+.step.sys{border-color:#bdd1ea;background:#f8fbff}
+.conn{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;padding-top:85px;color:#0b715a}
+.conn .ar{font-size:38px;line-height:1;font-weight:300}
+.conn .lbl{font-size:11px;line-height:1.35;text-align:center;color:#5d746d;max-width:54px}
+.conn.amber .ar{color:#b7791f}
+.bottom{display:grid;grid-template-columns:1.25fr .95fr;gap:16px;margin-top:18px;align-items:start}
+.box{border:1px solid #c5ddd4;border-radius:13px;background:#fff;padding:13px 15px}
+.box h2{font-size:17px;color:#075e4c;margin:0 0 10px}
+.states{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.state-node{border:1px solid #d8e4df;border-radius:9px;background:#fbfdfc;padding:8px 9px}
+.state-node b{font-size:12.8px;color:#075e4c;display:block;margin-bottom:5px}
+.state-node .rs{display:flex;flex-wrap:wrap;gap:4px}
+.rule-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.rule{border:1px solid #e0e9e4;border-radius:9px;padding:8px 9px;background:#fbfdfc}
+.rule b{font-size:12.6px;color:#163d37}
+.rule p{font-size:11.7px;line-height:1.55;color:#687d77;margin:3px 0 0}
+.note{margin-top:12px;background:#fffaf0;border:1px solid #ecd2a8;border-radius:10px;padding:10px 13px;font-size:12.2px;line-height:1.65;color:#6b4b16}
+.foot{display:flex;justify-content:space-between;border-top:1px solid #d7e7df;margin-top:14px;padding-top:10px;color:#7a8f89;font-size:11.8px}
+</style></head><body><div class="canvas">
+<div class="top"><div><h1>蒙牛活动管理平台 · 业务流程图</h1><div class="sub">总部端一期：创建 → BPM 并联审批 → 批次配置与推送 → 服务商确认 / 回传 → 执行结束</div></div><div class="badge">4 节点 / 11 状态 · 2026-10-30</div></div>
+<div class="legend"><span class="lg"><i class="g"></i><b>正常主路径</b></span><span class="lg"><i class="a"></i>待办 / 待确认</span><span class="lg"><i class="b"></i>外部系统</span><span class="lg"><i class="r"></i>异常 / 退回</span><span class="lg"><i class="n"></i>只读 / 归档</span></div>
+
+<div class="flow">
+  <section class="stage s1">
+    <div class="stage-h"><div class="no">01 · 草稿节点</div><h2>创建与报批</h2></div>
+    <div class="stage-body">
+      <div class="step"><h3>钉钉登录</h3><p>蒙牛内部人员身份与组织信息；业务运营仅能操作本人项目。</p></div>
+      <div class="step"><h3>创建项目</h3><p>基本信息 · 预算与费用科目 · 服务商 · 计划与批次明细。</p></div>
+      <div class="step"><h3>提交前校验</h3><p>预算单号校验；零售商四项必填；<b>门店编码取客户系统原值、格式不限</b>；商品 69 码 / 店内码去重。</p></div>
+      <div class="step key"><h3>保存草稿 / 提交审批</h3><p>保存草稿保持「草稿」；提交后生成 16 位项目编号，进入「审批中」。</p><div class="tags"><span class="tag gray">草稿</span><span class="tag blue">审批中</span></div></div>
+      <div class="step warn"><h3>退回后重提</h3><p>未通过项目可修改并重新提交；再次进入 BPM 并联审批。</p></div>
+    </div>
+  </section>
+
+  <div class="conn"><div class="ar">→</div><div class="lbl">提交审批单</div></div>
+
+  <section class="stage s2">
+    <div class="stage-h"><div class="no">02 · 审批节点</div><h2>BPM 并联审批</h2></div>
+    <div class="stage-body">
+      <div class="step sys"><h3>BPM 接收审批单</h3><p>系统只提交审批单，不建设审批引擎，不提供通过 / 驳回 / 撤回按钮。</p></div>
+      <div class="step"><h3>审批人 N 人并联</h3><p>审批人之间无先后、无分级；可多选，按项目分别授权。</p></div>
+      <div class="step key"><h3>全部同意 → 已通过</h3><p>所选审批人全部同意，回写「已通过」，项目进入待推送。</p><div class="tags"><span class="tag green">已通过</span></div></div>
+      <div class="step warn"><h3>任一未通过 → 未通过</h3><p>任一人未通过即回写「未通过」，项目退回创建人修改。</p><div class="tags"><span class="tag red">未通过</span></div></div>
+      <div class="step sys"><h3>按人回写结果</h3><p>返回每位审批人的结果、处理时间与审批意见，项目详情时间轴按人展示并汇总已同意人数。</p></div>
+    </div>
+  </section>
+
+  <div class="conn"><div class="ar">→</div><div class="lbl">已通过</div></div>
+
+  <section class="stage s3">
+    <div class="stage-h"><div class="no">03 · 推送节点</div><h2>批次配置与推送</h2></div>
+    <div class="stage-body">
+      <div class="step key"><h3>已通过 / 待推送</h3><p>补齐批次配置：券名称、面额 / 门槛、可用时间、发放上限、使用说明、券图、零售商与商品。</p><div class="tags"><span class="tag amber">待推送</span></div></div>
+      <div class="step"><h3>配置校验</h3><p>商户号在小程序「可发券商户号」清单内；批次号由服务商后续回传，创建人只读。</p></div>
+      <div class="step"><h3>推送确认</h3><p>确认已与名单内零售商达成合作、已通知回传；确认后推送服务商并发送专属链接。</p></div>
+      <div class="step"><h3>已推送 / 服务商确认</h3><p>服务商打开专属链接确认承接；项目进入「待确认 → 已确认」。</p><div class="tags"><span class="tag blue">已推送</span><span class="tag amber">待确认</span><span class="tag green">已确认</span></div></div>
+      <div class="step"><h3>推送后锁定</h3><p>计划批次、机制类型、机制详细字段与批次配置全部只读；计划行仅保留「明细」。</p></div>
+    </div>
+  </section>
+
+  <div class="conn"><div class="ar">→</div><div class="lbl">确认承接<br>回传批次</div></div>
+
+  <section class="stage s4">
+    <div class="stage-h"><div class="no">04 · 执行节点</div><h2>执行与结束</h2></div>
+    <div class="stage-body">
+      <div class="step sys"><h3>服务商回传</h3><p>在微信商户平台建券后，回传批次号与微信商户号；平台校验归属与白名单。</p></div>
+      <div class="step key"><h3>已配置</h3><p>批次号回传并校验通过，等待账单与核销数据。</p><div class="tags"><span class="tag green">已配置</span></div></div>
+      <div class="step"><h3>执行中</h3><p>批次计划生效，消费者领券 / 核销；服务商按周期回传账单。</p><div class="tags"><span class="tag blue">执行中</span></div></div>
+      <div class="step"><h3>已结束</h3><p>项目周期自然结束；或业务调整提前终止，释放预算额度、保留历史数据。</p><div class="tags"><span class="tag gray">已结束</span></div></div>
+      <div class="step warn"><h3>终止 / 异常</h3><p>仅无批次推送等允许条件可终止；已推送批次不可直接终止，需先处理批次。</p></div>
+    </div>
+  </section>
+</div>
+
+<div class="bottom">
+  <div class="box">
+    <h2>状态主线（4 节点 / 11 状态）</h2>
+    <div class="states">
+      <div class="state-node"><b>草稿</b><div class="rs"><span class="tag gray">草稿</span></div></div>
+      <div class="state-node"><b>审批</b><div class="rs"><span class="tag blue">审批中</span><span class="tag green">已通过</span><span class="tag red">未通过</span></div></div>
+      <div class="state-node"><b>推送</b><div class="rs"><span class="tag amber">待推送</span><span class="tag blue">已推送</span><span class="tag amber">待确认</span><span class="tag green">已确认</span></div></div>
+      <div class="state-node"><b>执行</b><div class="rs"><span class="tag green">已配置</span><span class="tag blue">执行中</span><span class="tag gray">已结束</span></div></div>
+    </div>
+  </div>
+  <div class="box">
+    <h2>关键规则</h2>
+    <div class="rule-grid">
+      <div class="rule"><b>审批</b><p>并联、无先后；全部同意才通过，任一未通过即未通过。</p></div>
+      <div class="rule"><b>批次</b><p>推送后只读；仅「已通过 / 待推送」可补配置。</p></div>
+      <div class="rule"><b>门店编码</b><p>客户系统原值，格式不限；只校验必填与重复。</p></div>
+      <div class="rule"><b>挂券</b><p>单小程序；商户号白名单；服务商回传批次号 / 商户号。</p></div>
+    </div>
+  </div>
+</div>
+
+<div class="note"><b>边界：</b>系统不建设 BPM 审批引擎，不代替微信商户平台建券；审批动作在 BPM 完成，平台只提交审批单并接收结果。批次配置在推送后锁定，服务商通过专属链接完成确认、下载与回传。</div>
+<div class="foot"><span>蒙牛活动管理平台 · 总部端一期</span><span>示意 · 业务流程图 · 与原型构建 h 同步</span></div>
+</div></body></html>

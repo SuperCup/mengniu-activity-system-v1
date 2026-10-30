@@ -1,5 +1,0 @@
-  var bad = CRE_BRIEF.filter(function(b){
-    return !(b.name || '').trim() || !(b.mech || '').trim() || !(b.ret || '').trim() || !(b.sku || '').trim();
-  });
-  if(!CRE_BRIEF.length) missing.push('至少 1 个计划概况');
-  if(bad.length) missing.push('计划概况的名称 / 机制 / 零售商 / 商品');

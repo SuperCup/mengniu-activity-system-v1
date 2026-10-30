@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>产品架构</title>
+<style>
+  * { box-sizing: border-box; }
+  html, body { margin: 0; background: #f4f7f6; font-family: "Microsoft YaHei", "PingFang SC", sans-serif; color: #1c2b27; }
+  .page { width: 1360px; height: 860px; padding: 28px 32px 24px; }
+  h1 { margin: 0; font-size: 22px; font-weight: 700; }
+  .sub { margin: 4px 0 16px; color: #5d6f69; font-size: 13px; }
+  .band { background: #fff; border: 1px solid #d7e2de; border-radius: 12px; padding: 12px 14px 14px; margin-bottom: 12px; }
+  .lab { font-size: 12px; letter-spacing: 1px; color: #096c52; font-weight: 700; margin-bottom: 8px; }
+  .row { display: flex; gap: 10px; }
+  .chip { flex: 1; background: #f3faf7; border: 1px solid #c9e3d8; border-radius: 8px; padding: 8px 10px; }
+  .chip b { display: block; font-size: 14px; }
+  .chip span { display: block; margin-top: 2px; font-size: 12px; color: #5d6f69; line-height: 1.45; }
+  .prod { flex: 1; border-radius: 10px; padding: 12px 14px; color: #fff; }
+  .prod.a { background: #096c52; }
+  .prod.b { background: #1f6f8a; }
+  .prod.c { background: #c45c26; }
+  .prod b { display: block; font-size: 16px; }
+  .prod span { display: block; margin-top: 4px; font-size: 12px; line-height: 1.5; opacity: .92; }
+  .mods { display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px; }
+  .mod { background: #fff; border: 1px solid #d5e0db; border-radius: 8px; padding: 8px 8px 7px; min-height: 62px; }
+  .mod b { display: block; font-size: 13px; }
+  .mod span { display: block; margin-top: 3px; font-size: 11px; color: #5d6f69; line-height: 1.4; }
+  .ext { flex: 1; background: #fff8f3; border: 1px dashed #e0b08a; border-radius: 8px; padding: 8px 10px; }
+  .ext b { display: block; font-size: 13px; }
+  .ext span { display: block; margin-top: 2px; font-size: 11.5px; color: #6a5648; line-height: 1.4; }
+  .arrow { text-align: center; color: #096c52; font-size: 12px; letter-spacing: 2px; margin: -4px 0 6px; }
+</style>
+</head>
+<body>
+<div class="page">
+  <h1>蒙牛活动管理平台 · 一期产品架构</h1>
+  <div class="sub">总部管活动与批次，服务商在微信侧配券并回传，消费者在蒙牛会员小程序领券。平台不替代微信支付商户后台。</div>
+
+  <div class="band">
+    <div class="lab">使用方</div>
+    <div class="row">
+      <div class="chip"><b>业务运营</b><span>创建项目、补批次、推送服务商、看执行结果。数据范围为本级及下级。</span></div>
+      <div class="chip"><b>审批</b><span>使用「项目审批」菜单的人处理同意或驳回。只看报批信息，不另设财务角色。</span></div>
+      <div class="chip"><b>管理员</b><span>维护角色、组织、服务商对接人，查看全量数据与系统日志。</span></div>
+      <div class="chip"><b>制券服务商</b><span>无系统账号。邮件专属链接确认执行、回传批次号与商户号。</span></div>
+      <div class="chip"><b>消费者</b><span>在蒙牛会员小程序领券、到店核销。不进入总部端。</span></div>
+    </div>
+  </div>
+  <div class="arrow">↓ 对应三个入口 ↓</div>
+  <div class="row" style="margin-bottom:12px">
+    <div class="prod a"><b>总部端</b><span>钉钉登录后进入项目管理。项目、计划与批次、领券小程序、数据看板、系统配置与日志。不设工作台。</span></div>
+    <div class="prod b"><b>服务商操作页</b><span>邮件链接免登录，令牌绑定单个活动。确认、下载计划、回传批次、上传订单。</span></div>
+    <div class="prod c"><b>领券小程序</b><span>平台把已回传批次推给小程序方配券。领取与核销状态以微信支付返回为准。</span></div>
+  </div>
+  <div class="band">
+    <div class="lab">平台能力</div>
+    <div class="mods">
+      <div class="mod"><b>项目创建</b><span>方案、PO 预算、服务商、计划机制与范围</span></div>
+      <div class="mod"><b>项目审批</b><span>同意 / 驳回，冻结报批快照</span></div>
+      <div class="mod"><b>项目管理</b><span>六态流转、推送、终止、复制</span></div>
+      <div class="mod"><b>计划与批次</b><span>一计划一批次一券，补齐后才可推送</span></div>
+      <div class="mod"><b>领券协同</b><span>圈选已回传批次，推送小程序渠道</span></div>
+      <div class="mod"><b>数据看板</b><span>按条件查询服务商回传的执行数据</span></div>
+      <div class="mod"><b>门店商户号</b><span>一门店一微信商户号，供回传校验</span></div>
+      <div class="mod"><b>商品维护</b><span>69 码 / 店内码，活动范围引用</span></div>
+      <div class="mod"><b>系统管理</b><span>角色菜单、组织、服务商唯一对接人</span></div>
+      <div class="mod"><b>系统日志</b><span>关键动作只读查询，不提供导出</span></div>
+      <div class="mod"><b>开放接口</b><span>服务商回传核销、执行与账单；小程序发券</span></div>
+      <div class="mod"><b>预算校验</b><span>占用超过核销预算时不能推送</span></div>
+    </div>
+  </div>
+  <div class="arrow">↓ 依赖蒙牛与微信侧系统 ↓</div>
+  <div class="row">
+    <div class="ext"><b>钉钉</b><span>单点登录、组织与人员</span></div>
+    <div class="ext"><b>蒙牛审批流</b><span>发起审批、回写同意或驳回</span></div>
+    <div class="ext"><b>预算 / PO</b><span>校验已审批 PO，带出预算、科目、承担主体</span></div>
+    <div class="ext"><b>邮件</b><span>向服务商唯一邮箱发送活动链接</span></div>
+    <div class="ext"><b>微信支付</b><span>服务商在商户平台建批次。核销与账单由服务商回传，平台不直连拉单</span></div>
+    <div class="ext"><b>会员小程序</b><span>按推送批次配券，消费者在小程序内领取</span></div>
+  </div>
+</div>
+</body>
+</html>

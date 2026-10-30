@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1080" viewBox="0 0 1600 1080">
+  <defs>
+    <marker id="arr" markerWidth="9" markerHeight="9" refX="8" refY="4" orient="auto">
+      <path d="M0,0 L9,4 L0,8 Z" fill="#2b7e6a"/>
+    </marker>
+  </defs>
+  <rect width="100%" height="100%" fill="#ffffff"/>
+  <g font-family="Microsoft YaHei, sans-serif">
+    <text x="48" y="52" font-size="36" fill="#075e4c" font-weight="700">应用蓝图</text>
+    <text x="48" y="88" font-size="20" fill="#58756e">蒙牛活动管理平台 · 一期能力域与角色协作（不含技术部署）</text>
+
+    <rect x="48" y="120" width="1504" height="108" rx="12" fill="#f2f8f5" stroke="#72a69a" stroke-width="2"/>
+    <text x="72" y="156" font-size="24" fill="#075e4c" font-weight="700">使用角色</text>
+    <rect x="72" y="172" width="340" height="40" rx="8" fill="#fff" stroke="#72a69a"/>
+    <text x="90" y="199" font-size="18" fill="#163d37">业务运营 · 创建与执行本人项目</text>
+    <rect x="428" y="172" width="300" height="40" rx="8" fill="#fff" stroke="#72a69a"/>
+    <text x="446" y="199" font-size="18" fill="#163d37">审批人 · 按 BPM 授权处理</text>
+    <rect x="744" y="172" width="280" height="40" rx="8" fill="#fff" stroke="#72a69a"/>
+    <text x="762" y="199" font-size="18" fill="#163d37">管理员 · 角色与主数据配置</text>
+    <rect x="1040" y="172" width="480" height="40" rx="8" fill="#fff" stroke="#72a69a"/>
+    <text x="1058" y="199" font-size="18" fill="#163d37">服务商 · 项目专属入口（无独立账号）</text>
+
+    <path d="M800 228 L800 258" stroke="#2b7e6a" stroke-width="3" marker-end="url(#arr)"/>
+
+    <rect x="48" y="268" width="1504" height="560" rx="14" fill="#fff" stroke="#0b715a" stroke-width="3"/>
+    <text x="72" y="308" font-size="26" fill="#075e4c" font-weight="700">蒙牛活动管理平台 · 应用能力</text>
+
+    <rect x="72" y="330" width="350" height="150" rx="12" fill="#f2f8f5" stroke="#72a69a" stroke-width="2"/>
+    <text x="92" y="368" font-size="22" fill="#075e4c" font-weight="700">1. 项目报批</text>
+    <text x="92" y="402" font-size="17" fill="#163d37">项目创建 · 预算与服务商</text>
+    <text x="92" y="430" font-size="17" fill="#163d37">提交审批 · BPM 结果回写</text>
+    <text x="92" y="458" font-size="17" fill="#163d37">项目管理（六态流转）</text>
+
+    <rect x="442" y="330" width="350" height="150" rx="12" fill="#f2f8f5" stroke="#72a69a" stroke-width="2"/>
+    <text x="462" y="368" font-size="22" fill="#075e4c" font-weight="700">2. 计划与批次</text>
+    <text x="462" y="402" font-size="17" fill="#163d37">计划列表 · 补充批次配置</text>
+    <text x="462" y="430" font-size="17" fill="#163d37">券规则 / 零售商 / 商品明细</text>
+    <text x="462" y="458" font-size="17" fill="#163d37">一计划一批次一券</text>
+
+    <rect x="812" y="330" width="350" height="150" rx="12" fill="#f2f8f5" stroke="#72a69a" stroke-width="2"/>
+    <text x="832" y="368" font-size="22" fill="#075e4c" font-weight="700">3. 服务商协作</text>
+    <text x="832" y="402" font-size="17" fill="#163d37">推送邮件 · 专属确认页</text>
+    <text x="832" y="430" font-size="17" fill="#163d37">下载计划 · 回传批次</text>
+    <text x="832" y="458" font-size="17" fill="#163d37">核销 / 账单回传</text>
+
+    <rect x="1182" y="330" width="340" height="150" rx="12" fill="#f2f8f5" stroke="#72a69a" stroke-width="2"/>
+    <text x="1202" y="368" font-size="22" fill="#075e4c" font-weight="700">4. 投放触达</text>
+    <text x="1202" y="402" font-size="17" fill="#163d37">领券小程序对接</text>
+    <text x="1202" y="430" font-size="17" fill="#163d37">创建发券任务 · 推送批次</text>
+    <text x="1202" y="458" font-size="17" fill="#163d37">对接既有会员小程序</text>
+
+    <rect x="72" y="502" width="350" height="140" rx="12" fill="#f2f8f5" stroke="#72a69a" stroke-width="2"/>
+    <text x="92" y="540" font-size="22" fill="#075e4c" font-weight="700">5. 主数据沉淀</text>
+    <text x="92" y="574" font-size="17" fill="#163d37">门店与商户号（汇总入库）</text>
+    <text x="92" y="602" font-size="17" fill="#163d37">商品维护（汇总入库）</text>
+
+    <rect x="442" y="502" width="350" height="140" rx="12" fill="#f2f8f5" stroke="#72a69a" stroke-width="2"/>
+    <text x="462" y="540" font-size="22" fill="#075e4c" font-weight="700">6. 数据看板</text>
+    <text x="462" y="574" font-size="17" fill="#163d37">本人项目查询与回传数据</text>
+    <text x="462" y="602" font-size="17" fill="#163d37">按回传金额口径展示</text>
+
+    <rect x="812" y="502" width="350" height="140" rx="12" fill="#f2f8f5" stroke="#72a69a" stroke-width="2"/>
+    <text x="832" y="540" font-size="22" fill="#075e4c" font-weight="700">7. 系统管理</text>
+    <text x="832" y="574" font-size="17" fill="#163d37">角色权限 · 服务商配置</text>
+    <text x="832" y="602" font-size="17" fill="#163d37">管理员维护主数据与授权</text>
+
+    <rect x="1182" y="502" width="340" height="140" rx="12" fill="#f2f8f5" stroke="#72a69a" stroke-width="2"/>
+    <text x="1202" y="540" font-size="22" fill="#075e4c" font-weight="700">8. 系统日志</text>
+    <text x="1202" y="574" font-size="17" fill="#163d37">关键操作留痕查询</text>
+    <text x="1202" y="602" font-size="17" fill="#163d37">按本人项目范围可见</text>
+
+    <rect x="72" y="662" width="1450" height="140" rx="12" fill="#eaf5f0" stroke="#0b715a" stroke-width="2"/>
+    <text x="92" y="700" font-size="22" fill="#075e4c" font-weight="700">核心业务对象</text>
+    <text x="92" y="738" font-size="18" fill="#163d37">项目（预算系统 TPM / MEM / 其他） → 计划 → 批次（微信支付券） → 投放任务 → 核销与账单回传</text>
+    <text x="92" y="772" font-size="18" fill="#163d37">活动零售商明细 · 活动商品明细 · 门店/商户号 · 商品主数据 · 操作日志</text>
+
+    <rect x="48" y="860" width="1504" height="180" rx="12" fill="#f7f8f8" stroke="#72a69a" stroke-width="2"/>
+    <text x="72" y="900" font-size="24" fill="#075e4c" font-weight="700">一期外部依赖（应用视角）</text>
+    <rect x="72" y="922" width="340" height="88" rx="10" fill="#fff" stroke="#72a69a"/>
+    <text x="90" y="958" font-size="18" fill="#075e4c" font-weight="700">登录</text>
+    <text x="90" y="988" font-size="17" fill="#163d37">钉钉（蒙牛内部人员）</text>
+    <rect x="432" y="922" width="340" height="88" rx="10" fill="#fff" stroke="#72a69a"/>
+    <text x="450" y="958" font-size="18" fill="#075e4c" font-weight="700">审批</text>
+    <text x="450" y="988" font-size="17" fill="#163d37">BPM 审批流</text>
+    <rect x="792" y="922" width="360" height="88" rx="10" fill="#fff" stroke="#72a69a"/>
+    <text x="810" y="958" font-size="18" fill="#075e4c" font-weight="700">财务 / 预算来源</text>
+    <text x="810" y="988" font-size="17" fill="#163d37">TPM、MEM（及其他）</text>
+    <rect x="1172" y="922" width="350" height="88" rx="10" fill="#fff" stroke="#72a69a"/>
+    <text x="1190" y="958" font-size="18" fill="#075e4c" font-weight="700">投放与制券</text>
+    <text x="1190" y="988" font-size="17" fill="#163d37">会员小程序 · 制券服务商</text>
+  </g>
+</svg>

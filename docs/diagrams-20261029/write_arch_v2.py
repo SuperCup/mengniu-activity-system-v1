@@ -1,0 +1,198 @@
+# -*- coding: utf-8 -*-
+"""系统架构图：微信发券能力移出客户现有系统；按层级/系统做简单配色。"""
+from pathlib import Path
+
+out = Path(__file__).parent
+
+# 配色约定
+# 角色带：浅绿
+# 客户现有：蓝灰
+# 本平台：青绿
+# 协作方（小程序/服务商）：暖米
+# 微信能力：橙浅
+# 后台：灰绿
+# 关键集成：深青绿底条
+
+svg = """<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1680" height="1080" viewBox="0 0 1680 1080">
+  <defs>
+    <!-- 箭头颜色与描边一致：绿 / 蓝 / 暖 / 橙 -->
+    <marker id="mG" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+      <path d="M0,0 L8,4 L0,8 Z" fill="#2b7e6a"/>
+    </marker>
+    <!-- 统一用朝右三角 + orient=auto，避免反向 marker 导致箭头看起来反了 -->
+    <marker id="mB" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+      <path d="M0,0 L8,4 L0,8 Z" fill="#6f8fad"/>
+    </marker>
+    <marker id="mW" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+      <path d="M0,0 L8,4 L0,8 Z" fill="#b8894a"/>
+    </marker>
+    <marker id="mO" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+      <path d="M0,0 L8,4 L0,8 Z" fill="#d0893a"/>
+    </marker>
+  </defs>
+  <rect width="100%" height="100%" fill="#ffffff"/>
+  <g font-family="Microsoft YaHei, sans-serif">
+
+    <text x="48" y="42" font-size="32" fill="#075e4c" font-weight="700">系统架构图</text>
+    <text x="48" y="70" font-size="16" fill="#58756e">蒙牛活动管理平台 · 一期逻辑架构与外部系统协作</text>
+
+    <!-- 角色 -->
+    <rect x="48" y="90" width="1584" height="84" rx="12" fill="#d9ebe4" stroke="#72a69a" stroke-width="1.6"/>
+    <text x="72" y="120" font-size="17" fill="#075e4c" font-weight="700">访问角色</text>
+    <rect x="72" y="132" width="210" height="30" rx="7" fill="#fff" stroke="#72a69a"/>
+    <text x="177" y="152" text-anchor="middle" font-size="13" fill="#163d37">业务运营 · 本人项目</text>
+    <rect x="298" y="132" width="200" height="30" rx="7" fill="#fff" stroke="#72a69a"/>
+    <text x="398" y="152" text-anchor="middle" font-size="13" fill="#163d37">审批人 · BPM 授权</text>
+    <rect x="514" y="132" width="180" height="30" rx="7" fill="#fff" stroke="#72a69a"/>
+    <text x="604" y="152" text-anchor="middle" font-size="13" fill="#163d37">管理员 · 系统配置</text>
+    <rect x="710" y="132" width="320" height="30" rx="7" fill="#fff" stroke="#72a69a"/>
+    <text x="870" y="152" text-anchor="middle" font-size="13" fill="#163d37">服务商 · 项目专属入口（无独立账号）</text>
+    <text x="1060" y="152" font-size="12" fill="#58756e">数据范围：业务侧按项目创建人隔离</text>
+
+    <path d="M840 174 L840 200" stroke="#2b7e6a" stroke-width="2.4" marker-end="url(#mG)"/>
+
+    <!-- 左：客户现有系统（蓝）——不含微信发券 -->
+    <rect x="48" y="210" width="320" height="430" rx="14" fill="#e4eef7" stroke="#6f8fad" stroke-width="2"/>
+    <text x="72" y="246" font-size="19" fill="#2a4f6e" font-weight="700">客户现有系统</text>
+    <text x="72" y="270" font-size="12" fill="#5a738a">内部身份 · 审批 · 预算 · 通知</text>
+
+    <rect x="68" y="290" width="280" height="72" rx="10" fill="#fff" stroke="#6f8fad" stroke-width="1.8"/>
+    <text x="86" y="318" font-size="15" fill="#2a4f6e" font-weight="700">钉钉</text>
+    <text x="86" y="342" font-size="13" fill="#163d37">内部人员登录与用户身份</text>
+
+    <rect x="68" y="376" width="280" height="72" rx="10" fill="#fff" stroke="#6f8fad" stroke-width="1.8"/>
+    <text x="86" y="404" font-size="15" fill="#2a4f6e" font-weight="700">BPM</text>
+    <text x="86" y="428" font-size="13" fill="#163d37">审批发起、流转与结果回写</text>
+
+    <rect x="68" y="462" width="280" height="88" rx="10" fill="#fff" stroke="#6f8fad" stroke-width="1.8"/>
+    <text x="86" y="490" font-size="15" fill="#2a4f6e" font-weight="700">财务系统 · TPM / MEM</text>
+    <text x="86" y="514" font-size="13" fill="#163d37">活动预算来源与预算单校验</text>
+    <text x="86" y="536" font-size="12" fill="#5a738a">创建项目时选择预算系统</text>
+
+    <rect x="68" y="564" width="280" height="54" rx="10" fill="#fff" stroke="#6f8fad" stroke-width="1.5"/>
+    <text x="86" y="586" font-size="14" fill="#2a4f6e" font-weight="700">通知接口</text>
+    <text x="86" y="606" font-size="12" fill="#163d37">邮件等消息触达</text>
+
+    <!-- 左下：微信支付能力（橙，独立于客户现有系统） -->
+    <rect x="48" y="658" width="320" height="120" rx="14" fill="#fff1e4" stroke="#d0893a" stroke-width="2"/>
+    <text x="72" y="692" font-size="17" fill="#8a4f12" font-weight="700">微信支付能力</text>
+    <text x="72" y="720" font-size="13" fill="#163d37">公共发券 / 券批次能力</text>
+    <text x="72" y="744" font-size="13" fill="#163d37">卡包展示；由服务商侧创建批次</text>
+    <text x="72" y="766" font-size="12" fill="#a66a28">平台能力，非客户内部系统</text>
+
+    <!-- 钉钉 → 本平台：登录 -->
+    <path d="M370 326 L418 326" stroke="#6f8fad" stroke-width="2.4" marker-end="url(#mB)"/>
+    <text x="394" y="316" text-anchor="middle" font-size="11" fill="#6f8fad">登录</text>
+    <!-- BPM：本平台发起审批 → BPM；BPM 结果回写 → 本平台 -->
+    <path d="M418 400 L370 400" stroke="#6f8fad" stroke-width="2.4" marker-end="url(#mB)"/>
+    <text x="394" y="390" text-anchor="middle" font-size="11" fill="#6f8fad">发起审批</text>
+    <path d="M370 424 L418 424" stroke="#6f8fad" stroke-width="2.2" marker-end="url(#mB)"/>
+    <text x="394" y="446" text-anchor="middle" font-size="10" fill="#6f8fad">结果回写</text>
+    <!-- 财务 → 本平台：预算 -->
+    <path d="M370 505 L418 505" stroke="#6f8fad" stroke-width="2.4" marker-end="url(#mB)"/>
+    <text x="394" y="495" text-anchor="middle" font-size="11" fill="#6f8fad">预算</text>
+
+    <!-- 中：本平台（绿） -->
+    <rect x="428" y="210" width="780" height="568" rx="14" fill="#e8f5ef" stroke="#0b715a" stroke-width="2.6"/>
+    <text x="452" y="246" font-size="20" fill="#075e4c" font-weight="700">蒙牛活动管理平台</text>
+    <text x="720" y="246" font-size="13" fill="#58756e">总部端 + 服务商专属页</text>
+
+    <rect x="452" y="268" width="356" height="112" rx="11" fill="#fff" stroke="#72a69a" stroke-width="1.6"/>
+    <text x="472" y="298" font-size="16" fill="#075e4c" font-weight="700">管理端</text>
+    <text x="472" y="324" font-size="13" fill="#163d37">项目创建 · 审批结果 · 项目管理</text>
+    <text x="472" y="346" font-size="13" fill="#163d37">计划与批次配置（满减 / 减至）</text>
+    <text x="472" y="368" font-size="12" fill="#58756e">预算系统：TPM / MEM / 其他</text>
+
+    <rect x="828" y="268" width="356" height="112" rx="11" fill="#fff" stroke="#72a69a" stroke-width="1.6"/>
+    <text x="848" y="298" font-size="16" fill="#075e4c" font-weight="700">服务商专属操作页</text>
+    <text x="848" y="324" font-size="13" fill="#163d37">确认接收 · 下载计划</text>
+    <text x="848" y="346" font-size="13" fill="#163d37">批次回传 · 核销 / 账单</text>
+    <text x="848" y="368" font-size="12" fill="#58756e">按项目与批次校验归属</text>
+
+    <rect x="452" y="396" width="356" height="96" rx="11" fill="#fff" stroke="#72a69a" stroke-width="1.6"/>
+    <text x="472" y="426" font-size="16" fill="#075e4c" font-weight="700">投放与数据查询</text>
+    <text x="472" y="452" font-size="13" fill="#163d37">领券小程序投放任务</text>
+    <text x="472" y="474" font-size="13" fill="#163d37">本人项目看板与查询</text>
+
+    <rect x="828" y="396" width="356" height="96" rx="11" fill="#fff" stroke="#72a69a" stroke-width="1.6"/>
+    <text x="848" y="426" font-size="16" fill="#075e4c" font-weight="700">配置与留痕</text>
+    <text x="848" y="452" font-size="13" fill="#163d37">角色权限 · 服务商配置</text>
+    <text x="848" y="474" font-size="13" fill="#163d37">系统日志</text>
+
+    <rect x="452" y="510" width="732" height="68" rx="11" fill="#d7ebe3" stroke="#0b715a" stroke-width="1.6"/>
+    <text x="472" y="538" font-size="15" fill="#075e4c" font-weight="700">业务数据</text>
+    <text x="472" y="562" font-size="13" fill="#163d37">项目 · 计划 · 批次 · 零售商/商品明细 · 门店商户号 · 商品 · 台账 · 投放与回传 · 日志</text>
+
+    <rect x="452" y="596" width="732" height="70" rx="11" fill="#fff" stroke="#72a69a" stroke-width="1.5"/>
+    <text x="472" y="624" font-size="14" fill="#075e4c" font-weight="700">主链路</text>
+    <text x="472" y="650" font-size="13" fill="#163d37">报批 → 批次配置 → 服务商制券回传 → 小程序投放 → 核销数据回看</text>
+
+    <rect x="452" y="684" width="732" height="72" rx="11" fill="#fff8f0" stroke="#d0893a" stroke-width="1.5"/>
+    <text x="472" y="712" font-size="14" fill="#8a4f12" font-weight="700">与微信支付协作点</text>
+    <text x="472" y="738" font-size="13" fill="#163d37">服务商在微信侧创建券批次；平台接收批次号与核销回传，不替代微信商户平台</text>
+
+    <!-- 微信 → 协作点：箭头指向本平台；文案放缝隙正中并垫白底，避免被边框遮挡 -->
+    <path d="M368 720 L452 720" stroke="#d0893a" stroke-width="2.2" stroke-dasharray="5 3" marker-end="url(#mO)"/>
+    <rect x="372" y="698" width="56" height="16" rx="3" fill="#ffffff"/>
+    <text x="400" y="710" text-anchor="middle" font-size="11" fill="#d0893a">能力支撑</text>
+
+    <!-- 右：协作方（暖色） -->
+    <rect x="1280" y="210" width="352" height="230" rx="14" fill="#f7f0e6" stroke="#b8894a" stroke-width="2"/>
+    <text x="1304" y="246" font-size="17" fill="#7a5420" font-weight="700">既有会员小程序</text>
+    <text x="1304" y="276" font-size="13" fill="#163d37">开放 API：鉴权 / 批次查询 / 发券</text>
+    <text x="1304" y="300" font-size="13" fill="#163d37">接收批次推送与核销事件</text>
+    <text x="1304" y="324" font-size="13" fill="#163d37">消费者领券页面由其承接</text>
+    <text x="1304" y="356" font-size="12" fill="#8a6a3c">一期对接既有渠道，不新建 C 端</text>
+    <text x="1304" y="400" font-size="12" fill="#b8894a">← 接收平台投放任务</text>
+
+    <rect x="1280" y="460" width="352" height="318" rx="14" fill="#f7f0e6" stroke="#b8894a" stroke-width="2"/>
+    <text x="1304" y="496" font-size="17" fill="#7a5420" font-weight="700">制券服务商</text>
+    <text x="1304" y="526" font-size="13" fill="#163d37">确认接收 · 计划 / 批次回传</text>
+    <text x="1304" y="550" font-size="13" fill="#163d37">核销、执行情况、账单回传</text>
+    <text x="1304" y="574" font-size="13" fill="#163d37">在微信支付侧创建券批次</text>
+    <text x="1304" y="598" font-size="13" fill="#163d37">字段与校验按接口契约</text>
+    <text x="1304" y="632" font-size="12" fill="#8a6a3c">项目专属入口，无独立系统账号</text>
+    <rect x="1304" y="656" width="304" height="96" rx="8" fill="#fff1e4" stroke="#d0893a" stroke-width="1.4"/>
+    <text x="1320" y="684" font-size="13" fill="#8a4f12" font-weight="700">依赖微信支付能力</text>
+    <text x="1320" y="708" font-size="12" fill="#163d37">创建券批次、卡包与核销能力</text>
+    <text x="1320" y="730" font-size="12" fill="#163d37">服务商操作微信侧，平台收批次回传</text>
+    <text x="1304" y="770" font-size="12" fill="#b8894a">平台推送 / 服务商回传</text>
+
+    <!-- 本平台 → 会员小程序：投放 -->
+    <path d="M1210 300 L1278 300" stroke="#b8894a" stroke-width="2.4" marker-end="url(#mW)"/>
+    <text x="1244" y="290" text-anchor="middle" font-size="11" fill="#b8894a">投放</text>
+    <!-- 本平台 → 制券服务商：推送；服务商 → 本平台：回传 -->
+    <path d="M1210 520 L1278 520" stroke="#b8894a" stroke-width="2.4" marker-end="url(#mW)"/>
+    <text x="1244" y="510" text-anchor="middle" font-size="11" fill="#b8894a">推送</text>
+    <path d="M1278 548 L1210 548" stroke="#b8894a" stroke-width="2.4" marker-end="url(#mW)"/>
+    <text x="1244" y="572" text-anchor="middle" font-size="11" fill="#b8894a">回传</text>
+
+    <path d="M840 778 L840 800" stroke="#2b7e6a" stroke-width="2.4" marker-end="url(#mG)"/>
+
+    <!-- 后台任务（灰） -->
+    <rect x="48" y="810" width="1584" height="88" rx="12" fill="#f0f2f1" stroke="#8a9691" stroke-width="1.6"/>
+    <text x="72" y="844" font-size="16" fill="#3d4743" font-weight="700">后台任务与数据处理</text>
+    <text x="72" y="872" font-size="13" fill="#163d37">BPM / 预算状态同步 · 台账更新与对账 · 账单入库检查 · 通知与运行维护 · 看板指标汇总</text>
+
+    <!-- 关键集成 -->
+    <rect x="48" y="918" width="1584" height="124" rx="12" fill="#e8f5ef" stroke="#0b715a" stroke-width="2"/>
+    <text x="72" y="952" font-size="16" fill="#075e4c" font-weight="700">关键集成</text>
+    <rect x="72" y="968" width="250" height="50" rx="8" fill="#e4eef7" stroke="#6f8fad"/>
+    <text x="197" y="998" text-anchor="middle" font-size="13" fill="#163d37">登录 · 钉钉</text>
+    <rect x="338" y="968" width="200" height="50" rx="8" fill="#e4eef7" stroke="#6f8fad"/>
+    <text x="438" y="998" text-anchor="middle" font-size="13" fill="#163d37">审批 · BPM</text>
+    <rect x="554" y="968" width="240" height="50" rx="8" fill="#e4eef7" stroke="#6f8fad"/>
+    <text x="674" y="998" text-anchor="middle" font-size="13" fill="#163d37">预算 · TPM / MEM</text>
+    <rect x="810" y="968" width="280" height="50" rx="8" fill="#f7f0e6" stroke="#b8894a"/>
+    <text x="950" y="998" text-anchor="middle" font-size="13" fill="#163d37">投放 · 既有会员小程序</text>
+    <rect x="1106" y="968" width="240" height="50" rx="8" fill="#f7f0e6" stroke="#b8894a"/>
+    <text x="1226" y="998" text-anchor="middle" font-size="13" fill="#163d37">制券 · 服务商</text>
+    <rect x="1362" y="968" width="240" height="50" rx="8" fill="#fff1e4" stroke="#d0893a"/>
+    <text x="1482" y="998" text-anchor="middle" font-size="13" fill="#163d37">券能力 · 微信支付</text>
+  </g>
+</svg>
+"""
+
+(out / "系统架构图.svg").write_text(svg, encoding="utf-8")
+print("ok", (out / "系统架构图.svg").stat().st_size)

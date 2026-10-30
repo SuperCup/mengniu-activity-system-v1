@@ -1,1 +1,0 @@
-            + (planConfigState(p).k === 'ready' ? '' : '<a onclick="openPlanConfig(\'' + p.id + '\')">继续配置</a>')

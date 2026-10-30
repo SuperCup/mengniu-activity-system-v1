@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>业务流程</title>
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; background: #f4f7f6; font-family: "Microsoft YaHei", sans-serif; color: #1c2b27; }
+  .page { width: 1360px; height: 980px; padding: 26px 28px 18px; }
+  h1 { margin: 0; font-size: 22px; }
+  .sub { margin: 4px 0 14px; color: #5d6f69; font-size: 13px; }
+  .stage { display: flex; gap: 8px; margin-bottom: 8px; }
+  .s { flex: 1; background: #fff; border: 1px solid #d5e0db; border-radius: 10px; padding: 10px 10px 8px; min-height: 168px; position: relative; }
+  .s .n { display: inline-block; background: #096c52; color: #fff; border-radius: 99px; font-size: 12px; padding: 1px 8px; font-weight: 700; }
+  .s h3 { margin: 6px 0 4px; font-size: 14px; }
+  .s p { margin: 0; font-size: 12px; line-height: 1.55; color: #3d4f49; }
+  .who { margin-top: 6px; font-size: 11px; color: #096c52; font-weight: 700; }
+  .gate { background: #fff8e8; border: 1px solid #ead7a2; border-radius: 8px; padding: 8px 12px; font-size: 12.5px; line-height: 1.55; margin: 8px 0 10px; }
+  .gate b { color: #8a5a00; }
+  .row2 .s { min-height: 150px; }
+  .s.stop { border-color: #e7b4b4; background: #fff7f7; }
+  .foot { margin-top: 8px; font-size: 12px; color: #5d6f69; line-height: 1.55; }
+</style>
+</head>
+<body>
+<div class="page">
+  <h1>一期主业务流程</h1>
+  <div class="sub">一条微信支付活动从报批走到核销。状态由动作推进，不支持手工改状态。计划变更不在本期。</div>
+  <div class="stage">
+    <div class="s"><span class="n">1</span><h3>创建并提交</h3><p>填写项目、活动周期、PO、服务商，以及至少一条计划：机制、零售商、商品。PO 必须已存在且已审批。</p><div class="who">业务运营</div></div>
+    <div class="s"><span class="n">2</span><h3>审批方案</h3><p>提交后锁定编辑并冻结快照。同意进入待推送；驳回退回草稿并留痕。创建人可在待审批时撤回。</p><div class="who">数字化中心</div></div>
+    <div class="s"><span class="n">3</span><h3>补充批次</h3><p>按计划填写券名称、机制、可用时间、发放限制、使用须知，并导入零售商与商品。批次号此时只读。</p><div class="who">创建人</div></div>
+    <div class="s"><span class="n">4</span><h3>推送服务商</h3><p>全部计划补齐后才可推送。邮件只发到该服务商唯一对接邮箱，链接只打开这一次活动。</p><div class="who">创建人 · 邮件</div></div>
+  </div>
+  <div class="gate"><b>推送门槛：</b>项目已审批通过；至少 1 个计划；每个计划的批次必填项、零售商明细、商品明细都已通过。未回传批次号不影响推送，但没有批次号不能推给小程序。</div>
+  <div class="stage row2">
+    <div class="s"><span class="n">5</span><h3>服务商执行</h3><p>确认承接 → 下载批次计划 → 在微信支付后台建批次 → 按计划回传批次号和门店商户号 → 上传订单。商户号必须在门店库中。</p><div class="who">制券服务商</div></div>
+    <div class="s"><span class="n">6</span><h3>推送小程序</h3><p>仅执行中、且已有批次号的批次可推送。平台记录渠道与时间，不在平台内配券，推送后不撤回。</p><div class="who">业务运营</div></div>
+    <div class="s"><span class="n">7</span><h3>领券与核销</h3><p>消费者在会员小程序领券。核销、订单按微信回传入库。看板按活动、计划、批次汇总，一期不做订单导出。</p><div class="who">消费者 · 微信支付</div></div>
+    <div class="s stop"><span class="n">8</span><h3>终止或结束</h3><p>待推送、待确认可终止。终止后停发券、释放未核销预算，不可恢复，只能复制为新草稿重建。到期计划变为已结束。</p><div class="who">创建人 · 系统</div></div>
+  </div>
+  <div class="foot">驳回、撤回都回到草稿，可再编辑后重新提交。服务商看不到内部审批意见和其他事业部的活动。超时未确认不自动终止，也不提供催办。一期不设工作台。各计划「面额或减至价 × 发放上限」合计超过核销预算时，不能推送。</div>
+</div>
+</body>
+</html>

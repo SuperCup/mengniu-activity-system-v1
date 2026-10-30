@@ -6,20 +6,20 @@
 
 /* ---------- 逻辑 ---------- */
 var VENDORS=[
-  {code:'SVC-0001', name:'智选数字技术（广州）股份有限公司',
+  {code:'SVC-0001', name:'智选数字技术（广州）股份有限公司', mch:'1035891372',
    cms:[{n:'周敏',e:'zhoumin@zhixuan-digital.com'},{n:'赵宇',e:'zhaoyu@zhixuan-digital.com'},
         {n:'刘思远',e:'liusy@zhixuan-digital.com'}],
    remark:'集团级主服务商，承接全国总部统投项目；对账周期 T+3'},
-  {code:'SVC-0002', name:'上海智士网络科技有限公司',
+  {code:'SVC-0002', name:'上海智士网络科技有限公司', mch:'1252436002',
    cms:[{n:'胡味芝',e:'huwz@zhishi.com'},{n:'钱磊',e:'qianlei@zhishi.com'}],
    remark:'华东区主要执行方；券码异常需 2 小时内响应'},
-  {code:'SVC-0003', name:'武汉智赢数图科技有限公司',
+  {code:'SVC-0003', name:'武汉智赢数图科技有限公司', mch:'1457820366',
    cms:[{n:'李航',e:'lihang@zhiying-shutu.com'}],
    remark:'华中区执行方；支持门店物料代发'},
-  {code:'SVC-0004', name:'广州智曹数字技术有限公司',
+  {code:'SVC-0004', name:'广州智曹数字技术有限公司', mch:'1603482917',
    cms:[{n:'陈嘉明',e:'chenjm@zhicao-tech.com'},{n:'林晓彤',e:'linxt@zhicao-tech.com'}],
    remark:'华南区执行方；负责便利店渠道核销对接'},
-  {code:'SVC-0005', name:'智选数字技术（广州）股份有限公司北京分公司',
+  {code:'SVC-0005', name:'智选数字技术（广州）股份有限公司北京分公司', mch:'1035891372',
    cms:[{n:'王琳',e:'wanglin@zhixuan-digital.com'},{n:'孙皓',e:'sunhao@zhixuan-digital.com'}],
    remark:'华北区执行方；与总部共用券模板，独立结算'}
 ];
@@ -44,3 +44,8 @@ VENDORS.forEach(function(x){
     x.cms = [x.cms[0]];
   }
 });
+/** 服务商的归属商户号（选服务商时自动带出） */
+function vendorMch(name){
+  var v = (typeof vendorByName === 'function') ? vendorByName(name) : null;
+  return v ? (v.mch || '') : '';
+}

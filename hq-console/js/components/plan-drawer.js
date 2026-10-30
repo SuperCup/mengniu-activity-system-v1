@@ -68,42 +68,47 @@ function pnRender(){
   /* 零售商明细：零售商名称 / 门店名称 / 省份 / 城市 / 微信商户号 */
   var retHtml = '';
   if(!PN.ret.length){
-    retHtml = '<tr><td colspan="7" class="empty-row">尚未导入零售商 / 门店，点下方「导入零售商门店名单」</td></tr>';
+    retHtml = '<tr><td colspan="9" class="empty-row">尚未导入零售商 / 门店，点下方「导入零售商门店名单」</td></tr>';
   } else {
     PN.ret.forEach(function(it, i){
       retHtml += '<tr>'
         + '<td class="idx">' + (i+1) + '</td>'
+        + '<td><span class="ro sx-mono" style="font-size:11.4px">' + pnEsc(it.sid || '—') + '</span></td>'
         + '<td><span class="ro">' + pnEsc(it.ret || '—') + '</span></td>'
         + '<td><span class="ro">' + pnEsc(it.store || it.n || '—') + '</span></td>'
         + '<td><span class="ro mut">' + pnEsc(it.prov || '—') + '</span></td>'
         + '<td><span class="ro mut">' + pnEsc(it.city || '—') + '</span></td>'
         + '<td><span class="ro mut sx-mono" style="font-size:11.6px">' + (it.mch ? pnEsc(it.mch) : '<span class="tg tg-a">待服务商补充</span>') + '</span></td>'
+        + '<td><span class="ro mut sx-mono" style="font-size:11px">' + ((it.lng != null && it.lat != null) ? (it.lng + ', ' + it.lat) : '—') + '</span></td>'
         + '<td><span class="del" onclick="pnDel(\'ret\',' + i + ')">移除</span></td>'
         + '</tr>';
     });
   }
-  ['pnRetBody','bfRetBody'].forEach(function(id){
-    var el = document.getElementById(id); if(el) el.innerHTML = retHtml;
-  });
+  var pnRet = document.getElementById('pnRetBody');
+  if(pnRet) pnRet.innerHTML = retHtml;
+  var bfRet = document.getElementById('bfRetBody');
+  if(bfRet) bfRet.innerHTML = bfDetailHtml('ret');
 
   /* 商品明细：69码或店内码 / 商品名称 / 店内码所属零售商 */
   var skuHtml = '';
   if(!PN.sku.length){
-    skuHtml = '<tr><td colspan="5" class="empty-row">尚未导入商品，点下方「导入商品明细」</td></tr>';
+    skuHtml = '<tr><td colspan="6" class="empty-row">尚未导入商品，点下方「导入商品明细」</td></tr>';
   } else {
     PN.sku.forEach(function(it, i){
       skuHtml += '<tr>'
         + '<td class="idx">' + (i+1) + '</td>'
         + '<td><span class="ro sx-mono" style="font-size:11.8px">' + pnEsc(it.code || '—') + '</span></td>'
         + '<td><span class="ro">' + pnEsc(it.name || it.n || '—') + '</span></td>'
+        + '<td><span class="ro mut sx-mono" style="font-size:11.6px">' + pnEsc(it.inCode || '—') + '</span></td>'
         + '<td><span class="ro mut">' + pnEsc(it.owner || '—') + '</span></td>'
         + '<td><span class="del" onclick="pnDel(\'sku\',' + i + ')">移除</span></td>'
         + '</tr>';
     });
   }
-  ['pnSkuBody','bfSkuBody'].forEach(function(id){
-    var el = document.getElementById(id); if(el) el.innerHTML = skuHtml;
-  });
+  var pnSku = document.getElementById('pnSkuBody');
+  if(pnSku) pnSku.innerHTML = skuHtml;
+  var bfSku = document.getElementById('bfSkuBody');
+  if(bfSku) bfSku.innerHTML = bfDetailHtml('sku');
 
   var set = function(ids, v){
     ids.forEach(function(id){ var el = document.getElementById(id); if(el) el.textContent = v; });
@@ -120,6 +125,49 @@ function pnRender(){
       : '门店微信商户号已全部填写';
     tip.className = 'note' + (miss ? '' : ' g');
   });
+}
+
+function bfIn(type, i, k, v, ph){
+  return '<input class="inp" style="width:100%" value="' + vsEsc(v || '') + '" placeholder="' + pnEsc(ph) + '"'
+    + ' oninput="pnSet(\'' + type + '\',' + i + ',\'' + k + '\',this.value)">';
+}
+function bfCell(type, i, k, v, ph){
+  return '<td>' + bfIn(type, i, k, v, ph) + '</td>';
+}
+
+/* 批次抽屉里的零售商 / 商品：与创建项目的明细一样，逐行填写、导入文件，不从库选择 */
+function bfDetailHtml(kind){
+  var h = '';
+  if(kind === 'ret'){
+    if(!PN.ret.length){
+      return '<tr><td colspan="8" class="empty-row">还没有明细，可添加或导入</td></tr>';
+    }
+    PN.ret.forEach(function(it, i){
+      h += '<tr><td class="idx">' + (i + 1) + '</td>'
+        + bfCell('ret', i, 'sid', it.sid, '客户系统编码')
+        + bfCell('ret', i, 'ret', it.ret, '永辉')
+        + bfCell('ret', i, 'store', it.store || it.n, '永辉超市（重庆观音桥店）')
+        + bfCell('ret', i, 'prov', it.prov, '重庆')
+        + bfCell('ret', i, 'city', it.city, '重庆')
+        + bfCell('ret', i, 'mch', it.mch, '1236057802')
+        + bfCell('ret', i, 'lng', it.lng, '106.5507')
+        + bfCell('ret', i, 'lat', it.lat, '29.5647')
+        + '<td><span class="del" onclick="pnDel(\'ret\',' + i + ')">删除</span></td></tr>';
+    });
+    return h;
+  }
+  if(!PN.sku.length){
+    return '<tr><td colspan="6" class="empty-row">还没有明细，可「添加一行」或「导入文件」</td></tr>';
+  }
+  PN.sku.forEach(function(it, i){
+    h += '<tr><td class="idx">' + (i + 1) + '</td>'
+      + bfCell('sku', i, 'code', it.code, '6923644223456')
+      + bfCell('sku', i, 'name', it.name || it.n, '特仑苏纯牛奶 250ml×12')
+      + bfCell('sku', i, 'inCode', it.inCode, 'YH-88921')
+      + bfCell('sku', i, 'owner', it.owner, '永辉超市')
+      + '<td><span class="del" onclick="pnDel(\'sku\',' + i + ')">删除</span></td></tr>';
+  });
+  return h;
 }
 
 function pnSet(type, i, k, v){
@@ -148,6 +196,14 @@ function pnSave(again){
   var s = document.getElementById('pnStart').value;
   var e = document.getElementById('pnEnd').value;
   if(!s || !e || s > e){ MT.toast('开始时间不能晚于结束时间', 'err'); return; }
+
+  /* 计划时间必须落在项目活动周期内 */
+  var pr = (window.PROJECTS || []).filter(function(x){ return x.id === PN.projId; })[0];
+  var per = String((pr && pr.period) || '').split('~');
+  var ps = per[0] ? mnDate(String(per[0]).trim()) : '';
+  var pe = per[1] ? mnDate(String(per[1]).trim()) : '';
+  if(ps && mnDate(s) < ps){ MT.toast('开始时间不能早于项目活动周期（' + ps + '）', 'err'); return; }
+  if(pe && mnDate(e) > pe){ MT.toast('结束时间不能晚于项目活动周期（' + pe + '）', 'err'); return; }
 
   var budget = pnNum(document.getElementById('pnBudget').value);
   var face   = pnNum(document.getElementById('pnFace').value);
@@ -237,9 +293,9 @@ function addPlan(){
 
 /* ---------- 模板：dw-plannew ---------- */
 function tplDrawerplannew(){
-  return `<div class="drawer" id="dw-plannew" style="width:860px">
+  return `<div class="drawer" id="dw-plannew" style="width:1040px">
   <div class="dw-h">
-    <h3 id="pnTitle">创建活动计划 <span class="sub">项目：双节常温奶满减 · MN-WX-202612-0041</span></h3>
+    <h3 id="pnTitle">创建活动计划 <span class="sub">项目：双节常温奶满减 · 2026101810000005</span></h3>
     <span class="dw-x" onclick="closeDrawer()">×</span>
   </div>
   <div class="dw-b">
@@ -266,18 +322,20 @@ function tplDrawerplannew(){
     <table class="bt" style="table-layout:fixed">
       <thead><tr>
         <th style="width:4%">#</th>
-        <th style="width:17%">零售商名称</th>
-        <th style="width:28%">门店名称</th>
-        <th style="width:9%">省份</th>
-        <th style="width:9%">城市</th>
-        <th style="width:22%">微信商户号</th>
-        <th style="width:11%">操作</th>
+        <th style="width:10%">门店编码</th>
+        <th style="width:15%">零售商名称</th>
+        <th style="width:21%">门店名称</th>
+        <th style="width:8%">省份</th>
+        <th style="width:8%">城市</th>
+        <th style="width:14%">微信商户号</th>
+        <th style="width:11%">经纬度</th>
+        <th style="width:9%">操作</th>
       </tr></thead>
-      <tbody id="pnRetBody"><tr><td colspan="7" class="empty-row">尚未导入零售商 / 门店</td></tr></tbody>
+      <tbody id="pnRetBody"><tr><td colspan="9" class="empty-row">尚未导入零售商 / 门店</td></tr></tbody>
     </table>
     <div class="imp-row" onclick="openImp('ret')">
       <span class="ic">⇪</span> 导入零售商门店名单
-      <span class="hint">零售商名称 / 门店名称 / 省份 / 城市 / 微信商户号</span>
+      <span class="hint">门店编码 / 零售商 / 门店名称 / 省份 / 城市 / 商户号 / 经纬度</span>
     </div>
     <div class="note" id="pnMchTip" style="margin-top:10px">门店微信商户号可空，由服务商提报时补充</div>
 
@@ -285,17 +343,18 @@ function tplDrawerplannew(){
     <div class="psec"><h4>三、活动商品明细</h4><span class="psec-r"><b id="pnSkuCnt">0</b> 条</span></div>
     <table class="bt" style="table-layout:fixed">
       <thead><tr>
-        <th style="width:5%">#</th>
-        <th style="width:24%">69码或店内码</th>
-        <th style="width:44%">商品名称</th>
-        <th style="width:18%">店内码所属零售商</th>
-        <th style="width:9%">操作</th>
+        <th style="width:4%">#</th>
+        <th style="width:20%">69码</th>
+        <th style="width:34%">商品名称</th>
+        <th style="width:14%">店内码</th>
+        <th style="width:20%">店内码所属零售商</th>
+        <th style="width:8%">操作</th>
       </tr></thead>
-      <tbody id="pnSkuBody"><tr><td colspan="5" class="empty-row">尚未导入商品</td></tr></tbody>
+      <tbody id="pnSkuBody"><tr><td colspan="6" class="empty-row">尚未导入商品</td></tr></tbody>
     </table>
     <div class="imp-row" onclick="openImp('sku')">
       <span class="ic">⇪</span> 导入商品明细
-      <span class="hint">69码或店内码 / 商品名称 / 店内码所属零售商</span>
+      <span class="hint">69码 / 商品名称 / 店内码 / 店内码所属零售商</span>
     </div>
 
     <!-- 四、预算与优惠发放规则 -->

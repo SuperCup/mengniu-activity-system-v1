@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="docx-page-size" content="A4">
+<title>蒙牛活动管理平台 一期产品需求文档（客户确认与验收版）</title>
+<style>
+@page {
+  @top-right { content: "一期产品需求文档 V7.0"; }
+  @bottom-center { content: "第 " counter(page) " 页"; }
+}
+@page cover { @top-right { content: none; } @bottom-center { content: none; } }
+section[role="cover"] { page: cover; }
+
+:root {
+  --ff-head: "黑体", SimHei, sans-serif;
+  --ff-body: "宋体", SimSun, serif;
+  --ff-code: Consolas, monospace;
+
+  --fs-cover-kicker: 12pt;
+  --fs-cover-title: 26pt;
+  --fs-cover-sub: 15pt;
+  --fs-cover-meta: 10.5pt;
+  --fs-cover-note: 9.5pt;
+  --fs-toc-title: 18pt;
+  --fs-toc-l1: 11.5pt;
+  --fs-toc-l2: 10.5pt;
+  --fs-h1: 17pt;
+  --fs-h2: 12.5pt;
+  --fs-body: 12pt;
+  --fs-note: 10.5pt;
+  --fs-th: 9.5pt;
+  --fs-td: 9.5pt;
+  --fs-code: 10.5pt;
+  --fs-sum-title: 12pt;
+  --fs-sum-body: 11pt;
+
+  --color-primary: #096C52;
+  --color-primary-deep: #0B3B2E;
+  --color-primary-line: #0B5A45;
+  --color-heading: #123B30;
+  --color-text: #141E35;
+  --color-muted: #5C6B66;
+  --color-note: #24413A;
+  --color-border: #C9D6D1;
+  --color-surface: #F4F8F6;
+  --color-surface-alt: #F7FAF9;
+  --color-code-bg: #F0F4F2;
+  --color-white: #FFFFFF;
+  --color-bg: #FFFFFF;
+
+  --spacing-none: 0;
+  --spacing-hair: 1px;
+  --spacing-tiny: 2px;
+  --spacing-xs: 4px;
+  --spacing-sm: 5px;
+  --spacing-sn: 6px;
+  --spacing-md: 7px;
+  --spacing-lg: 8px;
+  --spacing-xl: 10px;
+  --spacing-em1: 0.24em;
+  --spacing-em2: 0.34em;
+  --spacing-em3: 0.35em;
+  --spacing-em4: 0.5em;
+  --spacing-em5: 0.55em;
+  --spacing-em6: 0.6em;
+  --spacing-em7: 0.7em;
+  --spacing-em8: 1.2em;
+  --spacing-em9: 1.25em;
+  --spacing-em10: 1.4em;
+  --spacing-em11: 1.6em;
+  --spacing-em12: 2.2em;
+  --spacing-em13: 2.6em;
+  --spacing-cover-top: 5.2cm;
+  --spacing-page-w: 15.6cm;
+}
+* { box-sizing: border-box; }
+body { width: var(--spacing-page-w); margin-left: auto; margin-right: auto; font-family: var(--ff-body);
+       font-size: var(--fs-body); line-height: 1.62; color: var(--color-text); background: var(--color-bg); }
+
+.cover-wrap { padding-top: var(--spacing-cover-top); }
+.cover-eyebrow { font-family: var(--ff-head); font-size: var(--fs-cover-kicker); color: var(--color-primary);
+  letter-spacing: 0.18em; text-align: left; margin-bottom: var(--spacing-em10); text-indent: var(--spacing-none); }
+.cover-title { font-family: var(--ff-head); font-size: var(--fs-cover-title); font-weight: 700; color: var(--color-primary-deep);
+  line-height: 1.32; text-align: left; margin-bottom: var(--spacing-em3); }
+.cover-sub { font-family: var(--ff-head); font-size: var(--fs-cover-sub); color: var(--color-primary);
+  text-align: left; margin-bottom: var(--spacing-em13); }
+.cover-meta { font-family: var(--ff-body); font-size: var(--fs-cover-meta); color: var(--color-muted);
+  text-align: left; margin-bottom: var(--spacing-em1); padding-top: var(--spacing-md); border-top: var(--spacing-hair) solid var(--color-border); }
+.cover-note { font-family: var(--ff-body); font-size: var(--fs-cover-note); color: var(--color-muted);
+  text-align: left; line-height: 1.7; margin-top: var(--spacing-em12); text-indent: var(--spacing-none); }
+
+.toc-title { font-family: var(--ff-head); font-size: var(--fs-toc-title); color: var(--color-primary);
+  text-align: center; margin-bottom: var(--spacing-em8); letter-spacing: 0.2em; }
+.toc-list, .toc-list ol { list-style: none; padding-left: var(--spacing-none); margin-left: var(--spacing-none); }
+.toc-list > li { font-family: var(--ff-head); font-size: var(--fs-toc-l1); color: var(--color-heading);
+  margin-top: var(--spacing-xs); margin-bottom: var(--spacing-tiny); text-indent: var(--spacing-none); }
+.toc-list a { color: var(--color-heading); text-decoration: none; }
+
+h1.section-header { font-family: var(--ff-head); font-size: var(--fs-h1); font-weight: 700; color: var(--color-primary);
+  margin-top: var(--spacing-em11); margin-bottom: var(--spacing-em7); padding-bottom: var(--spacing-em2);
+  border-bottom: var(--spacing-tiny) solid var(--color-primary); text-indent: var(--spacing-none); }
+h2 { font-family: var(--ff-head); font-size: var(--fs-h2); font-weight: 700; color: var(--color-primary-deep);
+  margin-top: var(--spacing-em9); margin-bottom: var(--spacing-em4); padding-left: var(--spacing-em4);
+  border-left: var(--spacing-xs) solid var(--color-primary); text-indent: var(--spacing-none); }
+p.body { font-family: var(--ff-body); font-size: var(--fs-body); line-height: 1.62; text-indent: 2em;
+  margin-bottom: var(--spacing-em5); }
+p.note { font-family: var(--ff-body); font-size: var(--fs-note); color: var(--color-note); background: var(--color-surface);
+  border-left: var(--spacing-xs) solid var(--color-primary); padding: var(--spacing-lg) var(--spacing-xl);
+  margin-top: var(--spacing-em6); margin-bottom: var(--spacing-em7); text-indent: var(--spacing-none); line-height: 1.6; }
+ol.lst, ul.lst { margin-top: var(--spacing-em3); margin-bottom: var(--spacing-em7); padding-left: var(--spacing-em12); }
+ol.lst li, ul.lst li { font-family: var(--ff-body); font-size: var(--fs-body); line-height: 1.62;
+  margin-bottom: var(--spacing-em1); text-indent: var(--spacing-none); }
+code { font-family: var(--ff-code); font-size: var(--fs-code); background: var(--color-code-bg); }
+
+table.tbl { width: 100%; border-collapse: collapse; margin-top: var(--spacing-em4); margin-bottom: var(--spacing-em11); }
+table.tbl th { background: var(--color-primary); color: var(--color-white); font-family: var(--ff-head);
+  font-size: var(--fs-th); font-weight: 700; padding: var(--spacing-sm) var(--spacing-sn);
+  border: var(--spacing-hair) solid var(--color-primary-line); text-align: left; line-height: 1.42; }
+table.tbl td { font-family: var(--ff-body); font-size: var(--fs-td); color: var(--color-text);
+  padding: var(--spacing-sm) var(--spacing-sn); border: var(--spacing-hair) solid var(--color-border);
+  line-height: 1.5; vertical-align: top; }
+table.tbl tbody tr:nth-child(even) td { background: var(--color-surface-alt); }
+table.tbl .nw { white-space: nowrap; }
+strong { font-weight: 700; }
+
+table.summary-card { width: 100%; border-collapse: collapse; margin-top: var(--spacing-em4); margin-bottom: var(--spacing-em11); }
+table.summary-card { border: var(--spacing-hair) solid var(--color-border); }
+table.summary-card th.sum-th { background: var(--color-primary); color: var(--color-white);
+  font-family: var(--ff-head); font-size: var(--fs-sum-title); font-weight: 700;
+  padding: var(--spacing-lg) var(--spacing-xl); text-align: left; }
+table.summary-card td { background: var(--color-surface); padding: var(--spacing-lg) var(--spacing-xl); }
+p.sum-body { font-family: var(--ff-body); font-size: var(--fs-sum-body); color: var(--color-note);
+  line-height: 1.7; margin-bottom: var(--spacing-em4); text-indent: var(--spacing-none); }
+</style>
+</head>
+<body><section role="body"><h1 class="section-header" id="section-9">九、字段级规则与校验</h1><p class="note">本章是开发、测试与验收共用的字段口径。未列出的字段视为无额外约束。所有日期统一 <code>YYYY-MM-DD</code>，所有金额单位为元、保留两位小数，所有编码类字段按文本处理。</p><h2 id="sub-40">9.1 项目创建字段</h2><table class="tbl"><thead><tr><th class="nw">分区</th><th>字段</th><th class="nw">必填</th><th>类型 / 长度</th><th>校验规则</th><th>来源</th></tr></thead><tbody><tr><td class="nw">基本信息</td><td>项目名称</td><td class="nw">是</td><td>文本 ≤50 字</td><td>同名校验提示不阻断</td><td>手工</td></tr><tr><td class="nw">基本信息</td><td>项目目标</td><td class="nw">否</td><td>文本 ≤100 字</td><td>—</td><td>手工</td></tr><tr><td class="nw">基本信息</td><td>投放平台</td><td class="nw">是</td><td>枚举</td><td>一期固定「微信支付」</td><td>系统</td></tr><tr><td class="nw">基本信息</td><td>活动周期（起 / 止）</td><td class="nw">是</td><td>日期</td><td>起始不晚于结束；批次可用时间须落在其内</td><td>手工</td></tr><tr><td class="nw">基本信息</td><td>活动负责人</td><td class="nw">是</td><td>文本 ≤20 字</td><td>—</td><td>手工</td></tr><tr><td class="nw">基本信息</td><td>联系方式</td><td class="nw">是</td><td>文本 11 位</td><td>手机号格式校验</td><td>手工</td></tr><tr><td class="nw">预算与费用</td><td>PO 单号</td><td class="nw">是</td><td>文本</td><td>必须存在于 PO 库且已审批</td><td>手工</td></tr><tr><td class="nw">预算与费用</td><td>核销预算</td><td class="nw">是</td><td>金额</td><td>由 PO 带出，只读</td><td>PO 库</td></tr><tr><td class="nw">预算与费用</td><td>费用科目</td><td class="nw">是</td><td>文本</td><td>由 PO 带出，只读</td><td>PO 库</td></tr><tr><td class="nw">预算与费用</td><td>承担主体</td><td class="nw">是</td><td>文本</td><td>由 PO 带出，只读</td><td>PO 库</td></tr><tr><td class="nw">预算与费用</td><td>预算来源</td><td class="nw">是</td><td>枚举</td><td>BU 自投 / 集团统投，由 PO 带出</td><td>PO 库</td></tr><tr><td class="nw">服务商</td><td>服务商</td><td class="nw">是</td><td>枚举</td><td>从服务商库选择</td><td>手工</td></tr><tr><td class="nw">服务商</td><td>对接联系人 / 邮箱</td><td class="nw">是</td><td>文本</td><td>选择服务商后自动带出，只读</td><td>服务商库</td></tr><tr><td class="nw">批次计划</td><td>机制</td><td class="nw">是</td><td>文本 ≤30 字</td><td>非空；文案与机制类型一致</td><td>手工</td></tr><tr><td class="nw">批次计划</td><td>机制类型</td><td class="nw">是</td><td>枚举</td><td>满减 / 减至，默认满减</td><td>手工</td></tr><tr><td class="nw">批次计划</td><td>活动零售商明细</td><td class="nw">是</td><td>表格</td><td>≥1 条，字段见 9.2</td><td>手工 / 导入 / 库选</td></tr><tr><td class="nw">批次计划</td><td>活动商品明细</td><td class="nw">是</td><td>表格</td><td>≥1 条，字段见 9.2</td><td>手工 / 导入 / 库选</td></tr></tbody></table><h2 id="sub-41">9.2 批次计划明细字段</h2><p class="body"><strong>活动零售商明细（7 列）</strong></p><table class="tbl"><thead><tr><th>字段</th><th class="nw">必填</th><th>规则</th></tr></thead><tbody><tr><td>零售商名称</td><td class="nw">是</td><td>文本</td></tr><tr><td>门店 ID</td><td class="nw">否</td><td>留空自动生成，全库唯一</td></tr><tr><td>门店名称</td><td class="nw">是</td><td>文本</td></tr><tr><td>省份</td><td class="nw">是</td><td>文本 / 字典</td></tr><tr><td>城市</td><td class="nw">是</td><td>文本 / 字典</td></tr><tr><td>微信商户号</td><td class="nw">否</td><td>填写时须为 8~12 位数字；留空时提示「推送服务商后由服务商提报时补充」</td></tr><tr><td>经度 / 纬度</td><td class="nw">否</td><td>成对填写；经度 -180~180，纬度 -90~90</td></tr></tbody></table><p class="body"><strong>活动商品明细（4 列）</strong></p><table class="tbl"><thead><tr><th>字段</th><th class="nw">必填</th><th>规则</th></tr></thead><tbody><tr><td>69 码</td><td class="nw">条件必填</td><td>与店内码至少填一个；8~14 位数字</td></tr><tr><td>商品名称</td><td class="nw">是</td><td>文本</td></tr><tr><td>店内码</td><td class="nw">条件必填</td><td>与 69 码至少填一个</td></tr><tr><td>店内码所属零售商</td><td class="nw">条件必填</td><td>填了店内码时至少一个；一行只对应一个零售商</td></tr></tbody></table><p class="note">判重键：零售商明细按「门店名称 + 商户号」，商品明细按「69 码/店内码 + 零售商」。重复行在提交前拦截并列出。</p><h2 id="sub-42">9.3 补充批次信息字段（对齐微信支付后台）</h2><table class="tbl"><thead><tr><th>字段</th><th>必填</th><th>规则</th><th>违规提示</th></tr></thead><tbody><tr><td>券名称</td><td>是</td><td>≤9 个汉字（超出仅提示，不阻断保存）</td><td>提示「微信侧通常限制 9 个字，超出可能创建失败」</td></tr><tr><td>机制类型</td><td>是</td><td>满减 / 减至</td><td>—</td></tr><tr><td>券面额（减至时显示「减至价」）</td><td>是</td><td>大于 0，最多两位小数</td><td>满减：金额须大于 0 且小于门槛；减至：减至价须大于 0 且低于门槛</td></tr><tr><td>使用门槛</td><td>满减必填 / 减至可空</td><td>≥0</td><td>满减门槛须大于 0</td></tr><tr><td>可用开始日</td><td>是</td><td>日期</td><td>早于项目周期开始则拦截</td></tr><tr><td>可用结束日</td><td>是</td><td>日期</td><td>晚于项目周期结束、或早于开始日则拦截</td></tr><tr><td>可用跨度</td><td>—</td><td>≤90 天</td><td>超出仅提示，不阻断</td></tr><tr><td>发放总上限</td><td>是</td><td>整数 ≥1</td><td>非整数或小于 1 拦截</td></tr><tr><td>单人可领（张）</td><td>是</td><td>整数 ≥1，且 ≤ 发放总上限</td><td>超出上限拦截</td></tr><tr><td>使用须知</td><td>是</td><td>文本 ≤100 字</td><td>空值拦截</td></tr><tr><td>批次号</td><td>否</td><td>6~20 位数字，全平台唯一</td><td>重复或格式不符拦截；由服务商回传写入</td></tr><tr><td>计划预算</td><td>系统计算</td><td>面额 × 发放总上限</td><td>只读，参与项目预算占用</td></tr></tbody></table><h2 id="sub-43">9.4 主数据字段</h2><table class="tbl"><thead><tr><th class="nw">对象</th><th>字段</th><th class="nw">必填</th><th>规则</th></tr></thead><tbody><tr><td class="nw">门店</td><td>门店 ID</td><td class="nw">否</td><td>留空自动生成，全库唯一</td></tr><tr><td class="nw">门店</td><td>零售商名称</td><td class="nw">是</td><td>文本</td></tr><tr><td class="nw">门店</td><td>门店名称</td><td class="nw">是</td><td>文本</td></tr><tr><td class="nw">门店</td><td>省份 / 城市</td><td class="nw">是</td><td>文本 / 字典</td></tr><tr><td class="nw">门店</td><td>微信商户号</td><td class="nw">是</td><td>8~12 位数字，全库唯一</td></tr><tr><td class="nw">门店</td><td>经度 / 纬度</td><td class="nw">否</td><td>成对；经度 -180~180，纬度 -90~90</td></tr><tr><td class="nw">门店</td><td>状态</td><td class="nw">是</td><td>启用 / 停用</td></tr><tr><td class="nw">商品</td><td>69 码</td><td class="nw">条件必填</td><td>8~14 位数字；与店内码至少一个</td></tr><tr><td class="nw">商品</td><td>商品名称</td><td class="nw">是</td><td>文本</td></tr><tr><td class="nw">商品</td><td>店内码</td><td class="nw">条件必填</td><td>填了则至少一个所属零售商</td></tr><tr><td class="nw">商品</td><td>店内码所属零售商</td><td class="nw">条件必填</td><td>可多个，新增不覆盖历史</td></tr><tr><td class="nw">商品</td><td>规格</td><td class="nw">否</td><td>文本</td></tr><tr><td class="nw">商品</td><td>状态</td><td class="nw">是</td><td>启用 / 停用</td></tr></tbody></table><h2 id="sub-44">9.5 导入通用规则</h2><ol class="lst"><li>模板列名固定，不允许增删列；表头匹配失败时提示「模板不正确」并给出模板下载入口。</li><li>无表头文件不得丢行：整行匹配列名才判定为表头；单行文件同样可导入。</li><li>行级校验逐行返回结果，异常行给出「行号 + 字段 + 原因」，不因单行失败中断整批。</li><li>导入结果页展示：总行数、成功行数、失败行数、失败明细下载。</li><li>同一文件重复导入不产生重复数据（按判重键幂等）。</li></ol><h2 id="sub-45">9.6 校验提示要求</h2><ol class="lst"><li>表单校验错误提示定位到具体字段并说明原因，禁止只提示「参数错误」。</li><li>提交类操作一次性列出全部缺失项，不只报第一个。</li><li>拦截类提示必须说明「为什么不行 + 怎么改」，例如「第 2 行满减金额 15 元不得大于等于门槛 10 元」。</li><li>危险操作（终止、删除、覆盖导入）二次确认，确认文案写明后果。</li></ol><p class="body">---</p></section></body></html>

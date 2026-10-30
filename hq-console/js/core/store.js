@@ -10,7 +10,7 @@ window.MT = window.MT || {};
 
 MT.store = (function(){
   var KEY = 'mn_hq_store_v2';
-  var SCHEMA = 5;
+  var SCHEMA = 10;
 
   var state = { ready:false, writable:true, err:'' };
 
@@ -31,7 +31,11 @@ MT.store = (function(){
       at: new Date().toISOString(),
       projects: plain(window.PROJECTS || []),
       plans: plain(window.PLANS || []),
-      logs: plain((window.SYS_LOGS || []).slice(0, 500))
+      logs: plain((window.SYS_LOGS || []).slice(0, 500)),
+      stores: plain(window.RET_DB || []),
+      skus: plain(window.SKU_DB || []),
+      miniApps: plain(window.MINI_APPS || []),
+      miniPush: plain(window.MINI_PUSH || [])
     };
   }
 
@@ -46,12 +50,20 @@ MT.store = (function(){
       if(p.version == null) p.version = 1;
       notes.push(p.id);
     });
-    (data.projects || []).forEach(function(p){
-      /* 元旦乳品满减是「待推送服务商」示例；旧本地数据若被改成已终止，拉回来 */
-      if(p.id === 'MN-WX-202612-0044' && p.state === 'stopped'){
-        p.state = 'approved';
-        p.stoppedAt = '';
+    (data.skus || []).forEach(function(x){
+      if(!x.rets){
+        x.rets = [];
+        if(x.ret) String(x.ret).split(/[、,，\/]/).forEach(function(v){ v = v.trim(); if(v) x.rets.push(v); });
       }
+      delete x.ret; delete x.brand; delete x.cat;
+    });
+    (data.projects || []).forEach(function(p){
+      /* V7.3：旧的 7 状态映射到「4 节点 / 11 状态」 */
+      var OLD2NEW = {
+        draft:'editing', pending:'approving', approved:'passed', rejected:'rejected',
+        confirmed:'to_confirm', running:'running', stopped:'finished'
+      };
+      if(OLD2NEW[p.state]) p.state = OLD2NEW[p.state];
       if((!p.vendorContact || !p.vendorMail) && typeof vendorByName === 'function'){
         var vend = vendorByName(p.vendor);
         var cms = vend && vend.cms && vend.cms[0];
@@ -60,6 +72,25 @@ MT.store = (function(){
           if(!p.vendorMail) p.vendorMail = cms.e;
         }
       }
+      /* V7.2：补齐创建人 / 审批人 / 负责人 / 归属商户号 */
+      var people = (window.PROJ_PEOPLE || {})[p.id];
+      if(people){
+        if(!p.creator && typeof contactById === 'function'){
+          var cr = contactById(people.creator);
+          if(cr) p.creator = { id:cr.id, name:cr.name, dept:cr.dept, phone:cr.phone };
+        }
+        if(!p.ownerUser && typeof contactById === 'function'){
+          var ow = contactById(people.owner);
+          if(ow) p.ownerUser = { id:ow.id, name:ow.name, dept:ow.dept, phone:ow.phone };
+        }
+        if(!Array.isArray(p.approvers)){
+          p.approvers = (people.approvers || []).map(function(id){
+            var c = (typeof contactById === 'function') ? contactById(id) : null;
+            return c ? { id:c.id, name:c.name, dept:c.dept, title:c.title } : null;
+          }).filter(Boolean);
+        }
+      }
+      if(!p.vendorMch && typeof vendorMch === 'function') p.vendorMch = vendorMch(p.vendor) || '';
       if(p.coupon == null) p.coupon = p.bat || '';
       if(!p.grant) p.grant = '领券';
       if(!p.version) p.version = 1;
@@ -72,6 +103,15 @@ MT.store = (function(){
         delete b.bat;
       });
     });
+    /* 元旦项目补多条待完善计划，便于验证配置工作台 */
+    if(Array.isArray(window.DEMO_TODO_PLANS)){
+      if(!Array.isArray(data.plans)) data.plans = [];
+      window.DEMO_TODO_PLANS.forEach(function(seed){
+        if(!data.plans.some(function(p){ return p.id === seed.id; })){
+          data.plans.push(JSON.parse(JSON.stringify(seed)));
+        }
+      });
+    }
     return notes;
   }
 
@@ -93,6 +133,19 @@ MT.store = (function(){
       window.SYS_LOGS.length = 0;
       data.logs.forEach(function(r){ window.SYS_LOGS.push(r); });
     }
+    if(Array.isArray(data.stores) && data.stores.length){
+      window.RET_DB.length = 0;
+      data.stores.forEach(function(s){ window.RET_DB.push(s); });
+    }
+    if(Array.isArray(data.skus) && data.skus.length){
+      window.SKU_DB.length = 0;
+      data.skus.forEach(function(s){ window.SKU_DB.push(s); });
+    }
+    /* 发券渠道固定为单一「蒙牛会员服务中心」，不再从本地缓存恢复旧渠道列表 */
+    if(Array.isArray(data.miniPush) && Array.isArray(window.MINI_PUSH)){
+      window.MINI_PUSH.length = 0;
+      data.miniPush.forEach(function(x){ window.MINI_PUSH.push(x); });
+    }
     return true;
   }
 
@@ -104,7 +157,7 @@ MT.store = (function(){
     }catch(e){
       state.writable = false;
       state.err = e.message || String(e);
-      storageNotice();
+      /* 本地存储受限时静默降级为内存态，不再在页面顶部提示 */
       return false;
     }
   }
@@ -113,7 +166,7 @@ MT.store = (function(){
     if(!lsOk()){
       state.ready = true; state.writable = false;
       state.err = '浏览器限制本地存储';
-      storageNotice();
+      /* 本地存储受限时静默降级为内存态，不再在页面顶部提示 */
       return false;
     }
     var raw = null;
@@ -161,7 +214,7 @@ function storageNotice(msg){
   var bar = document.createElement('div');
   bar.id = 'mnStoreWarn';
   bar.className = 'mn-warnbar';
-  bar.innerHTML = '<span>' + (msg || '当前浏览器限制了本地存储，本次演示的修改不会被保存；可在「系统管理 → 重置演示数据」重新开始。') + '</span>'
+  bar.innerHTML = '<span>' + msg + '</span>'
     + '<a class="x" onclick="this.parentNode.remove()">关闭</a>';
   host.insertBefore(bar, host.firstChild);
 }

@@ -1,1 +1,0 @@
-  var briefs = (p.planBrief || []).map(function(b){ return b.name; }).join('、');

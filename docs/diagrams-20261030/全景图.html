@@ -1,0 +1,95 @@
+<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><title>全景图</title>
+<style>
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;background:#fff;color:#163d37;font-family:"Microsoft YaHei","PingFang SC","Noto Sans SC",sans-serif}
+body{width:1800px}
+.canvas{padding:40px 44px 34px;background:#fff}
+.top{display:flex;align-items:flex-start;justify-content:space-between;border-bottom:2px solid #d7e7df;padding-bottom:18px;margin-bottom:22px}
+h1{margin:0;color:#075e4c;font-size:38px;letter-spacing:1px;line-height:1.15}
+.sub{margin-top:8px;color:#58756e;font-size:17px;line-height:1.5}
+.badge{background:#eef7f2;border:1px solid #9fc7b9;color:#0b715a;border-radius:999px;padding:9px 15px;font-size:14px;font-weight:700;white-space:nowrap}
+.section-title{font-size:22px;font-weight:800;color:#075e4c;display:flex;align-items:center;gap:10px;margin:8px 0 12px}
+.section-title:before{content:"";width:7px;height:24px;border-radius:3px;background:#0b715a;display:inline-block}
+.roles{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:22px}
+.role{background:#f2f8f5;border:1px solid #a9cbbf;border-radius:12px;padding:15px 17px}
+.role b{display:block;color:#075e4c;font-size:17px;margin-bottom:4px}
+.role span{color:#5d746d;font-size:13.5px;line-height:1.55}
+.platform{border:2px solid #0b715a;border-radius:16px;padding:20px 22px 18px;background:#fcfffd}
+.plat-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
+.plat-head h2{margin:0;font-size:25px;color:#075e4c}
+.pill{font-size:13px;color:#075e4c;background:#e6f3ed;border:1px solid #a9cbbf;border-radius:999px;padding:6px 11px;font-weight:700}
+.caps{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.cap{background:#f2f8f5;border:1px solid #a9cbbf;border-radius:12px;padding:14px 15px;min-height:138px}
+.cap .no{font-size:12px;color:#0b715a;font-weight:800;letter-spacing:.5px}
+.cap h3{font-size:18px;color:#075e4c;margin:4px 0 8px}
+.cap p{font-size:13.2px;line-height:1.65;color:#36564f;margin:0}
+.cap p + p{margin-top:2px}
+.objects{margin-top:14px;background:#eef7f2;border:1px dashed #72a69a;border-radius:12px;padding:12px 14px}
+.objects b{color:#075e4c;font-size:15px}
+.objects .row{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+.chip{background:#fff;border:1px solid #b9d5ca;color:#36564f;border-radius:8px;padding:5px 9px;font-size:12.5px}
+.flowline{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:14px}
+.node{border:1px solid #a9cbbf;border-radius:12px;background:#fff;padding:12px 13px;position:relative}
+.node:not(:last-child):after{content:"›";position:absolute;right:-9px;top:50%;transform:translateY(-50%);font-size:28px;color:#0b715a;font-weight:700}
+.node h4{margin:0 0 7px;font-size:16px;color:#075e4c}
+.node .states{display:flex;flex-wrap:wrap;gap:5px}
+.st{font-size:12px;padding:3px 7px;border-radius:6px;background:#eef7f2;border:1px solid #c5ddd4;color:#36564f}
+.st.exec{background:#e9f1fb;border-color:#bdd1ea;color:#234d7a}
+.deps{margin-top:22px}
+.dep-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.dep{border:1px solid #d8e4df;background:#fafcfb;border-radius:11px;padding:12px 14px;display:flex;gap:10px;align-items:flex-start}
+.dep .dot{width:9px;height:9px;border-radius:50%;background:#0b715a;margin-top:6px;flex:0 0 auto}
+.dep b{font-size:15px;color:#163d37}
+.dep span{display:block;color:#687d77;font-size:12.4px;line-height:1.5;margin-top:2px}
+.foot{display:flex;justify-content:space-between;margin-top:18px;padding-top:12px;border-top:1px solid #d7e7df;color:#7a8f89;font-size:12px}
+.note{background:#fffaf0;border:1px solid #ecd2a8;color:#6b4b16;border-radius:10px;padding:10px 13px;font-size:12.8px;line-height:1.65;margin-top:12px}
+
+.role .em{color:#0b715a;font-weight:700}
+</style></head><body><div class="canvas">
+<div class="top"><div><h1>蒙牛活动管理平台 · 全景图</h1><div class="sub">总部端一期能力域、角色协作与项目状态主线（与当前原型一致）</div></div><div class="badge">2026-10-30 · 4 节点 / 11 状态</div></div>
+
+<div class="section-title">使用角色</div>
+<div class="roles">
+  <div class="role"><b>业务运营</b><span>创建项目、补批次配置、提交审批、推送服务商；仅看本人创建 / 负责 / 审批项目</span></div>
+  <div class="role"><b>管理员</b><span>角色与权限、服务商、门店与商户号、商品维护；全量项目可见</span></div>
+  <div class="role"><b>审批人 · BPM</b><span>在 BPM 内处理审批；系统只提交审批单、接收按人结果与意见，不提供审批按钮</span></div>
+  <div class="role"><b>服务商</b><span>无独立账号；通过项目专属邮件链接确认承接、下载工作簿、回传批次号与商户号</span></div>
+</div>
+
+<div class="section-title">平台能力</div>
+<div class="platform">
+  <div class="plat-head"><h2>蒙牛活动管理平台 · 应用能力</h2><div class="pill">项目状态：草稿 → 审批 → 推送 → 执行</div></div>
+  <div class="caps">
+    <div class="cap"><div class="no">01</div><h3>项目报批</h3><p>项目创建 · 预算与服务商</p><p>提交审批 · BPM 结果回写</p><p>项目列表按 4 节点分组筛选 11 个状态</p></div>
+    <div class="cap"><div class="no">02</div><h3>计划与批次</h3><p>计划列表 / 批次配置</p><p>券规则 · 零售商 · 商品 · 商户号</p><p>推送服务商后批次配置锁定，仅查看明细</p></div>
+    <div class="cap"><div class="no">03</div><h3>服务商协作</h3><p>推送确认 · 专属确认页</p><p>下载工作簿 · 回传批次号 / 商户号</p><p>确认承接、执行与核销账单回流</p></div>
+    <div class="cap"><div class="no">04</div><h3>挂券与配置</h3><p>单小程序「蒙牛会员服务中心」</p><p>可发券商户号清单 · 发放任务</p><p>推送后商户号清单锁定</p></div>
+    <div class="cap"><div class="no">05</div><h3>主数据</h3><p>门店与商户号（客户系统编码原值）</p><p>商品维护 · 零售商 / 商户号 / 经纬度</p><p>名单导入与批次明细引用同一套主数据</p></div>
+    <div class="cap"><div class="no">06</div><h3>数据看板</h3><p>本人项目查询与回传数据</p><p>核销订单分析 · 趋势图</p><p>按回传金额口径展示</p></div>
+    <div class="cap"><div class="no">07</div><h3>系统管理</h3><p>角色仅保留管理员 / 业务运营</p><p>服务商配置 · 组织与权限</p><p>数据范围固定为创建人 / 负责人 / 审批人</p></div>
+    <div class="cap"><div class="no">08</div><h3>系统日志</h3><p>项目、审批、计划批次、挂券、服务商留痕</p><p>按本人项目范围可见</p><p>筛选与导出当前结果</p></div>
+  </div>
+  <div class="objects"><b>核心业务对象</b><div class="row"><span class="chip">项目</span><span class="chip">计划</span><span class="chip">批次</span><span class="chip">发券任务</span><span class="chip">核销 / 账单</span><span class="chip">活动零售商明细</span><span class="chip">活动商品明细</span><span class="chip">门店 / 商户号 / 商品主数据</span><span class="chip">操作日志</span></div></div>
+  <div class="flowline">
+    <div class="node"><h4>草稿</h4><div class="states"><span class="st">草稿</span></div></div>
+    <div class="node"><h4>审批</h4><div class="states"><span class="st">审批中</span><span class="st">已通过</span><span class="st">未通过</span></div></div>
+    <div class="node"><h4>推送</h4><div class="states"><span class="st">待推送</span><span class="st">已推送</span><span class="st">待确认</span><span class="st">已确认</span></div></div>
+    <div class="node"><h4>执行</h4><div class="states"><span class="st exec">已配置</span><span class="st exec">执行中</span><span class="st exec">已结束</span></div></div>
+  </div>
+</div>
+
+<div class="deps">
+  <div class="section-title">外部依赖（应用视角）</div>
+  <div class="dep-grid">
+    <div class="dep"><span class="dot"></span><div><b>钉钉登录</b><span>蒙牛内部人员身份与组织信息</span></div></div>
+    <div class="dep"><span class="dot"></span><div><b>BPM 审批</b><span>审批单发起、并联审批、按人结果与意见回写</span></div></div>
+    <div class="dep"><span class="dot"></span><div><b>TPM / MEM</b><span>预算单校验与预算来源</span></div></div>
+    <div class="dep"><span class="dot"></span><div><b>既有会员小程序</b><span>开放 API：鉴权、发券、批次查询</span></div></div>
+    <div class="dep"><span class="dot"></span><div><b>制券服务商</b><span>微信商户平台建券、批次与账单回传</span></div></div>
+    <div class="dep"><span class="dot"></span><div><b>微信支付</b><span>券能力、卡包展示、核销数据</span></div></div>
+  </div>
+</div>
+
+<div class="note"><b>当前口径：</b>审批为并联、无先后分级，全部同意才通过；<b>已配置</b>属于执行节点；门店编码来自客户系统，当前不限定格式；批次推送后只读。</div>
+<div class="foot"><span>蒙牛活动管理平台 · 总部端一期</span><span>示意 · 与原型构建 h 同步</span></div>
+</div></body></html>

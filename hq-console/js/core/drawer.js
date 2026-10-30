@@ -37,6 +37,11 @@ function openDrawer(id){
 }
 
 function closeDrawer(){
+  var bat = document.getElementById('dw-batch');
+  var inpageOpen = !!(bat && bat.classList.contains('inpage') && bat.classList.contains('on'));
+  if(document.querySelector('#dw-batch.on') && typeof batchStash === 'function') batchStash();
+  /* 内嵌在「计划与批次」页里的批次配置：关闭时把列表恢复回来，避免留下空白/旧配置 */
+  if(inpageOpen && typeof batchPage === 'function') batchPage(false);
   var ds = document.querySelectorAll('.drawer.on');
   for(var i=0;i<ds.length;i++) ds[i].classList.remove('on');
   var m = document.getElementById('mask');

@@ -28,6 +28,7 @@
 
 .mn-top-r{margin-left:auto;display:flex;align-items:center;gap:14px;flex:0 0 auto}
 .mn-help{font-size:var(--fs-sm);color:rgba(255,255,255,.82);cursor:pointer}
+.mn-ver{font-size:11px;line-height:1;letter-spacing:.4px;padding:4px 7px;border-radius:5px;color:#fff;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.22);margin-right:10px}
 .mn-help:hover{color:#fff}
 .mn-user{display:flex;align-items:center;gap:8px;font-size:var(--fs-sm);color:#fff;line-height:1.2}
 .mn-user .av{
@@ -98,6 +99,8 @@
 }
 .crumb b{color:var(--ink);font-weight:600}
 .crumb .sp{color:var(--ink-20)}
+.crumb a{color:var(--ink-60);cursor:pointer;text-decoration:none}
+.crumb a:hover{color:var(--brand);text-decoration:underline}
 
 .wrap{flex:1;padding:18px 24px 48px;min-height:var(--min-h)}
 
@@ -126,3 +129,9 @@
 .sider a.item .ic svg{width:16px;height:16px;display:block}
 .sider a.item:hover .ic{opacity:1}
 .sider a.item.on .ic{opacity:1;color:var(--brand)}
+
+/* ---------- 演示身份（数据边界） ---------- */
+.mn-identity{display:flex;align-items:center;gap:6px;font-size:11.8px;color:rgba(255,255,255,.82)}
+.mn-identity select{height:26px;border-radius:5px;border:1px solid rgba(255,255,255,.28);background:rgba(255,255,255,.10);color:#fff;font-size:12px;padding:0 6px;max-width:190px;outline:none}
+.mn-identity select option{color:#141E35;background:#fff}
+.mn-user b{font-weight:600}

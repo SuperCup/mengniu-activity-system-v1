@@ -299,7 +299,7 @@ function tplPageboard(){
   return `<div class="view" id="v-board">
   <div class="note b" style="margin-top:0">
     <b>指标口径：</b>沿用呼市 / 河南已对齐版本，模块与拆分维度直接平移，不另起炉灶（待确认清单标黄项 17）。
-    数据源为微信支付 T+1 回传的发券 / 核销 / 订单明细，按活动 → 计划 → 批次 → 二维码四级维度下钻。
+    数据源为微信支付 T+1 回传的发券 / 核销 / 订单明细，按活动 → 计划 → 批次三级维度下钻。
   </div>
   
   <div class="sums">

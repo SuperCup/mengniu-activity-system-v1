@@ -16,11 +16,10 @@ function wfToday(){ return wfNow().slice(0,10); }
 /** 刷新所有受影响的视图（避免某处改了数据、别处还是旧数字） */
 function wfRefresh(){
   if(typeof renderProjCards === 'function') renderProjCards();
-  if(typeof renderApproveList === 'function') renderApproveList();
+  if(typeof syncUserFilter === 'function') syncUserFilter();
   if(typeof renderPlans === 'function') renderPlans();
   if(typeof renderTodos === 'function') renderTodos();
   if(typeof renderDbAll === 'function') renderDbAll();
-  if(typeof renderBlist === 'function'){ try{ renderBlist(); }catch(e){} }
 }
 
 function wfNextProjId(){
@@ -34,12 +33,27 @@ function wfNextProjId(){
   return 'MN-WX-202612-' + n;
 }
 
+/* 推送确认弹窗点「确认推送」后执行 */
+function wfPushDo(id){
+  var p = wfFindProj(id); if(!p) return;
+  var now = wfNow();
+  var stat = projConfigStat(p.id);
+  p.state = 'pushed';
+  p.saved = now;
+  p.mailAt = now;
+  p.handoff = { at:now, by:mnCurrentUser().name, plans:stat.list.map(function(x){ return x.id; }) };
+  sysLog('项目管理', '推送服务商', p.name, p.id, '推送至 ' + (p.vendor || '服务商') + '，共 ' + stat.list.length + ' 个计划（本地记录）');
+  mnPersist(); wfRefresh();
+  MT.toast('已推送服务商（本地记录，' + (p.vendorMail || '服务商邮箱') + '）；邮件发送需接入邮件服务');
+}
+
 function wfFindProj(id){
   return (typeof projByAny === 'function') ? projByAny(id) : (window.PROJECTS || []).filter(function(p){ return p.id === id; })[0];
 }
 
-/* ---------- 提交报批 ---------- */
-function wfSubmit(){
+/* ---------- 提交报批（mode = 'draft' 时只存草稿，不做完整性校验） ---------- */
+function wfSubmit(mode){
+  var isDraft = (mode === 'draft');
   var g = function(id){ var el = document.getElementById(id); return el ? String(el.value || '').trim() : ''; };
   var missing = [];
 
@@ -47,69 +61,136 @@ function wfSubmit(){
   if(!name) missing.push('项目名称');
   var ownerName = g('projOwner');
   var ownerPhone = g('projOwnerPhone');
-  if(!ownerName) missing.push('活动负责人');
-  if(!ownerPhone) missing.push('联系方式');
   var po = g('poNo').toUpperCase();
-  if(!po) missing.push('PO 单号');
-  if(g('projVendor') === '') missing.push('服务商');
+  var apList = (typeof getApprovers === 'function') ? getApprovers() : [];
 
-  if(!CRE_BRIEF.length){
-    missing.push('至少 1 个计划');
-  } else {
-    var bad = CRE_BRIEF.filter(function(b){
-      return !String(b.mech || '').trim()
-          || !(b.ret || []).length || !(b.sku || []).length;
-    });
-    if(bad.length) missing.push('计划的机制 / 活动零售商 / 活动商品');
+  if(!isDraft){
+    if(!ownerName) missing.push('活动负责人');
+    if(!ownerPhone) missing.push('联系方式');
+    if(!po) missing.push('预算单号');
+    if(g('projVendor') === '') missing.push('服务商');
+    if(!apList.length) missing.push('项目审批人（至少 1 人）');
+
+    if(!CRE_BRIEF.length){
+      missing.push('至少 1 个计划');
+    } else {
+      var bad = CRE_BRIEF.filter(function(b){
+        return mechCheck(b)
+            || !(b.ret || []).length || !(b.sku || []).length;
+      });
+      if(bad.length) missing.push('计划的机制金额 / 活动零售商 / 活动商品');
+      var sidBad = CRE_BRIEF.some(function(b){
+        return (b.ret || []).some(function(r){ return (r.ret || r.store || r.mch) && !String(r.sid || '').trim(); });
+      });
+      if(sidBad) missing.push('活动零售商门店编码（每行必填）');
+      var retLack = CRE_BRIEF.some(function(b){
+        return (b.ret || []).some(function(r){
+          var hasData = r.sid || r.ret || r.store || r.prov || r.city || r.mch;
+          var blank = function(v){ var s = String(v == null ? '' : v).trim(); return !s || s === '—'; };
+          return hasData && (blank(r.ret) || blank(r.prov) || blank(r.city));
+        });
+      });
+      if(retLack) missing.push('活动零售商（零售商名称 / 省份 / 城市）');
+      var skuOver = false, skuDup = false;
+      CRE_BRIEF.forEach(function(b){
+        var rows = (b.sku || []).filter(function(x){ return x.code || x.name || x.inCode; });
+        var max = (b.mechType === '减至') ? 5000 : 15000;
+        if(rows.length > max) skuOver = true;
+        var seen = {};
+        rows.forEach(function(x){
+          var c = String(x.code || '').trim(), n = String(x.inCode || '').trim();
+          if(c){ if(seen['c' + c]) skuDup = true; seen['c' + c] = 1; }
+          if(n){ if(seen['n' + n]) skuDup = true; seen['n' + n] = 1; }
+        });
+      });
+      if(skuOver) missing.push('活动商品数量（满减≤15000 / 换购≤5000）');
+      if(skuDup) missing.push('活动商品 69码 / 店内码去重');
+    }
   }
 
-  if(missing.length){ MT.toast('提交前请补充：' + missing.join('、'), 'err'); return; }
+  if(missing.length){
+    MT.toast((isDraft ? '保存草稿前请补充：' : '提交前请补充：') + missing.join('、'), 'err');
+    return;
+  }
 
-  /* PO 校验结果进入提交条件，而不是只做展示 */
+  /* 编辑草稿 / 未通过项目后重新提交：复用原项目编号，整单替换计划 */
+  var editId = window.CRE_EDIT_ID || '';
+  var exist = editId ? wfFindProj(editId) : null;
+
+  /* PO 校验结果进入提交条件，而不是只做展示；编辑已存在项目不再重复校验 */
   var pod = (window.PO_DB || {})[po];
-  if(!pod){ MT.toast('PO 单不存在或未审批（' + po + '），不能提交', 'err'); return; }
+  if(!isDraft && !pod && !exist){ MT.toast('预算单不存在或未审批（' + po + '），不能提交', 'err'); return; }
+  if(!pod) pod = {};
 
   var now = wfNow();
-  var id = wfNextProjId();
+  var id = exist ? exist.id : wfNextProjId();
   var vend = (window.VENDORS || [])[parseInt(g('projVendor'), 10)] || {};
-  var proto = (window.PROJECTS || []).filter(function(x){ return x.state === 'pending'; })[0]
+  var proto = (window.PROJECTS || []).filter(function(x){ return x.state === 'approving'; })[0]
            || (window.PROJECTS || [])[0] || {};
   var proj = JSON.parse(JSON.stringify(proto));
 
+  /* 草稿允许空行：只落有内容的计划 */
+  var briefs = isDraft
+    ? CRE_BRIEF.filter(function(b){ return b.mech || (b.ret || []).length || (b.sku || []).length; })
+    : CRE_BRIEF;
+  /* 门店编码来自客户系统，保留原值，仅去首尾空格 */
+  briefs.forEach(function(b){
+    (b.ret || []).forEach(function(r){ if(r.sid) r.sid = String(r.sid).trim(); });
+  });
   var kinds = [];
-  CRE_BRIEF.forEach(function(b){ if(kinds.indexOf(b.mech) < 0) kinds.push(b.mech); });
+  briefs.forEach(function(b){ if(b.mech && kinds.indexOf(b.mech) < 0) kinds.push(b.mech); });
 
   proj.id = id;
   proj.name = name;
-  proj.orderNo = 'SO' + wfToday().replace(/-/g, '') + '-' + String((window.PROJECTS || []).length + 1).slice(-2);
+  proj.orderNo = exist ? exist.orderNo : ('SO' + wfToday().replace(/-/g, '') + '-' + String((window.PROJECTS || []).length + 1).slice(-2));
   proj.source = pod.src || proj.source;
   proj.platform = '微信支付';
   proj.bu = pod.org || proj.bu;
   proj.owner = ownerName + (ownerPhone ? ' · ' + ownerPhone : '');
+  var ownerId = g('projOwnerId');
+  proj.ownerUser = ownerId && (typeof contactById === 'function') && contactById(ownerId)
+    ? (function(c){ return { id:c.id, name:c.name, phone:c.phone, dept:c.dept, title:c.title }; })(contactById(ownerId))
+    : (typeof personOf === 'function' ? personOf(proj.owner) : { name:ownerName, phone:ownerPhone });
+  proj.creator = (function(){
+    var u = (typeof mnCurrentUser === 'function') ? mnCurrentUser() : { name:'张明' };
+    return { id:u.id || '', name:u.name, dept:u.dept || '' };
+  })();
+  proj.approvers = apList.map(function(c){ return { id:c.id, name:c.name, dept:c.dept, title:c.title }; });
   proj.vendor = vend.name || '';
+  proj.vendorMch = (typeof vendorMch === 'function') ? (vendorMch(vend.name) || vend.mch || '') : (vend.mch || '');
   proj.vendorMail = (vend.cms && vend.cms[0] && vend.cms[0].e) || '';
   proj.vendorContact = (vend.cms && vend.cms[0] && vend.cms[0].n) || '';
   proj.mech = kinds.join(' / ');
+  var perS = (typeof g === 'function') ? g('creStart') : '';
+  var perE = (typeof g === 'function') ? g('creEnd') : '';
+  if(perS && perE) proj.period = perS + '~' + perE;
+  proj.budgetSys = g('budgetSys') || 'TPM';
+  proj.budgetFiles = BUDGET_VOUCHERS.slice();
   proj.po = po;
-  proj.budget = '\u00a5' + pod.budget;
+  var budgetTyped = g('poBudget');
+  proj.budget = budgetTyped
+    ? (String(budgetTyped).indexOf('\u00a5') === 0 ? budgetTyped : '\u00a5' + budgetTyped)
+    : ('\u00a5' + pod.budget);
   proj.crumb = undefined;
-  proj.state = 'pending';
-  proj.submitted = now;
+  proj.state = isDraft ? 'editing' : 'approving';
+  proj.code = exist ? (exist.code || exist.id) : newProjCode();
+  proj.submitted = isDraft ? '' : now;
   proj.saved = now;
-  proj.approver = '数字化中心 · 张明（第 1 级）';
+  proj.approver = proj.approvers.map(function(a){ return a.name; }).join('、') || '—';
   proj.version = 1;
   proj.rejectLog = [];
   proj.handoff = null;
-  proj.planBrief = CRE_BRIEF.map(function(b, i){
-    var nm = b.name || ('计划' + (i + 1));
-    return { name:nm, coupon:b.coupon || b.bat || nm, mech:b.mech, grant:b.grant || '领券', ret:b.ret, sku:b.sku };
+  /* 计划名称、券名称、发券方式不在创建时报：统一按序号命名，券名称等补充批次信息时再填 */
+  proj.planBrief = briefs.map(function(b, i){
+    return { name:'计划' + (i + 1), coupon:'', mech:b.mech, mechType:b.mechType || '满减',
+             thr:b.thr, face:b.face, maxPrice:b.maxPrice || '', rate:b.rate, grant:'', ret:b.ret, sku:b.sku };
   });
   proj.snapshot = {
     version: 1,
     at: now,
     project: { name:name, budget:proj.budget, vendor:proj.vendor, period:proj.period },
     plans: proj.planBrief.map(function(b, i){
-      return { id:'PL-' + id.slice(-4) + '-' + (i+1), name:b.name, coupon:b.coupon, mech:b.mech, grant:b.grant, s:'', e:'', budget:0 };
+      return { id:'PL-' + id.slice(-4) + '-' + (i+1), name:b.name, coupon:'', mech:b.mech, s:'', e:'', budget:0 };
     })
   };
 
@@ -117,15 +198,17 @@ function wfSubmit(){
   var period = String(proj.period || '').split('~');
   var s = (period[0] || '').trim() || wfToday();
   var e = (period[1] || '').trim() || wfToday();
-  CRE_BRIEF.forEach(function(b, i){
+  var wfNewPlans = [];
+  briefs.forEach(function(b, i){
     var pid = 'PL-' + id.slice(-4) + '-' + (i+1);
-    window.PLANS.push({
+    wfNewPlans.push({
       id: pid,
       pid: 'ZS-HD-202612-' + String.fromCharCode(65 + i),
       projectId: id, proj: id,
-      name: b.name || ('计划' + (i + 1)), mech: b.mech, coupon: b.coupon || b.name || ('计划' + (i + 1)), grant: b.grant || '领券', bat: b.coupon || b.name || ('计划' + (i + 1)),
+      name: '计划' + (i + 1), mech: b.mech, mechType: b.mechType || '满减', rate: b.rate || 0,
+      coupon: '', grant: '', bat: '',
       s: s, e: e,
-      face: 0, thr: 0, qty: 0, budget: 0,
+      face: b.face || 0, thr: b.thr || 0, maxPrice: b.maxPrice || '', qty: 0, budget: 0,
       limit: '', valid: '',
       ret: (b.ret || []).map(function(r){ return r.ret; }),
       sku: (b.sku || []).map(function(r){ return r.name; }),
@@ -137,51 +220,40 @@ function wfSubmit(){
     });
   });
 
-  window.PROJECTS.push(proj);
-  sysLog('项目管理', '提交审批', proj.name, proj.id, '提交后进入待审批，审批人：数字化中心 张明');
+  /* 计划整体替换：编辑场景下先清掉旧计划再挂新的，保证条数一致 */
+  window.PLANS = (window.PLANS || []).filter(function(x){ return (x.projectId || x.proj) !== id; }).concat(wfNewPlans);
+
+  if(exist){
+    proj.creator = exist.creator;
+    proj.createdAt = exist.createdAt;
+    proj.rejectLog = exist.rejectLog || [];
+    proj.version = (exist.version || 1) + 1;
+    proj.approvalNote = '';
+    proj.confirmedAt = '';
+    proj.stoppedAt = '';
+    proj.stopReason = '';
+    PROJECTS[PROJECTS.indexOf(exist)] = proj;
+  } else {
+    PROJECTS.push(proj);
+  }
+  sysLog('项目管理', isDraft ? '保存草稿' : (exist ? '重新提交审批' : '提交审批'), proj.name, proj.id,
+    isDraft ? '保存为草稿，计划与审批信息待补全'
+            : ((exist ? '修改后重新提交，' : '提交后') + '进入审批中，审批人：' + proj.approver + '（BPM 并联审批，全部同意后通过）'));
   mnPersist();
   wfRefresh();
 
   /* 表单回到初始状态，避免重复提交同一份 */
   CRE_BRIEF.length = 0;
-  CRE_BRIEF.push({ name:'', coupon:'', mech:'', grant:'领券', ret:[], sku:[] });
+  CRE_BRIEF.push({ mechType:'满减', thr:'', face:'', rate:'', mech:'', ret:[], sku:[] });
   renderProjBrief();
-  MT.toast('已提交审批：' + name + '（' + id + '），等待数字化中心审批');
-  go('v-manage');
-}
-
-/* ---------- 审批 ---------- */
-function wfApprove(id, act){
-  var p = wfFindProj(id);
-  if(!p){ MT.toast('未找到该项目', 'err'); return; }
-  if(p.state !== 'pending'){ MT.toast('该项目当前不在待审批状态，无法审批', 'err'); return; }
-  var now = wfNow();
-
-  if(act === 'agree'){
-    p.state = 'approved';
-    p.approvedAt = now;
-    p.approvedBy = '数字化中心 · 张明';
-    sysLog('项目审批', '审批通过', p.name, p.id, '第 1 级审批通过；待补执行配置 ' + projConfigStat(p.id).todo + ' 个计划');
-    p.saved = now;
-    if(!p.snapshot){
-      p.snapshot = { version:p.version || 1, at:now,
-        project:{ name:p.name, budget:p.budget, vendor:p.vendor, period:p.period },
-        plans:(p.planBrief || []).map(function(b, i){
-          return { id:'PL-' + p.id.slice(-4) + '-' + (i+1), name:b.name, coupon:b.coupon || b.bat, mech:b.mech, grant:b.grant || '领券', s:'', e:'', budget:0 };
-        }) };
-    }
-    mnPersist(); wfRefresh();
-    var stat = projConfigStat(p.id);
-    MT.toast('已同意「' + p.name + '」；待补执行配置 ' + stat.todo + ' 个计划，点「完善批次计划」开始补充');
+  window.CRE_EDIT_ID = '';
+  if(typeof resetCreateMode === 'function') resetCreateMode();
+  if(isDraft){
+    MT.toast('已保存草稿：' + name + '（' + id + '），可随时编辑后提交审批');
   } else {
-    p.state = 'draft';
-    p.rejectLog = p.rejectLog || [];
-    p.rejectLog.push({ at:now, by:'数字化中心 · 张明', note:'方案信息不足，退回修改' });
-    sysLog('项目审批', '审批驳回', p.name, p.id, '驳回原因：方案信息不足，退回修改');
-    p.saved = now;
-    mnPersist(); wfRefresh();
-    MT.toast('已驳回「' + p.name + '」，退回创建人修改（留痕已记录）');
+    MT.toast((exist ? '已重新提交审批：' : '已提交审批：') + name + '（' + id + '），审批人：' + proj.approver + '（BPM 并联审批，全部同意后通过）');
   }
+  go('v-manage');
 }
 
 /* ---------- 项目管理里的状态动作 ---------- */
@@ -191,23 +263,15 @@ function wfAct(act, id){
   var now = wfNow();
 
   if(act === 'submit'){
-    if(p.state !== 'draft'){ MT.toast('只有草稿可以提交', 'err'); return; }
-    p.state = 'pending'; p.submitted = now; p.saved = now;
-    sysLog('项目管理', '提交审批', p.name, p.id, '草稿提交，进入待审批');
+    if(p.state !== 'editing' && p.state !== 'rejected'){ MT.toast('只有草稿或未通过项目可以提交', 'err'); return; }
+    p.state = 'approving'; p.submitted = now; p.saved = now;
+    sysLog('项目管理', '提交审批', p.name, p.id, '提交审批，进入审批中（审批人：' + (p.approver || '—') + '；并联审批，全部同意后通过）');
     mnPersist(); wfRefresh();
-    MT.toast('已提交审批：' + p.name);
-    return;
-  }
-  if(act === 'withdraw'){
-    if(p.state !== 'pending'){ MT.toast('只有待审批项目可以撤回', 'err'); return; }
-    p.state = 'draft'; p.saved = now;
-    sysLog('项目管理', '撤回审批', p.name, p.id, '撤回后回到草稿');
-    mnPersist(); wfRefresh();
-    MT.toast('已撤回，项目回到草稿');
+    MT.toast('已提交审批：' + p.name + '，审批人：' + (p.approver || '—') + '（全部同意后通过）');
     return;
   }
   if(act === 'push'){
-    if(p.state !== 'approved'){ MT.toast('只有审批通过的项目可以推送', 'err'); return; }
+    if(p.state !== 'to_push'){ MT.toast('只有「待推送」的项目可以推送', 'err'); return; }
     var stat = projConfigStat(p.id);
     if(!stat.total){ MT.toast('该项目还没有计划，先补充计划再推送', 'err'); return; }
     if(stat.todo){
@@ -216,16 +280,12 @@ function wfAct(act, id){
       MT.toast('还有 ' + stat.todo + ' 个计划未配置完成：' + names + '，不能推送', 'err');
       return;
     }
-    p.state = 'confirmed';
-    p.saved = now;
-    p.handoff = { at:now, by:mnCurrentUser().name, plans:stat.list.map(function(x){ return x.id; }) };
-    sysLog('项目管理', '推送服务商', p.name, p.id, '推送至 ' + (p.vendor || '服务商') + '，共 ' + stat.list.length + ' 个计划（本地记录）');
-    mnPersist(); wfRefresh();
-    MT.toast('已推送服务商（本地记录，' + (p.vendorMail || '服务商邮箱') + '）；邮件发送需接入邮件服务');
+    openPushConfirm(id);
     return;
   }
   if(act === 'resend'){
     if(!p.handoff){ MT.toast('还没有推送记录，无法重发', 'err'); return; }
+    p.mailAt = now;
     sysLog('项目管理', '重发确认邮件', p.name, p.id, '重发至 ' + (p.vendorMail || '服务商邮箱') + '（本地模拟）');
     MT.toast('已重发确认邮件到 ' + (p.vendorMail || '服务商邮箱') + '（本地模拟，未真实发送）');
     return;
@@ -241,14 +301,17 @@ function wfAct(act, id){
     return;
   }
   if(act === 'stop'){
-    p.state = 'stopped'; p.saved = now; p.stoppedAt = now;
+    if(['to_push','pushed','to_confirm','confirmed','configured','running'].indexOf(p.state) < 0){
+      MT.toast('当前状态不能终止', 'err'); return;
+    }
+    p.state = 'finished'; p.saved = now; p.stoppedAt = now;
     sysLog('项目管理', '终止项目', p.name, p.id, '终止后释放未核销预算额度');
     mnPersist(); wfRefresh();
     MT.toast('已终止「' + p.name + '」，预算额度将释放回部门池');
     return;
   }
   if(act === 'del'){
-    if(p.state !== 'draft'){ MT.toast('只有草稿可以删除', 'err'); return; }
+    if(p.state !== 'editing'){ MT.toast('只有草稿可以删除', 'err'); return; }
     var i = window.PROJECTS.indexOf(p);
     if(i >= 0) window.PROJECTS.splice(i, 1);
     sysLog('项目管理', '删除草稿', p.name, p.id, '草稿已删除');
@@ -260,7 +323,7 @@ function wfAct(act, id){
     var cp = JSON.parse(JSON.stringify(p));
     cp.id = wfNextProjId();
     cp.name = p.name + '（副本）';
-    cp.state = 'draft';
+    cp.state = 'editing';
     cp.submitted = ''; cp.approvedAt = ''; cp.snapshot = null; cp.handoff = null;
     cp.rejectLog = [];
     cp.saved = now;
@@ -279,8 +342,8 @@ function wfAct(act, id){
 function wfEnterConfig(projId){
   var p = wfFindProj(projId);
   if(!p) return;
-  if(p.state !== 'approved' && p.state !== 'confirmed' && p.state !== 'running'){
-    MT.toast('该项目当前不可补充配置', 'err');
+  if(['passed','to_push'].indexOf(p.state) < 0){
+    MT.toast('仅「已通过 / 待推送」项目可补充批次配置；推送后已锁定', 'err');
     return;
   }
   if(typeof openProjPlans === 'function'){
@@ -310,7 +373,7 @@ function wfResetDemo(){
 
 /** 工作台「待我补充执行配置」：跳到第一个有欠配置计划的项目 */
 function wfGoFirstConfig(){
-  var t = (window.PROJECTS || []).filter(function(p){ return p.state === 'approved'; })
+  var t = (window.PROJECTS || []).filter(function(p){ return p.state === 'passed'; })
     .filter(function(p){ return projConfigStat(p.id).todo; })[0];
   if(!t){ MT.toast('当前没有待补充执行配置的项目'); return; }
   wfEnterConfig(t.id);
